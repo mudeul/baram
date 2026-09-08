@@ -47,6 +47,18 @@ const blog = defineCollection({
     }),
 });
 
+// Dreams collection — Markdown content for timeline/records
+const dreams = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/dreams' }),
+  schema: () =>
+    z.object({
+      title: z.string(),
+      description: z.string().optional(), // 본문 요약 (선택 사항)
+      pubDate: z.coerce.date(), // 타임라인 정렬용 날짜 (필수)
+      draft: z.boolean().default(false), // 임시글 숨김 처리용
+    }),
+});
+
 // Portfolio / Projects collection — Markdown content. Cover and gallery
 // images go through astro:assets via `image()`.
 const projects = defineCollection({
@@ -172,4 +184,5 @@ const landing = defineCollection({
   }),
 });
 
-export const collections = { blog, projects, landing };
+// 모든 컬렉션을 한 번에 정확히 export 합니다.
+export const collections = { blog, dreams, projects, landing };

@@ -1,0 +1,178 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import Footer from '@/components/common/Footer.astro';
+import GlassPanel from '@/components/common/GlassPanel.astro';
+import { withBase } from '@/lib/url';
+import { formatDate } from '@/lib/date';
+import { getCollection } from 'astro:content';
+
+// dreams 컬렉션에서 데이터 가져오기 (드래프트 제외)
+const dreams = await getCollection('dreams', ({ data }) => {
+  return import.meta.env.PROD ? !data.draft : true;
+});
+
+// 날짜 기준 최신순 정렬
+dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Dreams">
+  <Header />
+
+  <main id="main" tabindex="-1" class="main-content">
+    <div class="container">
+      <div class="timeline-header">
+        <h1>Dreams</h1>
+        <p>꿈속에서 마주한 조각들과 흐릿한 기억들을 기록하는 공간입니다.</p>
+      </div>
+
+      <!-- 타임라인 컨테이너 -->
+      <div class="timeline">
+        {
+          dreams.length === 0 ? (
+            <GlassPanel variant="default" padding="xl" className="empty-state">
+              <p>아직 기록된 꿈이 없습니다. 첫 번째 꿈을 남겨보세요!</p>
+            </GlassPanel>
+          ) : (
+            dreams.map((dream) => (
+              <div class="timeline-item">
+                {/* 타임라인의 왼쪽 동그라미 포인트 */}
+                <div class="timeline-dot" />
+
+                {/* 글 내용 패널 */}
+                <GlassPanel
+                  variant="solid"
+                  padding="lg"
+                  className="timeline-content"
+                >
+                  <time class="timeline-date">
+                    {formatDate(dream.data.pubDate)}
+                  </time>
+                  <h2 class="timeline-post-title">
+                    <a href={withBase(`/dreams/${dream.id}/`)}>
+                      {dream.data.title}
+                    </a>
+                  </h2>
+                  {dream.data.description && (
+                    <p class="timeline-desc">{dream.data.description}</p>
+                  )}
+                </GlassPanel>
+              </div>
+            ))
+          )
+        }
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .main-content {
+    min-height: 100vh;
+    padding: var(--space-2xl) 0;
+  }
+
+  .container {
+    max-width: 800px;
+    margin-inline: auto;
+    padding-inline: var(--space-lg);
+  }
+
+  .timeline-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+  }
+
+  .timeline-header h1 {
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    margin-bottom: var(--space-sm);
+    background: linear-gradient(
+      135deg,
+      var(--color-text),
+      var(--color-accent-dark, #6366f1)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .timeline-header p {
+    color: var(--color-text-muted, #888);
+  }
+
+  /* 타임라인 전체 컨테이너 (왼쪽에 선이 들어갈 공간 확보) */
+  .timeline {
+    position: relative;
+    max-width: 700px;
+    margin: 0 auto;
+    padding-left: 2.5rem; /* 선과 카드가 겹치지 않도록 카드 영역을 오른쪽으로 밀어줌 */
+  }
+
+  /* 세로로 이어지는 선 */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px; /* 선의 위치를 고정 */
+    top: 1.8rem;
+    bottom: 1.8rem;
+    width: 2px;
+    background-color: var(--color-accent, #3b82f6);
+    opacity: 0.4;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: var(--space-xl);
+  }
+
+  /* 동그라미 마커 최종 미세 조정 */
+  .timeline-dot {
+    position: absolute;
+    left: -2.05rem; /* 살짝 오른쪽으로 당겨서 중심 맞추기 */
+    top: 1.5rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--color-accent, #3b82f6);
+    border: 2px solid var(--color-bg, #121212);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    z-index: 2;
+  }
+
+  .timeline-date {
+    display: block;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--color-text-muted, #888);
+    margin-bottom: var(--space-xs, 0.25rem);
+  }
+
+  .timeline-post-title {
+    font-size: var(--text-xl, 1.25rem);
+    font-weight: 700;
+    margin-bottom: var(--space-sm, 0.5rem);
+  }
+
+  .timeline-post-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .timeline-post-title a:hover {
+    color: var(--color-accent, #3b82f6);
+  }
+
+  .timeline-desc {
+    color: var(--color-text-muted, #888);
+    font-size: var(--text-base, 1rem);
+    line-height: 1.6;
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--color-text-muted, #888);
+  }
+</style>
