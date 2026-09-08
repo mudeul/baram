@@ -75,15 +75,15 @@ export interface SiteConfig {
 }
 
 const siteConfig: SiteConfig = {
-  name: 'Astro Haze',
-  title: 'Astro Haze - Glassmorphism Theme',
-  description: 'A beautiful glassmorphism multi-purpose theme for Astro 7',
-  author: 'Your Name',
-  url: 'https://kpab.github.io/astro-haze',
+  name: '높이 부는 바람',
+  title: '높이 부는 바람',
+  description: '이 바람이 좋아 나를 날려도 좋아 어디로든 갈 수 있다면',
+  author: '무들',
+  url: 'https://mudeul.github.io/baram/',
   ogImage: '/og-image.png',
-  twitterHandle: '@yourusername',
-  lang: 'en',
-  ogLocale: 'en_US',
+  twitterHandle: '@mudeul',
+  lang: 'ko',
+  ogLocale: 'ko_KR',
 
   theme: {
     accentColor: 'hsl(280, 70%, 60%)',
