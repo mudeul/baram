@@ -20,7 +20,18 @@ html {
 }
 
 body {
-  font-family: 'Pretendard', var(--font-sans), -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  font-family:
+    'Pretendard',
+    var(--font-sans),
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    'Helvetica Neue',
+    'Segoe UI',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    sans-serif;
   font-size: var(--text-base);
   line-height: 1.6;
   color: var(--color-text);
