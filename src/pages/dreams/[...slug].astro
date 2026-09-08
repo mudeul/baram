@@ -5,8 +5,6 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import GlassPanel from '@/components/common/GlassPanel.astro';
-import Tag from '@/components/ui/Tag.astro';
-import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 import { formatDate } from '@/lib/date';
 import { getCollection } from 'astro:content';
@@ -15,7 +13,7 @@ export const getStaticPaths = (async () => {
   const dreams = await getCollection('dreams', ({ data }) => {
     return import.meta.env.PROD ? !data.draft : true;
   });
-
+  
   return dreams.map((dream) => ({
     params: { slug: dream.id },
     props: { dream },
@@ -26,9 +24,6 @@ const { dream } = Astro.props;
 const { Content } = await render(dream);
 
 const formattedDate = formatDate(dream.data.pubDate);
-const updatedDate = dream.data.updatedDate
-  ? formatDate(dream.data.updatedDate)
-  : undefined;
 ---
 
 <BaseLayout
@@ -37,7 +32,6 @@ const updatedDate = dream.data.updatedDate
   ogImage={withBase(`/og/dreams/${dream.id}.png`)}
   article={{
     publishedTime: dream.data.pubDate.toISOString(),
-    modifiedTime: dream.data.updatedDate?.toISOString(),
   }}
 >
   <Header />
@@ -50,49 +44,9 @@ const updatedDate = dream.data.updatedDate
           <h1 class="post-title">{dream.data.title}</h1>
 
           <div class="post-meta">
-            <time datetime={dream.data.pubDate.toISOString()}
-              >{formattedDate}</time
-            >
-            {
-              updatedDate && (
-                <>
-                  <span class="separator" aria-hidden="true">
-                    ·
-                  </span>
-                  <span>Updated {updatedDate}</span>
-                </>
-              )
-            }
+            <time datetime={dream.data.pubDate.toISOString()}>{formattedDate}</time>
           </div>
-
-          {
-            dream.data.tags && dream.data.tags.length > 0 && (
-              <div class="post-tags">
-                {dream.data.tags.map((tag) => (
-                  <Tag name={tag} />
-                ))}
-              </div>
-            )
-          }
         </GlassPanel>
-
-        {
-          dream.data.heroImage && (
-            <div
-              class="post-hero-image"
-              transition:name={`dream-image-${dream.id}`}
-            >
-              <Picture
-                src={dream.data.heroImage}
-                alt={dream.data.heroImageAlt ?? dream.data.title}
-                widths={[600, 1200, 1600]}
-                sizes="(min-width: 1024px) 720px, 100vw"
-                loading="eager"
-                fetchpriority="high"
-              />
-            </div>
-          )
-        }
 
         <div class="post-body">
           <GlassPanel variant="solid" padding="xl" className="post-content">
@@ -142,7 +96,7 @@ const updatedDate = dream.data.updatedDate
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-lg); 
   }
 
   .post-title {
@@ -172,32 +126,6 @@ const updatedDate = dream.data.updatedDate
     margin-bottom: var(--space-md);
   }
 
-  .separator {
-    opacity: 0.5;
-  }
-
-  .post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-xs);
-    margin-top: var(--space-md);
-  }
-
-  .post-hero-image {
-    margin-bottom: var(--space-lg);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--glass-shadow);
-  }
-
-  .post-hero-image :global(img) {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  /* 본문 카드 위쪽 간격을 아주 좁게(xs) 밀착 */
   .post-body {
     margin-top: var(--space-xs);
     margin-bottom: var(--space-2xl);
