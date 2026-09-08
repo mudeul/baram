@@ -11,7 +11,7 @@ import Picture from '@/components/ui/Picture.astro';
 import Toc from '@/components/blog/Toc.astro';
 import { withBase } from '@/lib/url';
 import { formatDate } from '@/lib/date';
-import { getPublishedPosts, getAdjacentPosts, readingTime } from '@/lib/posts';
+import { getPublishedPosts, getAdjacentPosts } from '@/lib/posts'; // readingTime 제거됨
 import siteConfig from '@/site.config';
 
 export const getStaticPaths = (async () => {
@@ -28,7 +28,6 @@ const { Content, headings } = await render(post);
 const allPosts = await getPublishedPosts();
 const { newer, older } = getAdjacentPosts(allPosts, post.id);
 
-const minutes = readingTime(post.body);
 const formattedDate = formatDate(post.data.pubDate);
 const updatedDate = post.data.updatedDate
   ? formatDate(post.data.updatedDate)
@@ -77,26 +76,7 @@ const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
                 </>
               )
             }
-            {
-              siteConfig.blog.showReadingTime && minutes > 0 && (
-                <>
-                  <span class="separator" aria-hidden="true">
-                    ·
-                  </span>
-                  <span>{minutes} min read</span>
-                </>
-              )
-            }
-            {
-              post.data.author && (
-                <>
-                  <span class="separator" aria-hidden="true">
-                    ·
-                  </span>
-                  <span>By {post.data.author}</span>
-                </>
-              )
-            }
+            {/* 1 min read 및 By Anonymous 관련 코드가 여기서 깔끔하게 삭제되었습니다. */}
           </div>
 
           {
@@ -266,13 +246,24 @@ const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encod
     margin-bottom: var(--space-2xl);
   }
 
+  /* 제목과 헤더 내용 전체 가운데 정렬 보장 */
+  .post-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .post-back {
+    align-self: flex-start; /* 뒤로 가기 버튼은 왼쪽 정렬 유지 원하시면 이 줄을 지우시면 됩니다 */
+  }
+
   .post-title {
     font-size: var(--text-4xl);
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: var(--space-lg);
-    /* The accent end uses the darker, AA-checked accent (see Button.astro's
-       solid variant) so the gradient edge stays readable on light mode. */
+    text-align: center; /* 확실한 가운데 정렬 */
     background: linear-gradient(
       135deg,
       var(--color-text),
