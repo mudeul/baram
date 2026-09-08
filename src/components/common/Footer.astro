@@ -1,26 +1,18 @@
 ---
 import siteConfig from '@/site.config';
 import { withBase } from '@/lib/url';
-import { getEnabledNavItems } from '@/lib/nav';
 import GlassPanel from './GlassPanel.astro';
 
 const currentYear = new Date().getFullYear();
 
 const socialIcons = {
-  github: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>`,
-  twitter: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>`,
-  linkedin: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>`,
-  instagram: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`,
+  github: ``,
+  twitter: ``,
+  linkedin: ``,
+  instagram: ``,
   youtube: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>`,
+  bluesky: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><title>Bluesky</title><path d="M5.202 2.857C7.954 4.922 10.913 9.11 12 11.358c1.087-2.247 4.046-6.436 6.798-8.501C20.783 1.366 24 .213 24 3.883c0 .732-.42 6.156-.667 7.037-.856 3.061-3.978 3.842-6.755 3.37 4.854.826 6.089 3.562 3.422 6.299-5.065 5.196-7.28-1.304-7.847-2.97-.104-.305-.152-.448-.153-.327 0-.121-.05.022-.153.327-.568 1.666-2.782 8.166-7.847 2.97-2.667-2.737-1.432-5.473 3.422-6.3-2.777.473-5.899-.308-6.755-3.369C.42 10.04 0 4.615 0 3.883c0-3.67 3.217-2.517 5.202-1.026"/></svg>`,
 };
-
-const navItems = getEnabledNavItems();
-
-const footerLinks = siteConfig.footer.links.filter((link) => {
-  if (link.href === '/sitemap-index.xml') return siteConfig.features.sitemap;
-  if (link.href === '/rss.xml') return siteConfig.features.rss;
-  return true;
-});
 ---
 
 <footer class="site-footer" data-pagefind-ignore>
@@ -32,38 +24,6 @@ const footerLinks = siteConfig.footer.links.filter((link) => {
         <div class="footer-section">
           <h3 class="footer-title">{siteConfig.name}</h3>
           <p class="footer-description">{siteConfig.description}</p>
-        </div>
-
-        <!-- Quick Links -->
-        <div class="footer-section">
-          <h4 class="footer-subtitle">Quick Links</h4>
-          <ul class="footer-links">
-            {
-              navItems.map((item) => (
-                <li>
-                  <a href={withBase(item.href)} class="footer-link">
-                    {item.name}
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
-
-        <!-- Resources -->
-        <div class="footer-section">
-          <h4 class="footer-subtitle">Resources</h4>
-          <ul class="footer-links">
-            {
-              footerLinks.map((link) => (
-                <li>
-                  <a href={withBase(link.href)} class="footer-link">
-                    {link.name}
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
         </div>
 
         <!-- Social Links -->
@@ -141,20 +101,16 @@ const footerLinks = siteConfig.footer.links.filter((link) => {
   .footer-container {
     max-width: var(--container-max);
     margin: 0 auto;
-    /* The grid inside queries this, not the viewport. */
     container-type: inline-size;
   }
 
   .footer-grid {
     display: grid;
-    /* min() stops a 250px track from outgrowing a narrower container. */
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
     gap: var(--space-2xl);
     margin-bottom: var(--space-xl);
   }
 
-  /* Was a viewport query: the footer columns depend on the footer's own width,
-     which is capped well below the window on a wide screen. */
   @container (max-width: 768px) {
     .footer-grid {
       grid-template-columns: 1fr;
@@ -201,27 +157,6 @@ const footerLinks = siteConfig.footer.links.filter((link) => {
     color: var(--color-text-muted);
     line-height: 1.6;
     margin: 0;
-  }
-
-  .footer-links {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  .footer-link {
-    color: var(--color-text-muted);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-    display: inline-flex;
-    align-items: center;
-  }
-
-  .footer-link:hover {
-    color: var(--color-accent);
   }
 
   /* Social Links */
@@ -289,7 +224,6 @@ const footerLinks = siteConfig.footer.links.filter((link) => {
   }
 
   /* Focus styles */
-  .footer-link:focus-visible,
   .social-link:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;

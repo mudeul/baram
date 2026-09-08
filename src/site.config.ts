@@ -111,9 +111,9 @@ const siteConfig: SiteConfig = {
   },
 
   social: {
-    github: 'https://github.com/yourusername',
-    twitter: 'https://twitter.com/yourusername',
-    linkedin: 'https://linkedin.com/in/yourusername',
+    youtube: 'https://www.youtube.com/@mulmi.t',
+    bluesky: 'https://bsky.app/profile/mudeul.bsky.social',
+    linkedin: '', // 안 쓰는 항목은 이렇게 빈 따옴표로 두면 화면에서 싹 사라집니다!
   },
 
   blog: {
