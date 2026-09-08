@@ -2,7 +2,7 @@
 title: 'Getting Started with Astro Haze'
 description: 'Learn how to quickly set up and customize the Astro Haze glassmorphism theme for your next project.'
 pubDate: 2024-01-15
-heroImage: '../../assets/images/blog/getting-started.jpg'
+heroImage: '![](../../assets/images/blog/getting-started.jpg')
 tags: ['astro', 'tutorial', 'getting-started']
 author: 'Alex Johnson'
 featured: true
