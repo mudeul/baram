@@ -41,13 +41,14 @@ export interface SiteConfig {
   };
 
   // Social links
-  social: {
-    github?: string;
-    twitter?: string;
-    linkedin?: string;
-    instagram?: string;
-    youtube?: string;
-  };
+social: {
+  github?: string;
+  twitter?: string;
+  linkedin?: string;
+  instagram?: string;
+  youtube?: string;
+  bluesky?: string;
+}
 
   // Blog settings
   blog: {
