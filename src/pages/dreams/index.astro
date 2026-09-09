@@ -7,23 +7,22 @@ import { withBase } from '@/lib/url';
 import { formatDate } from '@/lib/date';
 import { getCollection } from 'astro:content';
 
-// dreams 컬렉션에서 데이터 가져오기 (드래프트 제외)
 const dreams = await getCollection('dreams', ({ data }) => {
   return import.meta.env.PROD ? !data.draft : true;
 });
 
-// 날짜 기준 최신순 정렬
+// 최신순 정렬
 dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<BaseLayout title="Dreams">
+<BaseLayout title="Dreams" description="A collection of thoughts, dreams, and records.">
   <Header />
 
   <main id="main" tabindex="-1" class="main-content">
     <div class="container">
-      <div class="timeline-header">
-        <h1>Dreams</h1>
-        <p>꿈속에서 마주한 조각들과 흐릿한 기억들을 기록하는 공간입니다.</p>
+      <div class="page-header">
+        <h1 class="page-title">Dreams</h1>
+        <p class="page-description">기록하고 꿈꾸는 공간입니다.</p>
       </div>
 
       <!-- 타임라인 컨테이너 -->
@@ -36,25 +35,17 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
           ) : (
             dreams.map((dream) => (
               <div class="timeline-item">
-                {/* 타임라인의 왼쪽 동그라미 포인트 */}
-                <div class="timeline-dot" />
+                {/* 타임라인의 왼쪽 동그라미 포인트 (기본 위치 유지) */}
+                <div class="timeline-dot"></div>
 
                 {/* 글 내용 패널 */}
-                <GlassPanel
-                  variant="solid"
-                  padding="lg"
-                  className="timeline-content"
-                >
-                  <time class="timeline-date">
-                    {formatDate(dream.data.pubDate)}
-                  </time>
+                <GlassPanel variant="solid" padding="lg" className="timeline-content">
+                  <time class="timeline-date">{formatDate(dream.data.pubDate)}</time>
                   <h2 class="timeline-post-title">
-                    <a href={withBase(`/dreams/${dream.id}/`)}>
-                      {dream.data.title}
-                    </a>
+                    <a href={withBase(`/dreams/${dream.id}/`)}>{dream.data.title}</a>
                   </h2>
                   {dream.data.description && (
-                    <p class="timeline-desc">{dream.data.description}</p>
+                    <p class="timeline-excerpt">{dream.data.description}</p>
                   )}
                 </GlassPanel>
               </div>
@@ -71,6 +62,7 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 <style>
   .main-content {
     min-height: 100vh;
+    min-height: 100dvh;
     padding: var(--space-2xl) 0;
   }
 
@@ -80,47 +72,45 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     padding-inline: var(--space-lg);
   }
 
-  .timeline-header {
+  .page-header {
     text-align: center;
     margin-bottom: var(--space-3xl);
   }
 
-  .timeline-header h1 {
+  .page-title {
     font-size: var(--text-4xl);
     font-weight: 800;
     margin-bottom: var(--space-sm);
     background: linear-gradient(
       135deg,
       var(--color-text),
-      var(--color-accent-dark, #6366f1)
+      var(--color-accent-dark)
     );
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  .timeline-header p {
-    color: var(--color-text-muted, #888);
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
   }
 
-  /* 타임라인 전체 컨테이너 (왼쪽에 선이 들어갈 공간 확보) */
+  /* 타임라인 구조 */
   .timeline {
     position: relative;
-    max-width: 700px;
-    margin: 0 auto;
-    padding-left: 2.5rem; /* 선과 카드가 겹치지 않도록 카드 영역을 오른쪽으로 밀어줌 */
+    padding-left: 2rem;
   }
 
-  /* 세로로 이어지는 선 */
+  /* 타임라인 수직 연결선만 오른쪽으로 3px 이동 */
   .timeline::before {
     content: '';
     position: absolute;
-    left: 12px; /* 선의 위치를 고정 */
-    top: 1.8rem;
-    bottom: 1.8rem;
+    top: 0;
+    bottom: 0;
+    left: calc(0.5rem + 3px);
     width: 2px;
-    background-color: var(--color-accent, #3b82f6);
-    opacity: 0.4;
+    background: var(--color-border);
   }
 
   .timeline-item {
@@ -128,51 +118,76 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     margin-bottom: var(--space-xl);
   }
 
-  /* 동그라미 마커 최종 미세 조정 */
+  /* 타임라인 동그라미 마커 (기본 위치 유지) */
   .timeline-dot {
     position: absolute;
-    left: -2.05rem; /* 살짝 오른쪽으로 당겨서 중심 맞추기 */
+    left: calc(-2rem + 0.5rem);
     top: 1.5rem;
+    transform: translateX(-50%);
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background-color: var(--color-accent, #3b82f6);
-    border: 2px solid var(--color-bg, #121212);
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+    background: var(--color-accent);
+    border: 2px solid var(--color-bg);
+    box-shadow: 0 0 0 2px var(--color-border);
     z-index: 2;
+  }
+
+  .timeline-content {
+    transition: transform var(--transition-fast);
+  }
+
+  .timeline-content:hover {
+    transform: translateY(-2px);
   }
 
   .timeline-date {
     display: block;
-    font-size: var(--text-sm, 0.875rem);
-    color: var(--color-text-muted, #888);
-    margin-bottom: var(--space-xs, 0.25rem);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
   }
 
   .timeline-post-title {
-    font-size: var(--text-xl, 1.25rem);
+    font-size: var(--text-xl);
     font-weight: 700;
-    margin-bottom: var(--space-sm, 0.5rem);
+    margin-bottom: var(--space-xs);
   }
 
   .timeline-post-title a {
-    color: inherit;
+    color: var(--color-text);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: color var(--transition-fast);
   }
 
   .timeline-post-title a:hover {
-    color: var(--color-accent, #3b82f6);
+    color: var(--color-accent);
   }
 
-  .timeline-desc {
-    color: var(--color-text-muted, #888);
-    font-size: var(--text-base, 1rem);
+  .timeline-excerpt {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
     line-height: 1.6;
+    margin: 0;
   }
 
   .empty-state {
     text-align: center;
-    color: var(--color-text-muted, #888);
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .timeline {
+      padding-left: 1.5rem;
+    }
+    /* 모바일에서도 선만 오른쪽으로 3px 이동 */
+    .timeline::before {
+      left: calc(0.35rem + 3px);
+    }
+    .timeline-dot {
+      left: calc(-1.5rem + 0.35rem);
+      width: 10px;
+      height: 10px;
+    }
   }
 </style>
