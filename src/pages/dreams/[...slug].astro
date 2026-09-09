@@ -15,7 +15,7 @@ export const getStaticPaths = (async () => {
   });
 
   return dreams.map((dream) => ({
-    params: { id: dream.id },
+    params: { slug: [dream.id] }, // 배열 형태로 전달해야 합니다!
     props: { dream },
   }));
 }) satisfies GetStaticPaths;
