@@ -6,21 +6,17 @@ import Footer from '@/components/common/Footer.astro';
 import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
-// 프로젝트 컬렉션 가져오기 및 정렬
-const allProjects = (
-  await getCollection('projects', ({ data }) => {
-    return import.meta.env.PROD ? !data.draft : true;
-  })
-).sort((a, b) => {
+// 프로젝트 컬렉션 가져오기 (draft 필드가 없으므로 바로 가져옴)
+const allProjects = (await getCollection('projects')).sort((a, b) => {
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
   return (b.data.year || 0) - (a.data.year || 0);
 });
 
-// 모든 프로젝트에서 태그(스택) 목록 추출 및 중복 제거
+// 모든 프로젝트에서 tech(기술 스택) 목록 추출 및 중복 제거
 const allTagsSet = new Set<string>();
 allProjects.forEach((project) => {
-  if (project.data.tags && Array.isArray(project.data.tags)) {
-    project.data.tags.forEach((tag: string) => allTagsSet.add(tag));
+  if (project.data.tech && Array.isArray(project.data.tech)) {
+    project.data.tech.forEach((techItem: string) => allTagsSet.add(techItem));
   }
 });
 const tags = Array.from(allTagsSet);
@@ -39,7 +35,7 @@ const tags = Array.from(allTagsSet);
         <p class="page-description">프로젝트 및 기술 스택별 아카이브</p>
       </div>
 
-      {/* 태그 / 기술 스택 카테고리 필터 버튼 영역 */}
+      {/* 기술 스택 카테고리 필터 버튼 영역 */}
       {
         tags.length > 0 && (
           <div class="filter-tags" aria-label="Filter by tech stack">
@@ -59,22 +55,18 @@ const tags = Array.from(allTagsSet);
       <div class="portfolio-grid">
         {
           allProjects.map((project) => {
-            const projectTags = project.data.tags || [];
-            const dataTagsAttr = projectTags.join(',');
+            const projectTechs = project.data.tech || [];
+            const dataTagsAttr = projectTechs.join(',');
             return (
               <a
                 href={withBase(`/projects/${project.id}/`)}
                 class="portfolio-item"
                 data-tags={dataTagsAttr}
               >
-                {project.data.heroImage ? (
+                {project.data.cover ? (
                   <Picture
-                    src={project.data.heroImage}
-                    alt={
-                      project.data.heroImageAlt ||
-                      project.data.title ||
-                      'Project Image'
-                    }
+                    src={project.data.cover}
+                    alt={project.data.title || 'Project Image'}
                     widths={[400, 800]}
                     sizes="(min-width: 1024px) 33vw, 100vw"
                     loading="lazy"
@@ -96,14 +88,13 @@ const tags = Array.from(allTagsSet);
 </BaseLayout>
 
 <script>
-  // 간단한 클라이언트 측 태그 필터링 스크립트
+  // 클라이언트 측 기술 스택 필터링 스크립트
   document.addEventListener('DOMContentLoaded', () => {
     const filterButtons = document.querySelectorAll('.tag-btn');
     const items = document.querySelectorAll('.portfolio-item');
 
     filterButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
-        // 활성화 버튼 스타일 토글
         filterButtons.forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
 
@@ -111,7 +102,10 @@ const tags = Array.from(allTagsSet);
 
         items.forEach((item) => {
           const itemTags = item.getAttribute('data-tags')?.split(',') || [];
-          if (selectedTag === 'all' || itemTags.includes(selectedTag)) {
+          if (
+            selectedTag === 'all' ||
+            (selectedTag && itemTags.includes(selectedTag))
+          ) {
             (item as HTMLElement).style.display = 'block';
           } else {
             (item as HTMLElement).style.display = 'none';
