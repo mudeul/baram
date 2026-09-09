@@ -132,10 +132,10 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     margin-bottom: var(--space-xl);
   }
 
-  /* 타임라인 동그라미 마커: 선이 있는 정확히 그 위치(left: 0.75rem)에 고정 */
+  /* 타임라인 동그라미 마커: 선보다 1mm(약 0.05rem) 더 왼쪽으로 미세 조정 */
   .timeline-dot {
     position: absolute;
-    left: calc(-2rem + 0.75rem);
+    left: calc(-2rem + 0.7rem);
     top: 1.5rem;
     transform: translateX(-50%);
     width: 10px;
