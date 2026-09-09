@@ -15,7 +15,7 @@ export const getStaticPaths = (async () => {
   });
 
   return dreams.map((dream) => ({
-    params: { slug: dream.id },
+    params: { id: dream.id },
     props: { dream },
   }));
 }) satisfies GetStaticPaths;
