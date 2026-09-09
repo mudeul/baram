@@ -123,7 +123,10 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     bottom: 0;
     left: 0;
     width: 3px;
-    background-color: var(--color-accent, #3b82f6); /* 색상이 안 보일 경우를 대비해 파란빛 기본값 fallback 추가 */
+    background-color: var(
+      --color-accent,
+      #3b82f6
+    ); /* 색상이 안 보일 경우를 대비해 파란빛 기본값 fallback 추가 */
     z-index: 5; /* 카드가 가리지 않도록 앞으로 배치 */
   }
 
@@ -136,7 +139,7 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   .timeline-dot {
     position: absolute;
     /* 선(left: 0)의 위치에 정확히 맞춤 */
-    left: calc(-2rem - 1px); 
+    left: calc(-2rem - 1px);
     top: 1.5rem;
     width: 14px;
     height: 14px;
