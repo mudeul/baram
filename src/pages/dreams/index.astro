@@ -107,22 +107,22 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     font-size: var(--text-lg);
   }
 
-  /* 타임라인 컨테이너 */
+  /* 타임라인 구조: 카드가 침범하지 않도록 왼쪽 공간을 2.5rem으로 넉넉히 확보 */
   .timeline {
     position: relative;
-    padding-left: 2rem;
+    padding-left: 2.5rem;
   }
 
-  /* 타임라인 수직 연결선: 1px로 아주 섬세하게 조정하고 테두리 색상 계열로 변경 */
+  /* 타임라인 수직 연결선: 넉넉한 공간의 중앙 지점인 1.25rem에 배치 */
   .timeline::before {
     content: '';
     position: absolute;
     top: 0.5rem;
     bottom: 0.5rem;
-    left: 1rem;
+    left: 1.25rem;
     width: 1px;
     background-color: var(--color-accent);
-    opacity: 0.25;
+    opacity: 0.3;
     z-index: 1;
   }
 
@@ -131,10 +131,10 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     margin-bottom: var(--space-xl);
   }
 
-  /* 타임라인 동그라미 마커: 선(left: 1rem) 위치에 정확히 중앙 정렬 */
+  /* 타임라인 동그라미 마커: 선(1.25rem) 위치에 정확히 중앙 정렬하여 카드 바깥쪽에 배치 */
   .timeline-dot {
     position: absolute;
-    left: 1rem;
+    left: 1.25rem;
     top: 1.5rem;
     transform: translateX(-50%);
     width: 10px;
@@ -191,11 +191,11 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   @media (max-width: 768px) {
     .timeline {
-      padding-left: 1.75rem;
+      padding-left: 2rem;
     }
     .timeline::before,
     .timeline-dot {
-      left: 0.875rem;
+      left: 1rem;
     }
     .timeline-dot {
       width: 9px;
