@@ -7,9 +7,11 @@ import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
 // 프로젝트 컬렉션 가져오기 및 정렬
-const allProjects = (await getCollection('projects', ({ data }) => {
-  return import.meta.env.PROD ? !data.draft : true;
-})).sort((a, b) => {
+const allProjects = (
+  await getCollection('projects', ({ data }) => {
+    return import.meta.env.PROD ? !data.draft : true;
+  })
+).sort((a, b) => {
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
   return (b.data.year || 0) - (a.data.year || 0);
 });
@@ -38,14 +40,20 @@ const tags = Array.from(allTagsSet);
       </div>
 
       {/* 태그 / 기술 스택 카테고리 필터 버튼 영역 */}
-      {tags.length > 0 && (
-        <div class="filter-tags" aria-label="Filter by tech stack">
-          <button class="tag-btn active" data-tag="all">All</button>
-          {tags.map((tag) => (
-            <button class="tag-btn" data-tag={tag}>{tag}</button>
-          ))}
-        </div>
-      )}
+      {
+        tags.length > 0 && (
+          <div class="filter-tags" aria-label="Filter by tech stack">
+            <button class="tag-btn active" data-tag="all">
+              All
+            </button>
+            {tags.map((tag) => (
+              <button class="tag-btn" data-tag={tag}>
+                {tag}
+              </button>
+            ))}
+          </div>
+        )
+      }
 
       {/* 인스타그램 스타일 3열 사진 그리드 */}
       <div class="portfolio-grid">
@@ -54,15 +62,19 @@ const tags = Array.from(allTagsSet);
             const projectTags = project.data.tags || [];
             const dataTagsAttr = projectTags.join(',');
             return (
-              <a 
-                href={withBase(`/projects/${project.id}/`)} 
+              <a
+                href={withBase(`/projects/${project.id}/`)}
                 class="portfolio-item"
                 data-tags={dataTagsAttr}
               >
                 {project.data.heroImage ? (
                   <Picture
                     src={project.data.heroImage}
-                    alt={project.data.heroImageAlt || project.data.title || 'Project Image'}
+                    alt={
+                      project.data.heroImageAlt ||
+                      project.data.title ||
+                      'Project Image'
+                    }
                     widths={[400, 800]}
                     sizes="(min-width: 1024px) 33vw, 100vw"
                     loading="lazy"
@@ -193,7 +205,9 @@ const tags = Array.from(allTagsSet);
     overflow: hidden;
     background-color: var(--color-surface);
     box-shadow: var(--glass-shadow);
-    transition: transform var(--transition-fast), opacity var(--transition-fast);
+    transition:
+      transform var(--transition-fast),
+      opacity var(--transition-fast);
   }
 
   .portfolio-item:hover {
