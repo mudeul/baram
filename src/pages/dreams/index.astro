@@ -132,10 +132,12 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     margin-bottom: var(--space-xl);
   }
 
-  /* 타임라인 동그라미 마커: 왼쪽으로 1mm 더 미세 조정 */
+  /* 타임라인 동그라미 마커: 선보다 1mm 더 왼쪽으로 미세 조정 */
   .timeline-dot {
     position: absolute;
-    left: calc(-2rem + 0.65rem);
+    left: calc(
+      -2rem + 0.7rem
+    ); /* 0.65rem -> 0.7rem으로 변경 (숫자를 키워야 왼쪽으로 이동합니다) */
     top: 1.5rem;
     transform: translateX(-50%);
     width: 10px;
