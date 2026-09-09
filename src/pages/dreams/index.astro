@@ -107,21 +107,21 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     font-size: var(--text-lg);
   }
 
-  /* 타임라인 구조: 선이 들어갈 공간 확보 */
+  /* 타임라인 구조 */
   .timeline {
     position: relative;
-    padding-left: 1.75rem;
+    padding-left: 2rem; /* 왼쪽 패딩으로 카드와 선의 간격 확보 */
   }
 
-  /* 타임라인 수직 연결선 (두께를 2px로 슬림하게 조정) */
+  /* 타임라인 수직 연결선 (은은한 테두리 색상 사용) */
   .timeline::before {
     content: '';
     position: absolute;
     top: 0.5rem;
     bottom: 0.5rem;
-    left: 6px;
+    left: 7px; /* 선의 위치를 고정 */
     width: 2px;
-    background-color: var(--color-accent);
+    background-color: var(--color-border);
     z-index: 5;
   }
 
@@ -130,11 +130,12 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     margin-bottom: var(--space-xl);
   }
 
-  /* 타임라인 동그라미 마커 (선(left: 6px)의 정중앙에 정확히 얹히도록 위치 계산) */
+  /* 타임라인 동그라미 마커: 선(left: 7px)의 중심에 정확히 안착하도록 transform 사용 */
   .timeline-dot {
     position: absolute;
-    left: -1.4rem;
+    left: 7px;
     top: 1.5rem;
+    transform: translateX(-50%);
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -166,7 +167,7 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   }
 
   .timeline-post-title a {
-    (color: var(--color-text);)
+    color: var(--color-text);
     text-decoration: none;
     transition: color var(--transition-fast);
   }
@@ -189,13 +190,13 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   @media (max-width: 768px) {
     .timeline {
-      padding-left: 1.5rem;
+      padding-left: 1.75rem;
     }
-    .timeline::before {
-      left: 5px;
+    .timeline::before,
+    .timeline-dot {
+      left: 6px; /* 모바일에서도 동일하게 기준점 일치 */
     }
     .timeline-dot {
-      left: -1.25rem;
       width: 10px;
       height: 10px;
     }
