@@ -14,11 +14,11 @@ export async function getStaticPaths() {
   });
 
   return dreams.map((dream) => ({
-    params: { slug: dream.id }, // [...slug] 파일이라도 단일 string을 넘기면 Astro가 알아서 처리합니다.
+    // 반드시 배열 형태로 감싸주어야 [...slug] 라우팅이 정상적으로 인식합니다.
+    params: { slug: [dream.id] },
     props: { dream },
   }));
 }
-
 // 타입 에러를 피하기 위해 Astro.params에서 slug를 안전하게 꺼냅니다.
 const { slug } = Astro.params;
 const { dream } = Astro.props;
