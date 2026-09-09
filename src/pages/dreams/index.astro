@@ -107,27 +107,22 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     font-size: var(--text-lg);
   }
 
-  /* 타임라인 구조 */
+  /* 타임라인 구조: 선이 들어갈 공간 확보 */
   .timeline {
     position: relative;
-    /* 선이 그려질 공간을 위해 왼쪽에 여백 확보 */
-    padding-left: 2rem;
-    margin-left: 1rem;
+    padding-left: 1.75rem;
   }
 
-  /* 타임라인 수직 연결선 (눈에 잘 띄도록 accent 컬러나 명확한 색상 사용) */
+  /* 타임라인 수직 연결선 (두께를 2px로 슬림하게 조정) */
   .timeline::before {
     content: '';
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 3px;
-    background-color: var(
-      --color-accent,
-      #3b82f6
-    ); /* 색상이 안 보일 경우를 대비해 파란빛 기본값 fallback 추가 */
-    z-index: 5; /* 카드가 가리지 않도록 앞으로 배치 */
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 6px;
+    width: 2px;
+    background-color: var(--color-accent);
+    z-index: 5;
   }
 
   .timeline-item {
@@ -135,19 +130,18 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     margin-bottom: var(--space-xl);
   }
 
-  /* 타임라인 동그라미 마커 */
+  /* 타임라인 동그라미 마커 (선(left: 6px)의 정중앙에 정확히 얹히도록 위치 계산) */
   .timeline-dot {
     position: absolute;
-    /* 선(left: 0)의 위치에 정확히 맞춤 */
-    left: calc(-2rem - 1px);
+    left: -1.4rem;
     top: 1.5rem;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    background: var(--color-accent, #3b82f6);
-    border: 3px solid var(--color-bg, #ffffff);
+    background: var(--color-accent);
+    border: 2px solid var(--color-bg);
     box-shadow: 0 0 0 2px var(--color-border);
-    z-index: 10; /* 선보다 위로 오게 설정 */
+    z-index: 10;
   }
 
   .timeline-content {
@@ -172,7 +166,7 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   }
 
   .timeline-post-title a {
-    color: var(--color-text);
+    (color: var(--color-text);)
     text-decoration: none;
     transition: color var(--transition-fast);
   }
@@ -196,12 +190,14 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   @media (max-width: 768px) {
     .timeline {
       padding-left: 1.5rem;
-      margin-left: 0.5rem;
+    }
+    .timeline::before {
+      left: 5px;
     }
     .timeline-dot {
-      left: calc(-1.5rem - 1px);
-      width: 12px;
-      height: 12px;
+      left: -1.25rem;
+      width: 10px;
+      height: 10px;
     }
   }
 </style>
