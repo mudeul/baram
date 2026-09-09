@@ -233,3 +233,130 @@ const tags = Array.from(allTagsSet);
     }
   }
 </style>
+<style>
+  .main-content {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--space-2xl) 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin-inline: auto;
+    padding-inline: var(--space-lg);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+
+  .page-title {
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    margin-bottom: var(--space-xs);
+    background: linear-gradient(
+      135deg,
+      var(--color-text),
+      var(--color-accent-dark)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+  }
+
+  /* 카테고리 태그 필터 바 */
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .tag-btn {
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .tag-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .tag-btn.active {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    border-color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  /* 인스타그램 스타일 3열 그리드 */
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-xs);
+  }
+
+  .portfolio-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background-color: var(--color-surface);
+    display: block;
+  }
+
+  /* 🌟 Picture 컴포넌트 내부의 figure, figcaption(제목 영역) 및 이미지 강제 제어 */
+  .portfolio-item :global(figure),
+  .portfolio-item :global(.picture-wrapper) {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .portfolio-item :global(figcaption) {
+    display: none !important; /* 하단 제목/캡션 영역 강제 숨김 */
+  }
+
+  .portfolio-item :global(img) {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+
+  .portfolio-item:hover :global(img) {
+    transform: scale(1.02);
+    filter: brightness(0.95);
+  }
+
+  .portfolio-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 768px) {
+    .portfolio-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+  }
+</style>
