@@ -15,7 +15,10 @@ const dreams = await getCollection('dreams', ({ data }) => {
 dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<BaseLayout title="Dreams" description="A collection of thoughts, dreams, and records.">
+<BaseLayout
+  title="Dreams"
+  description="A collection of thoughts, dreams, and records."
+>
   <Header />
 
   <main id="main" tabindex="-1" class="main-content">
@@ -36,13 +39,21 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
             dreams.map((dream) => (
               <div class="timeline-item">
                 {/* 타임라인의 왼쪽 동그라미 포인트 (기본 위치 유지) */}
-                <div class="timeline-dot"></div>
+                <div class="timeline-dot" />
 
                 {/* 글 내용 패널 */}
-                <GlassPanel variant="solid" padding="lg" className="timeline-content">
-                  <time class="timeline-date">{formatDate(dream.data.pubDate)}</time>
+                <GlassPanel
+                  variant="solid"
+                  padding="lg"
+                  className="timeline-content"
+                >
+                  <time class="timeline-date">
+                    {formatDate(dream.data.pubDate)}
+                  </time>
                   <h2 class="timeline-post-title">
-                    <a href={withBase(`/dreams/${dream.id}/`)}>{dream.data.title}</a>
+                    <a href={withBase(`/dreams/${dream.id}/`)}>
+                      {dream.data.title}
+                    </a>
                   </h2>
                   {dream.data.description && (
                     <p class="timeline-excerpt">{dream.data.description}</p>
