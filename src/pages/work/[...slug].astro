@@ -86,42 +86,6 @@ const projectLinks = [
 
       <Container size="xl">
         <div class="case-layout">
-          <aside class="case-facts" aria-label="Project details">
-            <GlassCard padding="md" radius="lg" class="case-facts__card">
-              <dl>
-                {
-                  project.data.client && (
-                    <div>
-                      <dt>Client</dt>
-                      <dd>{project.data.client}</dd>
-                    </div>
-                  )
-                }
-                {
-                  project.data.duration && (
-                    <div>
-                      <dt>Duration</dt>
-                      <dd>{project.data.duration}</dd>
-                    </div>
-                  )
-                }
-              </dl>
-
-              {
-                siteConfig.portfolio.showTechStack && (
-                  <div class="case-facts__stack">
-                    <p>Stack</p>
-                    <ul>
-                      {project.data.tech.map((item) => (
-                        <li>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )
-              }
-            </GlassCard>
-          </aside>
-
           <div class="case-content">
             <p class="case-content__lead">{description}</p>
             <div class="prose">
