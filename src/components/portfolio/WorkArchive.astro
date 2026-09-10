@@ -6,7 +6,7 @@ import { withBase } from '@/lib/url';
 import ProjectCard from './ProjectCard.astro';
 
 export interface Props {
-  projects: CollectionEntry<'work'>[];
+  projects: CollectionEntry<'projects'>[];
   totalProjects: number;
   currentPage: number;
   totalPages: number;
@@ -363,7 +363,7 @@ const rangeEnd = indexOffset + projects.length;
   }
 
   /* Was a viewport query: two project columns need room from the container,
-     not from the window. */
+      not from the window. */
   @container (max-width: 768px) {
     .project-grid {
       grid-template-columns: 1fr;
