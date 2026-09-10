@@ -50,7 +50,6 @@ const projectLinks = [
   title={project.data.title}
   description={description}
   ogImage={withBase(`/og/work/${project.id}.png`)}
-  article={{ type: 'CreativeWork', year: project.data.year }}
 >
   <Header />
 
@@ -61,11 +60,7 @@ const projectLinks = [
           <a class="case-hero__back" href={withBase('/work/')}>← All work</a>
 
           <div class="case-hero__heading">
-            <p class="case-hero__kicker">
-              {project.data.role}{
-                siteConfig.portfolio.showYear && ` / ${project.data.year}`
-              }
-            </p>
+            <p class="case-hero__kicker">Selected project</p>
             <h1>{project.data.title}</h1>
             <p class="case-hero__summary">{project.data.summary}</p>
           </div>
@@ -101,18 +96,6 @@ const projectLinks = [
                     <div>
                       <dt>Client</dt>
                       <dd>{project.data.client}</dd>
-                    </div>
-                  )
-                }
-                <div>
-                  <dt>Role</dt>
-                  <dd>{project.data.role}</dd>
-                </div>
-                {
-                  siteConfig.portfolio.showYear && (
-                    <div>
-                      <dt>Year</dt>
-                      <dd>{project.data.year}</dd>
                     </div>
                   )
                 }

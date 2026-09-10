@@ -1,5 +1,4 @@
 ---
-import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
@@ -11,7 +10,7 @@ import siteConfig from '@/site.config';
 export async function getStaticPaths() {
   const projects = (await getCollection('projects')).sort((a, b) => {
     if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
-    return b.data.year - a.data.year;
+    return 0;
   });
   const perPage = Math.max(1, Math.floor(siteConfig.portfolio.projectsPerPage));
   const totalPages = Math.max(1, Math.ceil(projects.length / perPage));
