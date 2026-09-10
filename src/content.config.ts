@@ -59,10 +59,10 @@ const dreams = defineCollection({
     }),
 });
 
-// Portfolio / Projects collection — Markdown content. Cover and gallery
+// Portfolio / Work collection — Markdown content. Cover and gallery
 // images go through astro:assets via `image()`.
-const projects = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
+const work = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/work' }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
@@ -185,4 +185,4 @@ const landing = defineCollection({
 });
 
 // 모든 컬렉션을 한 번에 정확히 export 합니다.
-export const collections = { blog, dreams, projects, landing };
+export const collections = { blog, dreams, work, landing };
