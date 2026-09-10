@@ -7,7 +7,7 @@ import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
 // 프로젝트 컬렉션 가져오기 및 정렬
-const allProjects = (await getCollection('projects')).sort((a, b) => {
+const allProjects = (await getCollection('work')).sort((a, b) => {
   if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
   return (b.data.year || 0) - (a.data.year || 0);
 });
@@ -59,7 +59,7 @@ const tags = Array.from(allTagsSet);
             const dataTagsAttr = projectTechs.join(',');
             return (
               <a
-                href={withBase(`/projects/${project.id}/`)}
+                href={withBase(`/work/${project.id}/`)}
                 class="portfolio-item"
                 data-tags={dataTagsAttr}
               >
