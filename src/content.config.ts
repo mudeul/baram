@@ -68,7 +68,7 @@ const projects = defineCollection({
       title: z.string(),
       summary: z.string(),
       description: z.string().optional(),
-      cover: image(),
+      cover: image().optional(), // 👈 선택 사항으로 변경 (.optional() 추가)
       coverAlt: z.string().optional(),
       // A bare path (alt is auto-generated) or { src, alt } for a custom alt.
       // Both are normalized to { src, alt? } so every consumer sees one shape.
@@ -80,15 +80,16 @@ const projects = defineCollection({
           ),
         )
         .optional(),
-      tech: z.array(z.string()),
-      role: z.string(),
+      tech: z.array(z.string()).default([]), // 👈 안 적으면 빈 배열([])로 자동 처리
+      role: z.string().optional(), // 👈 선택 사항으로 변경 (.optional() 추가)
       // Four digits — catches a mistyped magnitude without ruling out the
       // retrospective work people legitimately list.
       year: z
         .number()
         .int()
         .min(1000, { message: 'Must be a four-digit year' })
-        .max(9999, { message: 'Must be a four-digit year' }),
+        .max(9999, { message: 'Must be a four-digit year' })
+        .optional(), // 👈 선택 사항으로 변경 (.optional() 추가)
       featured: z.boolean().default(false),
       links: z
         .object({
