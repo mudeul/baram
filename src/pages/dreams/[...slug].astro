@@ -39,7 +39,6 @@ const projectLinks = [
   project.data.links?.case && {
     label: 'Read case study',
     href: withBase(project.data.links.case),
-    // Unlike the two links above, a case study may live on or off site.
     external: classifyHref(project.data.links.case) === 'external',
   },
 ].filter((link): link is { label: string; href: string; external: boolean } =>
@@ -71,20 +70,24 @@ const projectLinks = [
             <p class="case-hero__summary">{project.data.summary}</p>
           </div>
 
-          <div
-            class="case-hero__image"
-            transition:name={`project-image-${project.id}`}
-          >
-            <Picture
-              src={project.data.cover}
-              alt={project.data.coverAlt ?? project.data.title}
-              widths={[600, 1200, 1586]}
-              sizes="100vw"
-              loading="eager"
-              fetchpriority="high"
-              class="case-cover"
-            />
-          </div>
+          {
+            project.data.cover && (
+              <div
+                class="case-hero__image"
+                transition:name={`project-image-${project.id}`}
+              >
+                <Picture
+                  src={project.data.cover}
+                  alt={project.data.coverAlt ?? project.data.title}
+                  widths={[600, 1200, 1586]}
+                  sizes="100vw"
+                  loading="eager"
+                  fetchpriority="high"
+                  class="case-cover"
+                />
+              </div>
+            )
+          }
         </Container>
       </header>
 
