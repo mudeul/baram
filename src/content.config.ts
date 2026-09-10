@@ -68,7 +68,7 @@ const projects = defineCollection({
       title: z.string(),
       summary: z.string(),
       description: z.string().optional(),
-      cover: image(), // 필수 값으로 변경
+      cover: image(), // 필수 값
       coverAlt: z.string().optional(),
       // A bare path (alt is auto-generated) or { src, alt } for a custom alt.
       // Both are normalized to { src, alt? } so every consumer sees one shape.
@@ -91,12 +91,6 @@ const projects = defineCollection({
         return [];
       }, z.array(z.string()).default([])),
 
-      role: z.string(), // 필수 값으로 변경
-      year: z.coerce
-        .number() // 문자열/따옴표가 들어와도 숫자로 안전하게 변환
-        .int()
-        .min(1000, { message: 'Must be a four-digit year' })
-        .max(9999, { message: 'Must be a four-digit year' }), // 필수 값으로 변경
       featured: z.boolean().default(false),
       links: z
         .object({
