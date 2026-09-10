@@ -80,16 +80,24 @@ const projects = defineCollection({
           ),
         )
         .optional(),
-      tech: z.array(z.string()).default([]), // 👈 안 적으면 빈 배열([])로 자동 처리
-      role: z.string().optional(), // 👈 선택 사항으로 변경 (.optional() 추가)
-      // Four digits — catches a mistyped magnitude without ruling out the
-      // retrospective work people legitimately list.
+      tech: z.preprocess((v) => {
+        if (typeof v === 'number') return [String(v)];
+        if (typeof v === 'string')
+          return v
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+        if (Array.isArray(v)) return v.map(String);
+        return [];
+      }, z.array(z.string()).default([])),
+
+      role: z.string().optional(),
       year: z
         .number()
         .int()
         .min(1000, { message: 'Must be a four-digit year' })
         .max(9999, { message: 'Must be a four-digit year' })
-        .optional(), // 👈 선택 사항으로 변경 (.optional() 추가)
+        .optional(),
       featured: z.boolean().default(false),
       links: z
         .object({
