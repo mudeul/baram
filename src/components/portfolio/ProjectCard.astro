@@ -9,8 +9,6 @@ export interface Props {
   cover: ImageMetadata;
   coverAlt?: string;
   tech: string[];
-  role: string;
-  year: number;
   href: string;
   /** Entry id, used to pair this card's cover with the case study's hero. */
   slug: string;
@@ -26,8 +24,6 @@ const {
   cover,
   coverAlt = title,
   tech,
-  role,
-  year,
   href,
   slug,
   index,
@@ -58,18 +54,6 @@ const {
     </div>
 
     <div class="project__body">
-      <div class="project__meta">
-        {
-          showYear && (
-            <>
-              <span>{year}</span>
-              <span aria-hidden="true">/</span>
-            </>
-          )
-        }
-        <span>{role}</span>
-      </div>
-
       <h2 class="project__title">{title}</h2>
       <p class="project__summary">{summary}</p>
 
@@ -162,18 +146,6 @@ const {
     display: flex;
     flex-direction: column;
     padding: var(--space-xl);
-  }
-
-  .project__meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-lg);
-    color: var(--color-text-muted);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
   }
 
   .project__title {
