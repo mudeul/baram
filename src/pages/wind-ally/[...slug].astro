@@ -11,14 +11,14 @@ import siteConfig from '@/site.config';
 import { classifyHref, withBase } from '@/lib/url';
 
 export async function getStaticPaths() {
-  const projects = await getCollection('projects');
+  const projects = await getCollection('wind-ally');
   return projects.map((project) => ({
     params: { slug: project.id },
     props: project,
   }));
 }
 
-type Props = CollectionEntry<'projects'>;
+type Props = CollectionEntry<'wind-ally'>;
 
 const project = Astro.props;
 const { Content } = await render(project);
@@ -52,7 +52,7 @@ const projectLinks = [
     <article>
       <header class="case-hero">
         <Container size="xl">
-          <a class="case-hero__back" href={withBase('/work/')}
+          <a class="case-hero__back" href={withBase('/wind-ally/')}
             >← All Wind-Ally</a
           >
 
@@ -104,7 +104,7 @@ const projectLinks = [
       <Container size="xl">
         <nav class="case-next" aria-label="Portfolio navigation">
           <p>End of case file</p>
-          <a href={withBase('/work/')}>
+          <a href={withBase('/wind-ally/')}>
             Explore all Wind-Ally
             <span aria-hidden="true">→</span>
           </a>

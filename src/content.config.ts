@@ -58,7 +58,21 @@ const dreams = defineCollection({
       draft: z.boolean().default(false), // 임시글 숨김 처리용
     }),
 });
+const windAllyCollection = defineCollection({
+  loader: glob({ pattern: '/**/*.{md,mdx}', base: './src/content/wind-ally' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    pubDate: z.coerce.date(),
+    draft: z.boolean().optional(),
+  }),
+});
 
+export const collections = {
+  blog: blogCollection,
+  dreams: dreamsCollection,
+  'wind-ally': windAllyCollection, // 👈 추가
+};
 // Portfolio / Projects collection — Markdown content. Cover and gallery
 // images go through astro:assets via `image()`.
 const projects = defineCollection({
