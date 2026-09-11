@@ -12,7 +12,6 @@ const posts = (await getCollection('blog')).sort(
 
 const pagePosts = posts.slice(0, 10);
 
-// 날짜 포맷 함수 (YYYY. MM. DD 형식)
 function formatDate(date: Date) {
   const d = new Date(date);
   const year = d.getFullYear();
@@ -23,7 +22,6 @@ function formatDate(date: Date) {
 ---
 
 <BaseLayout title="Blog" description="♪ 무서운 얘기를 해 줄까">
-  <!-- 상단 네비게이션 메뉴바 -->
   <Header />
 
   <main id="main" class="main-content">
@@ -36,14 +34,13 @@ function formatDate(date: Date) {
 
     <section class="section">
       <Container>
-        <!-- 카드 그리드 대신 깔끔한 리스트 구조로 변경 -->
         <ul class="blog-list">
           {
             pagePosts.map((post) => (
               <li class="blog-list-item">
                 <a href={withBase(`/blog/${post.id}/`)} class="blog-list-link">
-                  <span class="post-date">{formatDate(post.data.pubDate)}</span>
                   <span class="post-title">{post.data.title}</span>
+                  <span class="post-date">{formatDate(post.data.pubDate)}</span>
                 </a>
               </li>
             ))
@@ -53,7 +50,6 @@ function formatDate(date: Date) {
     </section>
   </main>
 
-  <!-- 하단 푸터 -->
   <Footer />
 </BaseLayout>
 
@@ -90,7 +86,7 @@ function formatDate(date: Date) {
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
 
-  /* 🌟 리스트형 스타일 */
+  /* 리스트형 스타일 */
   .blog-list {
     list-style: none;
     padding: 0;
@@ -109,9 +105,9 @@ function formatDate(date: Date) {
 
   .blog-list-link {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* 제목은 왼쪽, 날짜는 오른쪽 끝으로 배치 */
     align-items: baseline;
-    gap: var(--space-lg);
+    gap: var(--space-md);
     text-decoration: none;
     color: var(--color-text);
     transition: color var(--transition-fast);
@@ -121,17 +117,23 @@ function formatDate(date: Date) {
     color: var(--color-accent);
   }
 
-  .post-date {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    white-space: nowrap;
-  }
-
   .post-title {
     font-size: var(--text-lg);
     font-weight: 500;
     flex: 1;
+    /* 모바일에서 제목이 길 경우 처리 (말줄임표를 원치 않으시면 이 줄은 지우셔도 됩니다) */
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .post-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    white-space: nowrap; /* 날짜는 절대 줄바꿈 되지 않음 */
+    flex-shrink: 0;
   }
 
   @media (max-width: 768px) {
@@ -139,9 +141,9 @@ function formatDate(date: Date) {
       font-size: var(--text-3xl);
     }
 
+    /* 모바일에서도 flex-direction을 column으로 바꾸지 않고 한 줄 유지 */
     .blog-list-link {
-      flex-direction: column;
-      gap: var(--space-xs);
+      flex-direction: row;
     }
   }
 </style>
