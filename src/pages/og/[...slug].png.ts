@@ -5,25 +5,21 @@ import { renderOgImage } from '@/lib/og';
 
 /**
  * Social cards, one per post and case study, rendered at build time.
- *
- * The path is derived from the entry id alone, so the URL a platform scraped
- * last month still resolves after a rebuild. Pointing `og:image` at the hero
- * image instead — as the detail pages used to — meant a content-hashed
- * `_astro/…` URL that changed on every build and threw away the cached
- * preview each time.
  */
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
-  const projects = await getCollection('projects');
+  // 🌟 projects 대신 wind-ally 컬렉션을 가져옵니다.
+  const windAllies = await getCollection('wind-ally');
 
   return [
     ...posts.map((post) => ({
       params: { slug: `blog/${post.id}` },
       props: { title: post.data.title, eyebrow: 'Article' },
     })),
-    ...projects.map((project) => ({
-      params: { slug: `work/${project.id}` },
-      props: { title: project.data.title, eyebrow: 'Case study' },
+    // 🌟 경로와 데이터를 wind-ally에 맞게 연결합니다.
+    ...windAllies.map((item) => ({
+      params: { slug: `wind-ally/${item.id}` },
+      props: { title: item.data.title, eyebrow: 'Wind-Ally' },
     })),
   ];
 }
