@@ -61,8 +61,10 @@ const pagePosts = posts.slice(0, 10);
   }
 
   .page-description {
-    font-size: var(--text-lg);
     color: var(--color-text-muted);
+    font-size: var(
+      --text-base
+    ); /* 🌟 var(--text-lg)에서 var(--text-base)로 변경합니다 */
   }
 
   .section {

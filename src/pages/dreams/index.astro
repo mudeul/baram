@@ -106,7 +106,9 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   .page-description {
     color: var(--color-text-muted);
-    font-size: var(--text-lg);
+    font-size: var(
+      --text-base
+    ); /* 🌟 var(--text-lg)에서 var(--text-base)로 변경합니다 */
   }
 
   /* 타임라인 전체 컨테이너: 세로선을 오직 하나의 기준(.timeline)으로만 그림 */
