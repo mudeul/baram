@@ -97,7 +97,7 @@ const siteConfig: SiteConfig = {
       { name: 'Home', href: '/' },
       { name: 'Blog', href: '/blog/' },
       { name: 'Dreams', href: '/dreams/' },
-      { name: 'Wind-Ally', href: '/work/' },
+      { name: 'Wind-Ally', href: '/wind-ally/' },
       { name: 'Landing', href: '/landing/' },
       { name: 'About', href: '/about/' },
     ],
