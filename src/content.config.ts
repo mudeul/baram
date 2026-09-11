@@ -3,22 +3,13 @@ import { glob } from 'astro/loaders';
 import { z } from 'zod';
 import { classifyHref } from '@/lib/url';
 
-// A blank value is never a usable URL: `href=""` reloads the page and `src=""`
-// re-requests it, both without a word of warning. Surrounding whitespace is
-// trimmed off rather than carried into the markup.
 const nonBlank = z.string().trim().min(1, { message: 'Must not be empty' });
 
-// Values rendered into `href`. Every shape withBase() can resolve is accepted —
-// URLs, root-relative and relative paths, anchors, mailto:/tel: — so the schema
-// never rejects content the renderer handles. Only scheme-based injection
-// (javascript:, data:, …) is turned away.
 const href = nonBlank.refine((v) => classifyHref(v) !== 'unsafe', {
   message:
     'Must be an http(s) URL, a path, an anchor (#…), or a mailto:/tel: link',
 });
 
-// Values rendered into `<img src>`. Anchors and mailto:/tel: can never resolve
-// to an image, so they are rejected on top of the href rules.
 const imageSrc = nonBlank.refine(
   (v) => {
     const kind = classifyHref(v);
@@ -27,9 +18,7 @@ const imageSrc = nonBlank.refine(
   { message: 'Must be an http(s) URL or a path to an image file' },
 );
 
-// Blog collection — Markdown content via the Content Layer glob loader.
-// `image()` runs hero images through astro:assets (AVIF/WebP + responsive
-// srcset). Frontmatter paths are resolved relative to the Markdown file.
+// Blog collection
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
   schema: ({ image }) =>
@@ -47,45 +36,28 @@ const blog = defineCollection({
     }),
 });
 
-// Dreams collection — Markdown content for timeline/records
+// Dreams collection
 const dreams = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/dreams' }),
   schema: () =>
     z.object({
       title: z.string(),
-      description: z.string().optional(), // 본문 요약 (선택 사항)
-      pubDate: z.coerce.date(), // 타임라인 정렬용 날짜 (필수)
-      draft: z.boolean().default(false), // 임시글 숨김 처리용
+      description: z.string().optional(),
+      pubDate: z.coerce.date(),
+      draft: z.boolean().default(false),
     }),
 });
-const windAllyCollection = defineCollection({
-  loader: glob({ pattern: '/**/*.{md,mdx}', base: './src/content/wind-ally' }),
-  schema: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    pubDate: z.coerce.date(),
-    draft: z.boolean().optional(),
-  }),
-});
 
-export const collections = {
-  blog: blogCollection,
-  dreams: dreamsCollection,
-  'wind-ally': windAllyCollection, // 👈 추가
-};
-// Portfolio / Projects collection — Markdown content. Cover and gallery
-// images go through astro:assets via `image()`.
-const projects = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/projects' }),
+// 🌟 변수 이름은 일반 식별자(windAlly)로 선언합니다.
+const windAlly = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/wind-ally' }),
   schema: ({ image }) =>
     z.object({
       title: z.string(),
       summary: z.string(),
       description: z.string().optional(),
-      cover: image(), // 필수 값
+      cover: image(),
       coverAlt: z.string().optional(),
-      // A bare path (alt is auto-generated) or { src, alt } for a custom alt.
-      // Both are normalized to { src, alt? } so every consumer sees one shape.
       images: z
         .array(
           z.preprocess(
@@ -104,12 +76,13 @@ const projects = defineCollection({
         if (Array.isArray(v)) return v.map(String);
         return [];
       }, z.array(z.string()).default([])),
-
+      role: z.string().optional(),
+      year: z.number().int().min(1000).max(9999).optional(),
       featured: z.boolean().default(false),
       links: z
         .object({
-          live: z.url().optional(),
-          github: z.url().optional(),
+          live: z.string().url().optional(),
+          github: z.string().url().optional(),
           case: href.optional(),
         })
         .optional(),
@@ -118,7 +91,7 @@ const projects = defineCollection({
     }),
 });
 
-// Landing page sections — data (JSON/YAML) via the Content Layer glob loader
+// Landing page sections
 const landing = defineCollection({
   loader: glob({
     pattern: '**/*.{json,yaml,yml}',
@@ -170,7 +143,6 @@ const landing = defineCollection({
       .array(
         z.object({
           src: imageSrc,
-          // Empty alt would silently demote a content image to decorative.
           alt: z.string().min(1),
           caption: z.string().optional(),
         }),
@@ -200,5 +172,10 @@ const landing = defineCollection({
   }),
 });
 
-// 모든 컬렉션을 한 번에 정확히 export 합니다.
-export const collections = { blog, dreams, projects, landing };
+// 🌟 내보낼 때 키 이름에만 따옴표를 사용해 줍니다.
+export const collections = {
+  blog,
+  dreams,
+  'wind-ally': windAlly,
+  landing,
+};
