@@ -1,3 +1,72 @@
+---
+import siteConfig from '@/site.config';
+const defaultMode = siteConfig.theme.defaultColorMode;
+---
+
+<button
+  id="theme-toggle"
+  class="theme-toggle glass-button"
+  type="button"
+  aria-label="Toggle color theme"
+  title="Toggle color theme"
+  data-default-mode={defaultMode}
+>
+  <!-- Light mode icon (Sun/Star) -->
+  <svg
+    class="icon icon-sun"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <circle cx="12" cy="12" r="5"></circle>
+    <line x1="12" y1="1" x2="12" y2="3"></line>
+    <line x1="12" y1="21" x2="12" y2="23"></line>
+    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+    <line x1="1" y1="12" x2="3" y2="12"></line>
+    <line x1="21" y1="12" x2="23" y2="12"></line>
+    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+  </svg>
+
+  <!-- Dark mode icon (Moon) -->
+  <svg
+    class="icon icon-moon"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+  </svg>
+
+  <!-- System mode icon (Monitor) -->
+  <svg
+    class="icon icon-system"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+    <line x1="8" y1="21" x2="16" y2="21"></line>
+    <line x1="12" y1="17" x2="12" y2="21"></line>
+  </svg>
+</button>
+
 <style>
   .theme-toggle {
     position: relative;
@@ -8,17 +77,20 @@
     justify-content: center;
     border-radius: var(--radius-md);
     transition: background-color var(--transition-base);
+    background: transparent;
+    cursor: pointer;
+    border: none;
   }
 
   .theme-toggle:hover {
-    background: var(--glass-bg-solid);
+    background: var(--glass-bg-solid, rgba(150, 150, 150, 0.1));
   }
 
   .icon {
     position: absolute;
     transition:
-      opacity var(--transition-base),
-      transform var(--transition-base);
+      opacity 0.2s ease,
+      transform 0.2s ease;
     width: 20px;
     height: 20px;
   }
@@ -34,36 +106,31 @@
     transform: scale(1) rotate(0);
   }
 
-  /* System mode */
+  /* 글로벌 속성을 타겟팅하여 아이콘 전환 수정 */
   :global([data-theme-mode='system']) .icon-system {
     opacity: 1;
     transform: scale(1) rotate(0);
   }
-
   :global([data-theme-mode='system']) .icon-sun,
   :global([data-theme-mode='system']) .icon-moon {
     opacity: 0;
     transform: scale(0.8) rotate(180deg);
   }
 
-  /* Light mode */
   :global([data-theme-mode='light']) .icon-sun {
     opacity: 1;
     transform: scale(1) rotate(0);
   }
-
   :global([data-theme-mode='light']) .icon-moon,
   :global([data-theme-mode='light']) .icon-system {
     opacity: 0;
     transform: scale(0.8) rotate(180deg);
   }
 
-  /* Dark mode */
   :global([data-theme-mode='dark']) .icon-moon {
     opacity: 1;
     transform: scale(1) rotate(0);
   }
-
   :global([data-theme-mode='dark']) .icon-sun,
   :global([data-theme-mode='dark']) .icon-system {
     opacity: 0;
@@ -74,10 +141,70 @@
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
+</style>
 
-  @media (prefers-reduced-motion: reduce) {
-    .icon {
-      transition: opacity var(--transition-base);
+<script>
+  import { onPage } from '@/lib/lifecycle';
+
+  let toggle: HTMLElement | null = null;
+  let defaultMode = 'system';
+  const themes = ['system', 'light', 'dark'];
+
+  function safeGet(key: string): string | null {
+    try {
+      return localStorage.getItem(key);
+    } catch {
+      return null;
     }
   }
-</style>
+  function safeSet(key: string, value: string) {
+    try {
+      localStorage.setItem(key, value);
+    } catch {}
+  }
+  function prefersDark(): boolean {
+    try {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch {
+      return false;
+    }
+  }
+  function getThemePreference(): string {
+    const stored = safeGet('theme');
+    if (stored && themes.includes(stored)) return stored;
+    return themes.includes(defaultMode) ? defaultMode : 'system';
+  }
+  function updateAriaLabel(mode: string) {
+    if (!toggle) return;
+    const nextIndex = (themes.indexOf(mode) + 1) % themes.length;
+    toggle.setAttribute(
+      'aria-label',
+      `Theme: ${mode}. Activate to switch to ${themes[nextIndex]}.`,
+    );
+  }
+  function applyTheme(mode: string) {
+    const root = document.documentElement;
+    const resolved =
+      mode === 'system' ? (prefersDark() ? 'dark' : 'light') : mode;
+    root.setAttribute('data-theme', resolved);
+    root.setAttribute('data-theme-mode', mode);
+    safeSet('theme', mode);
+    updateAriaLabel(mode);
+  }
+  function cycleTheme() {
+    const current = getThemePreference();
+    const nextIndex = (themes.indexOf(current) + 1) % themes.length;
+    applyTheme(themes[nextIndex]);
+  }
+
+  onPage(() => {
+    toggle = document.getElementById('theme-toggle');
+    defaultMode = toggle?.dataset.defaultMode ?? 'system';
+    updateAriaLabel(getThemePreference());
+    toggle?.addEventListener('click', cycleTheme);
+  });
+
+  document.addEventListener('astro:after-swap', () => {
+    applyTheme(getThemePreference());
+  });
+</script>
