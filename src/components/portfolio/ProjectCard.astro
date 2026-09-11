@@ -87,8 +87,9 @@ const {
   .project__card {
     display: grid;
     grid-template-rows: auto 1fr;
-    /* 카드 전체의 모서리를 확실하게 둥글게 깎고 넘치는 요소를 숨김 처리합니다 */
-    border-radius: 0.2rem !important;
+    /* 아이폰 사진 갤러리처럼 아주 살짝만 모서리가 둥글도록 설정합니다 */
+    --card-radius: 0.25rem !important;
+    border-radius: var(--card-radius) !important;
     overflow: hidden;
   }
 
