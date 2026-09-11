@@ -9,7 +9,6 @@ import Tag from '@/components/ui/Tag.astro';
 import Picture from '@/components/ui/Picture.astro';
 import Toc from '@/components/blog/Toc.astro';
 import { withBase } from '@/lib/url';
-import { formatDate } from '@/lib/date';
 import { getPublishedPosts } from '@/lib/posts';
 import siteConfig from '@/site.config';
 
@@ -24,10 +23,22 @@ export const getStaticPaths = (async () => {
 const { post } = Astro.props;
 const { Content, headings } = await render(post);
 
-const formattedDate = formatDate(post.data.pubDate);
-const updatedDate = post.data.updatedDate
-  ? formatDate(post.data.updatedDate)
-  : undefined;
+// 🌟 작성일 포맷팅 (YYYY.MM.DD)
+const pubDate = post.data.pubDate;
+const pubYear = pubDate.getFullYear();
+const pubMonth = String(pubDate.getMonth() + 1).padStart(2, '0');
+const pubDay = String(pubDate.getDate()).padStart(2, '0');
+const formattedDate = `${pubYear}.${pubMonth}.${pubDay}`;
+
+// 🌟 수정일 포맷팅 (존재하는 경우 YYYY.MM.DD)
+let updatedDate: string | undefined = undefined;
+if (post.data.updatedDate) {
+  const upDate = post.data.updatedDate;
+  const upYear = upDate.getFullYear();
+  const upMonth = String(upDate.getMonth() + 1).padStart(2, '0');
+  const upDay = String(upDate.getDate()).padStart(2, '0');
+  updatedDate = `${upYear}.${upMonth}.${upDay}`;
+}
 
 const showToc = siteConfig.blog.showToc && headings.length > 0;
 ---
