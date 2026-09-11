@@ -4,7 +4,6 @@ import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import GlassPanel from '@/components/common/GlassPanel.astro';
 import { withBase } from '@/lib/url';
-import { formatDate } from '@/lib/date';
 import { getCollection } from 'astro:content';
 
 const dreams = await getCollection('dreams', ({ data }) => {
@@ -38,31 +37,43 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
               <p>아직 기록된 꿈이 없습니다. 첫 번째 꿈을 남겨보세요!</p>
             </GlassPanel>
           ) : (
-            dreams.map((dream) => (
-              <div class="timeline-item">
-                {/* 타임라인의 동그라미 마커 */}
-                <div class="timeline-dot" />
+            dreams.map((dream) => {
+              // 🌟 날짜를 YYYY.MM.DD 형식으로 변환합니다.
+              const pubDate = dream.data.pubDate;
+              const year = pubDate.getFullYear();
+              const month = String(pubDate.getMonth() + 1).padStart(2, '0');
+              const day = String(pubDate.getDate()).padStart(2, '0');
+              const formattedDate = `${year}.${month}.${day}`;
 
-                {/* 글 내용 패널 */}
-                <GlassPanel
-                  variant="solid"
-                  padding="lg"
-                  className="timeline-content"
-                >
-                  <time class="timeline-date">
-                    {formatDate(dream.data.pubDate)}
-                  </time>
-                  <h2 class="timeline-post-title">
-                    <a href={withBase(`/dreams/${dream.id}/`)}>
-                      {dream.data.title}
-                    </a>
-                  </h2>
-                  {dream.data.description && (
-                    <p class="timeline-excerpt">{dream.data.description}</p>
-                  )}
-                </GlassPanel>
-              </div>
-            ))
+              return (
+                <div class="timeline-item">
+                  {/* 타임라인의 동그라미 마커 */}
+                  <div class="timeline-dot" />
+
+                  {/* 글 내용 패널 */}
+                  <GlassPanel
+                    variant="solid"
+                    padding="lg"
+                    className="timeline-content"
+                  >
+                    <time
+                      class="timeline-date"
+                      datetime={pubDate.toISOString()}
+                    >
+                      {formattedDate}
+                    </time>
+                    <h2 class="timeline-post-title">
+                      <a href={withBase(`/dreams/${dream.id}/`)}>
+                        {dream.data.title}
+                      </a>
+                    </h2>
+                    {dream.data.description && (
+                      <p class="timeline-excerpt">{dream.data.description}</p>
+                    )}
+                  </GlassPanel>
+                </div>
+              );
+            })
           )
         }
       </div>
@@ -106,9 +117,7 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
   .page-description {
     color: var(--color-text-muted);
-    font-size: var(
-      --text-base
-    ); /* 🌟 var(--text-lg)에서 var(--text-base)로 변경합니다 */
+    font-size: var(--text-base);
   }
 
   /* 타임라인 전체 컨테이너: 세로선을 오직 하나의 기준(.timeline)으로만 그림 */
@@ -139,9 +148,7 @@ dreams.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
   /* 타임라인 동그라미 마커: 선보다 1mm 더 왼쪽으로 미세 조정 */
   .timeline-dot {
     position: absolute;
-    left: calc(
-      -2rem + 0.7rem
-    ); /* 0.65rem -> 0.7rem으로 변경 (숫자를 키워야 왼쪽으로 이동합니다) */
+    left: calc(-2rem + 0.7rem);
     top: 1.5rem;
     transform: translateX(-50%);
     width: 10px;
