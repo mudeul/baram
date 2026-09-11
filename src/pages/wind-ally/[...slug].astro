@@ -6,8 +6,6 @@ import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import Container from '@/components/ui/Container.astro';
 import Button from '@/components/ui/Button.astro';
-import ProjectGallery from '@/components/portfolio/ProjectGallery.astro';
-import siteConfig from '@/site.config';
 import { classifyHref, withBase } from '@/lib/url';
 
 export async function getStaticPaths() {
@@ -89,17 +87,6 @@ const projectLinks = [
           </div>
         </div>
       </Container>
-
-      {
-        project.data.images && (
-          <Container size="xl">
-            <ProjectGallery
-              images={project.data.images}
-              title={project.data.title}
-            />
-          </Container>
-        )
-      }
 
       <Container size="xl">
         <nav class="case-next" aria-label="Portfolio navigation">
