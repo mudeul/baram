@@ -11,7 +11,7 @@ const defaultMode = siteConfig.theme.defaultColorMode;
   title="Toggle color theme"
   data-default-mode={defaultMode}
 >
-  <!-- Light mode icon (Sun/Star) -->
+  <!-- Light mode icon (Sun) -->
   <svg
     class="icon icon-sun"
     width="24"
@@ -106,7 +106,7 @@ const defaultMode = siteConfig.theme.defaultColorMode;
     transform: scale(1) rotate(0);
   }
 
-  /* 글로벌 속성을 타겟팅하여 아이콘 전환 수정 */
+  /* System mode */
   :global([data-theme-mode='system']) .icon-system {
     opacity: 1;
     transform: scale(1) rotate(0);
@@ -117,6 +117,7 @@ const defaultMode = siteConfig.theme.defaultColorMode;
     transform: scale(0.8) rotate(180deg);
   }
 
+  /* Light mode */
   :global([data-theme-mode='light']) .icon-sun {
     opacity: 1;
     transform: scale(1) rotate(0);
@@ -127,6 +128,7 @@ const defaultMode = siteConfig.theme.defaultColorMode;
     transform: scale(0.8) rotate(180deg);
   }
 
+  /* Dark mode */
   :global([data-theme-mode='dark']) .icon-moon {
     opacity: 1;
     transform: scale(1) rotate(0);
@@ -140,6 +142,12 @@ const defaultMode = siteConfig.theme.defaultColorMode;
   .theme-toggle:focus-visible {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .icon {
+      transition: opacity 0.2s ease;
+    }
   }
 </style>
 
@@ -157,11 +165,13 @@ const defaultMode = siteConfig.theme.defaultColorMode;
       return null;
     }
   }
+
   function safeSet(key: string, value: string) {
     try {
       localStorage.setItem(key, value);
     } catch {}
   }
+
   function prefersDark(): boolean {
     try {
       return window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -169,11 +179,13 @@ const defaultMode = siteConfig.theme.defaultColorMode;
       return false;
     }
   }
+
   function getThemePreference(): string {
     const stored = safeGet('theme');
     if (stored && themes.includes(stored)) return stored;
     return themes.includes(defaultMode) ? defaultMode : 'system';
   }
+
   function updateAriaLabel(mode: string) {
     if (!toggle) return;
     const nextIndex = (themes.indexOf(mode) + 1) % themes.length;
@@ -182,6 +194,7 @@ const defaultMode = siteConfig.theme.defaultColorMode;
       `Theme: ${mode}. Activate to switch to ${themes[nextIndex]}.`,
     );
   }
+
   function applyTheme(mode: string) {
     const root = document.documentElement;
     const resolved =
@@ -191,6 +204,7 @@ const defaultMode = siteConfig.theme.defaultColorMode;
     safeSet('theme', mode);
     updateAriaLabel(mode);
   }
+
   function cycleTheme() {
     const current = getThemePreference();
     const nextIndex = (themes.indexOf(current) + 1) % themes.length;
