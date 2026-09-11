@@ -23,14 +23,16 @@ const {
 const isInteractive = interactive ?? Boolean(href);
 const Tag = href ? 'a' : (as ?? 'div');
 
-const radiusMap: Record<string, string> = {
-  sm: '0.25rem', // 🌟 이곳을 전역 변수 대신 고정 값으로 변경합니다!
-  md: 'var(--radius-md)',
-  lg: 'var(--radius-lg)',
-  xl: 'var(--radius-xl)',
+const paddingMap: Record<string, string> = {
+  none: '0',
+  sm: 'var(--space-md)',
+  md: 'var(--space-lg)',
+  lg: 'var(--space-xl)',
+  xl: 'var(--space-2xl)',
 };
+
 const radiusMap: Record<string, string> = {
-  sm: '0.25rem', // 기존 var(--radius-sm) 대신 원하는 아주 작은 곡률 직접 지정
+  sm: '0.25rem', // 아이폰 갤러리 같은 미세 곡률
   md: 'var(--radius-md)',
   lg: 'var(--radius-lg)',
   xl: 'var(--radius-xl)',
