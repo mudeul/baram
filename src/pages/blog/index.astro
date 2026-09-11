@@ -1,5 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro'; // 네비게이션바 임포트
+import Footer from '@/components/common/Footer.astro'; // 푸터 임포트
 import Container from '@/components/ui/Container.astro';
 import PostGrid from '@/components/blog/PostGrid.astro';
 import { getCollection } from 'astro:content';
@@ -12,24 +14,36 @@ const pagePosts = posts.slice(0, 10);
 ---
 
 <BaseLayout title="Blog" description="Insights, tutorials, and updates.">
-  <section class="page-header">
-    <Container>
-      <h1 class="page-title">Blog</h1>
-      <p class="page-description">
-        Insights, tutorials, and updates about web development, design, and
-        technology.
-      </p>
-    </Container>
-  </section>
+  <!-- 상단 네비게이션 메뉴바 -->
+  <Header />
 
-  <section class="section">
-    <Container>
-      <PostGrid posts={pagePosts} />
-    </Container>
-  </section>
+  <main id="main" class="main-content">
+    <section class="page-header">
+      <Container>
+        <h1 class="page-title">Blog</h1>
+        <p class="page-description">
+          Insights, tutorials, and updates about web development, design, and
+          technology.
+        </p>
+      </Container>
+    </section>
+
+    <section class="section">
+      <Container>
+        <PostGrid posts={pagePosts} />
+      </Container>
+    </section>
+  </main>
+
+  <!-- 하단 푸터 -->
+  <Footer />
 </BaseLayout>
 
 <style>
+  .main-content {
+    min-height: calc(100vh - 200px);
+  }
+
   .page-header {
     padding: var(--space-3xl) 0 var(--space-xl) 0;
     text-align: center;
