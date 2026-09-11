@@ -3,7 +3,6 @@ import type { ImageMetadata } from 'astro';
 import Tag from '@/components/ui/Tag.astro';
 import Picture from '@/components/ui/Picture.astro';
 import Badge from '@/components/ui/Badge.astro';
-import { formatDate } from '@/lib/date';
 
 export interface Props {
   title: string;
@@ -29,12 +28,15 @@ const {
   tags = [],
   href,
   slug,
-  readingTime,
   featured = false,
   class: className = '',
 } = Astro.props;
 
-const formattedDate = formatDate(pubDate);
+// 🌟 날짜를 YYYY.MM.DD 형식으로 변환합니다.
+const year = pubDate.getFullYear();
+const month = String(pubDate.getMonth() + 1).padStart(2, '0');
+const day = String(pubDate.getDate()).padStart(2, '0');
+const formattedDate = `${year}.${month}.${day}`;
 ---
 
 <article class:list={['blog-card', 'glass-card', className]}>
@@ -67,16 +69,6 @@ const formattedDate = formatDate(pubDate);
     <header class="blog-card__header">
       <div class="blog-card__meta">
         <time datetime={pubDate.toISOString()}>{formattedDate}</time>
-        {
-          readingTime && (
-            <>
-              <span class="separator" aria-hidden="true">
-                ·
-              </span>
-              <span>{readingTime} min read</span>
-            </>
-          )
-        }
       </div>
     </header>
 
@@ -160,10 +152,6 @@ const formattedDate = formatDate(pubDate);
     gap: var(--space-sm);
     font-size: var(--text-sm);
     color: var(--color-text-muted);
-  }
-
-  .separator {
-    opacity: 0.5;
   }
 
   .blog-card__title {
