@@ -10,7 +10,6 @@ import ProjectGallery from '@/components/portfolio/ProjectGallery.astro';
 import siteConfig from '@/site.config';
 import { classifyHref, withBase } from '@/lib/url';
 
-// 1. 동적 라우트를 위한 getStaticPaths 함수 (필수)
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
   return projects.map((project) => ({
@@ -24,6 +23,7 @@ type Props = CollectionEntry<'projects'>;
 const project = Astro.props;
 const { Content } = await render(project);
 const description = project.data.description ?? project.data.summary;
+
 const projectLinks = [
   project.data.links?.live && {
     label: 'Visit live site',
@@ -45,51 +45,42 @@ const projectLinks = [
 );
 ---
 
-<BaseLayout
-  title={`${project.data.title} — ${siteConfig.name}`}
-  description={description}
-  image={project.data.image?.src}
->
+<BaseLayout title={project.data.title} description={description}>
   <Header />
 
-  <main id="main-content">
-    <article class="case-study">
+  <main id="main" tabindex="-1">
+    <article>
       <header class="case-hero">
-        <Container>
-          <a href={withBase('/work/')} class="case-hero__back">
-            ← Back to Wind-Ally
-          </a>
+        <Container size="xl">
+          <a class="case-hero__back" href={withBase('/work/')}
+            >← All Wind-Ally</a
+          >
+
           <div class="case-hero__heading">
-            <div class="case-hero__kicker">
-              {project.data.year}
-              {project.data.category && `— ${project.data.category}`}
-            </div>
+            <p class="case-hero__kicker">Selected project</p>
             <h1>{project.data.title}</h1>
           </div>
         </Container>
       </header>
 
-      <Container>
+      <Container size="xl">
         <div class="case-content-wrapper">
-          <div class="case-content prose">
-            <Content />
-
-            {
-              project.data.gallery && project.data.gallery.length > 0 && (
-                <ProjectGallery images={project.data.gallery} />
-              )
-            }
+          <div class="case-content">
+            <div class="prose">
+              <Content />
+            </div>
 
             {
               projectLinks.length > 0 && (
-                <div class="case-actions">
-                  {projectLinks.map((link) => (
+                <div class="case-actions" aria-label="Project links">
+                  {projectLinks.map((link, index) => (
                     <Button
                       href={link.href}
-                      variant={link === projectLinks[0] ? 'primary' : 'outline'}
+                      variant={index === 0 ? 'solid' : 'outline'}
                       external={link.external}
                     >
                       {link.label}
+                      <span aria-hidden="true">↗</span>
                     </Button>
                   ))}
                 </div>
@@ -97,6 +88,27 @@ const projectLinks = [
             }
           </div>
         </div>
+      </Container>
+
+      {
+        project.data.images && (
+          <Container size="xl">
+            <ProjectGallery
+              images={project.data.images}
+              title={project.data.title}
+            />
+          </Container>
+        )
+      }
+
+      <Container size="xl">
+        <nav class="case-next" aria-label="Portfolio navigation">
+          <p>End of case file</p>
+          <a href={withBase('/work/')}>
+            Explore all Wind-Ally
+            <span aria-hidden="true">→</span>
+          </a>
+        </nav>
       </Container>
     </article>
   </main>
