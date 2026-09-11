@@ -12,31 +12,24 @@ const pagePosts = posts.slice(0, 10);
 ---
 
 <BaseLayout title="Blog" description="Insights, tutorials, and updates.">
-  <main id="main" tabindex="-1" class="main-content">
-    <section class="page-header">
-      <Container>
-        <h1 class="page-title">Blog</h1>
-        <p class="page-description">
-          Insights, tutorials, and updates about web development, design, and
-          technology.
-        </p>
-      </Container>
-    </section>
+  <section class="page-header">
+    <Container>
+      <h1 class="page-title">Blog</h1>
+      <p class="page-description">
+        Insights, tutorials, and updates about web development, design, and
+        technology.
+      </p>
+    </Container>
+  </section>
 
-    <section class="section">
-      <Container>
-        <PostGrid posts={pagePosts} />
-      </Container>
-    </section>
-  </main>
+  <section class="section">
+    <Container>
+      <PostGrid posts={pagePosts} />
+    </Container>
+  </section>
 </BaseLayout>
 
 <style>
-  .main-content {
-    min-height: 100vh;
-    min-height: 100dvh;
-  }
-
   .page-header {
     padding: var(--space-3xl) 0 var(--space-xl) 0;
     text-align: center;
