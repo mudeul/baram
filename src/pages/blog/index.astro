@@ -3,14 +3,23 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import Container from '@/components/ui/Container.astro';
-import PostGrid from '@/components/blog/PostGrid.astro';
 import { getCollection } from 'astro:content';
+import { withBase } from '@/lib/url';
 
 const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
 const pagePosts = posts.slice(0, 10);
+
+// 날짜 포맷 함수 (YYYY. MM. DD 형식)
+function formatDate(date: Date) {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
 ---
 
 <BaseLayout title="Blog" description="♪ 무서운 얘기를 해 줄까">
@@ -27,7 +36,19 @@ const pagePosts = posts.slice(0, 10);
 
     <section class="section">
       <Container>
-        <PostGrid posts={pagePosts} />
+        <!-- 카드 그리드 대신 깔끔한 리스트 구조로 변경 -->
+        <ul class="blog-list">
+          {
+            pagePosts.map((post) => (
+              <li class="blog-list-item">
+                <a href={withBase(`/blog/${post.id}/`)} class="blog-list-link">
+                  <span class="post-date">{formatDate(post.data.pubDate)}</span>
+                  <span class="post-title">{post.data.title}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
       </Container>
     </section>
   </main>
@@ -42,7 +63,6 @@ const pagePosts = posts.slice(0, 10);
   }
 
   .page-header {
-    /* 기존 값보다 위로 올리고 싶을 때 (숫자를 줄이거나 뺄셈 사용) */
     padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
     text-align: center;
   }
@@ -70,9 +90,58 @@ const pagePosts = posts.slice(0, 10);
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
 
+  /* 🌟 리스트형 스타일 */
+  .blog-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  .blog-list-item {
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: var(--space-md);
+  }
+
+  .blog-list-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-lg);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+
+  .blog-list-link:hover .post-title {
+    color: var(--color-accent);
+  }
+
+  .post-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+
+  .post-title {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    flex: 1;
+  }
+
   @media (max-width: 768px) {
     .page-title {
       font-size: var(--text-3xl);
+    }
+
+    .blog-list-link {
+      flex-direction: column;
+      gap: var(--space-xs);
     }
   }
 </style>
