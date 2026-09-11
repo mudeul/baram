@@ -1,49 +1,15 @@
----
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import Header from '@/components/common/Header.astro';
-import Footer from '@/components/common/Footer.astro';
-import Container from '@/components/ui/Container.astro';
-import PostGrid from '@/components/blog/PostGrid.astro';
-import { getCollection } from 'astro:content';
-
-const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
-
-const pagePosts = posts.slice(0, 10);
----
-
-<BaseLayout title="Blog" description="♪ 무서운 얘기를 해 줄까">
-  <!-- 상단 네비게이션 메뉴바 -->
-  <Header />
-
-  <main id="main" class="main-content">
-    <section class="page-header">
-      <Container>
-        <h1 class="page-title">Blog</h1>
-        <p class="page-description">♪ 무서운 얘기를 해 줄까</p>
-      </Container>
-    </section>
-
-    <section class="section">
-      <Container>
-        <PostGrid posts={pagePosts} />
-      </Container>
-    </section>
-  </main>
-
-  <!-- 하단 푸터 -->
-  <Footer />
-</BaseLayout>
-
 <style>
   .main-content {
-    min-height: calc(100vh - 200px);
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* 🌟 Dreams와 동일하게 main 전체에 상하 패딩을 줍니다 */
+    padding: var(--space-2xl) 0;
   }
 
+  /* 🌟 Dreams와 동일하게 상단 패딩 대신 margin-bottom 사용 */
   .page-header {
-    padding: var(--space-3xl) 0 var(--space-xl) 0;
     text-align: center;
+    margin-bottom: var(--space-3xl);
   }
 
   .page-title {
@@ -62,13 +28,12 @@ const pagePosts = posts.slice(0, 10);
 
   .page-description {
     color: var(--color-text-muted);
-    font-size: var(
-      --text-base
-    ); /* 🌟 var(--text-lg)에서 var(--text-base)로 변경합니다 */
+    font-size: var(--text-base);
   }
 
   .section {
-    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+    /* 🌟 main-content에서 하단 패딩을 잡아주므로 상단 패딩만 살려둡니다 */
+    padding-bottom: var(--space-xl);
   }
 
   @media (max-width: 768px) {
