@@ -42,8 +42,8 @@ const pagePosts = posts.slice(0, 10);
   }
 
   .page-header {
-    /* 🌟 Dreams 페이지와 타이틀 높이를 맞추기 위해 상단 패딩을 조정합니다 */
-    padding: calc(var(--space-3xl) + 4px) 0 var(--space-xl) 0;
+    /* 기존 값보다 위로 올리고 싶을 때 (숫자를 줄이거나 뺄셈 사용) */
+    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
     text-align: center;
   }
 
