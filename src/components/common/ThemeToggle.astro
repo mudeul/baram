@@ -169,7 +169,9 @@ const defaultMode = siteConfig.theme.defaultColorMode;
   function safeSet(key: string, value: string) {
     try {
       localStorage.setItem(key, value);
-    } catch {}
+    } catch {
+      // Ignore storage errors (e.g., private mode)
+    }
   }
 
   function prefersDark(): boolean {
