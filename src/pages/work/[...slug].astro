@@ -1,3 +1,109 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import Footer from '@/components/common/Footer.astro';
+import Container from '@/components/ui/Container.astro';
+import Button from '@/components/ui/Button.astro';
+import ProjectGallery from '@/components/portfolio/ProjectGallery.astro';
+import siteConfig from '@/site.config';
+import { classifyHref, withBase } from '@/lib/url';
+
+// 1. 동적 라우트를 위한 getStaticPaths 함수 (필수)
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: project,
+  }));
+}
+
+type Props = CollectionEntry<'projects'>;
+
+const project = Astro.props;
+const { Content } = await render(project);
+const description = project.data.description ?? project.data.summary;
+const projectLinks = [
+  project.data.links?.live && {
+    label: 'Visit live site',
+    href: project.data.links.live,
+    external: true,
+  },
+  project.data.links?.github && {
+    label: 'View source',
+    href: project.data.links.github,
+    external: true,
+  },
+  project.data.links?.case && {
+    label: 'Read case study',
+    href: withBase(project.data.links.case),
+    external: classifyHref(project.data.links.case) === 'external',
+  },
+].filter((link): link is { label: string; href: string; external: boolean } =>
+  Boolean(link),
+);
+---
+
+<BaseLayout
+  title={`${project.data.title} — ${siteConfig.name}`}
+  description={description}
+  image={project.data.image?.src}
+>
+  <Header />
+
+  <main id="main-content">
+    <article class="case-study">
+      <header class="case-hero">
+        <Container>
+          <a href={withBase('/work/')} class="case-hero__back">
+            ← Back to Wind-Ally
+          </a>
+          <div class="case-hero__heading">
+            <div class="case-hero__kicker">
+              {project.data.year}
+              {project.data.category && `— ${project.data.category}`}
+            </div>
+            <h1>{project.data.title}</h1>
+          </div>
+        </Container>
+      </header>
+
+      <Container>
+        <div class="case-content-wrapper">
+          <div class="case-content prose">
+            <Content />
+
+            {
+              project.data.gallery && project.data.gallery.length > 0 && (
+                <ProjectGallery images={project.data.gallery} />
+              )
+            }
+
+            {
+              projectLinks.length > 0 && (
+                <div class="case-actions">
+                  {projectLinks.map((link) => (
+                    <Button
+                      href={link.href}
+                      variant={link === projectLinks[0] ? 'primary' : 'outline'}
+                      external={link.external}
+                    >
+                      {link.label}
+                    </Button>
+                  ))}
+                </div>
+              )
+            }
+          </div>
+        </div>
+      </Container>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
 <style>
   .case-hero {
     padding-block: var(--space-2xl) var(--space-3xl);
@@ -92,7 +198,7 @@
     color: inherit;
   }
 
-  /* 🌟 본문 안의 이미지 모서리 둥글게 처리 */
+  /* 본문 안의 이미지 모서리 둥글게 처리 */
   .prose :global(img) {
     border-radius: var(--radius-lg, 1rem);
     overflow: hidden;
