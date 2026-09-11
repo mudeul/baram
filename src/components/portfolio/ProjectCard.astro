@@ -87,13 +87,16 @@ const {
   .project__card {
     display: grid;
     grid-template-rows: auto 1fr;
+    /* 카드 전체의 모서리를 확실하게 둥글게 깎고 넘치는 요소를 숨김 처리합니다 */
+    border-radius: var(--radius-xl, 1.5rem);
+    overflow: hidden;
   }
 
   .project__visual {
     position: relative;
     aspect-ratio: 16 / 10;
     overflow: hidden;
-    border-radius: var(--radius-lg);
+    /* 상단 영역만 둥글게 하거나 카드의 radius를 따르도록 설정 */
     background:
       linear-gradient(135deg, var(--color-accent-glass), transparent),
       var(--color-surface);
