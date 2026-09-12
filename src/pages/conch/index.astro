@@ -66,12 +66,16 @@ const conchItems = await Promise.all(
 
 <style>
   .main-content {
-    min-height: calc(100vh - 200px);
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--space-2xl) 0;
   }
 
+  /* Dreams와 동일한 패딩 및 여백 적용 */
   .page-header {
-    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
     text-align: center;
+    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
+    margin-bottom: var(--space-3xl);
   }
 
   .page-title {
@@ -94,7 +98,7 @@ const conchItems = await Promise.all(
   }
 
   .section {
-    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+    padding: 0;
   }
 
   /* 랜딩 페이지 FAQ 스타일과 조화되도록 아코디언 디자인 정돈 */

@@ -55,15 +55,18 @@ function formatDate(date: Date) {
 
 <style>
   .main-content {
-    min-height: calc(100vh - 200px);
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--space-2xl) 0;
   }
 
   .page-header {
-    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
     text-align: center;
+    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
+    margin-bottom: var(--space-3xl);
   }
 
-  /* Dreams 페이지의 제목과 동일한 사이즈와 보라색 그라데이션 적용 */
+  /* Dreams 페이지의 제목과 동일한 사이즈와 그라데이션 적용 */
   .page-title {
     font-size: var(--text-4xl);
     font-weight: 800;
@@ -84,10 +87,9 @@ function formatDate(date: Date) {
   }
 
   .section {
-    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+    padding: 0;
   }
 
-  /* 모바일에서 지금 마음에 드는 좁아진 상태를 기본값으로 유지 */
   .blog-list {
     list-style: none;
     padding: 0;
@@ -115,7 +117,6 @@ function formatDate(date: Date) {
     transition: color var(--transition-fast);
   }
 
-  /* 목록 각 포스트 제목: 페이지 대제목(Blog)과 동일한 선명한 그라데이션 적용 */
   .post-title {
     font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
@@ -156,10 +157,10 @@ function formatDate(date: Date) {
     }
   }
 
-  /* 🌟 PC 화면에서만 기존보다 20% 정도 더 좁게 제한 */
+  /* PC 화면에서 목록 폭을 아담하게 유지 */
   @media (min-width: 769px) {
     .blog-list {
-      max-width: 34rem; /* PC 전용으로 더 좁게 설정한 폭 */
+      max-width: 34rem;
     }
   }
 </style>
