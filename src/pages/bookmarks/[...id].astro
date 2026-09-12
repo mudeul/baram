@@ -1,0 +1,142 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import Footer from '@/components/common/Footer.astro';
+import Container from '@/components/ui/Container.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const bookmarks = await getCollection('bookmarks');
+  return bookmarks.map((bookmark) => ({
+    params: { id: bookmark.id },
+    props: { bookmark },
+  }));
+}
+
+const { bookmark } = Astro.props;
+const { Content } = await render(bookmark);
+
+function formatDate(dateString: string) {
+  if (!dateString) return '';
+  const d = new Date(dateString);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
+---
+
+<BaseLayout
+  title={bookmark.data.title}
+  description={bookmark.data.description || '유용한 링크'}
+>
+  <Header />
+
+  <main id="main" class="main-content">
+    <article class="post-container">
+      <header class="post-header">
+        <Container>
+          <div class="post-meta">
+            {
+              bookmark.data.author && (
+                <span class="post-author">{bookmark.data.author}</span>
+              )
+            }
+            <span class="post-date">{formatDate(bookmark.data.date)}</span>
+          </div>
+          <h1 class="post-title">{bookmark.data.title}</h1>
+          {
+            bookmark.data.url && (
+              <div class="external-link-wrap">
+                <a
+                  href={bookmark.data.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="external-btn"
+                >
+                  원문 링크 방문하기 &rarr;
+                </a>
+              </div>
+            )
+          }
+        </Container>
+      </header>
+
+      <section class="post-content">
+        <Container>
+          <div class="markdown-body">
+            <Content />
+          </div>
+        </Container>
+      </section>
+    </article>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .main-content {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--space-2xl) 0;
+  }
+
+  .post-header {
+    text-align: center;
+    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .post-meta {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-sm);
+  }
+
+  .post-title {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    margin-bottom: var(--space-lg);
+    background: linear-gradient(
+      135deg,
+      var(--color-text),
+      var(--color-accent-dark)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .external-link-wrap {
+    margin-top: var(--space-md);
+  }
+
+  .external-btn {
+    display: inline-block;
+    padding: var(--space-xs) var(--space-md);
+    font-size: var(--text-sm);
+    color: var(--color-accent);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .external-btn:hover {
+    border-color: var(--color-accent);
+    background: var(--color-accent);
+    color: var(--color-bg);
+  }
+
+  .markdown-body {
+    max-width: 42rem;
+    margin-inline: auto;
+    color: var(--color-text);
+    line-height: 1.7;
+  }
+</style>
