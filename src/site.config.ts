@@ -99,6 +99,7 @@ const siteConfig: SiteConfig = {
       { name: 'Dreams', href: '/dreams/' },
       { name: 'Wind-Ally', href: '/wind-ally/' },
       { name: 'Landing', href: '/landing/' },
+      { name: 'Conch', href: '/conch/' },
       { name: 'About', href: '/about/' },
     ],
   },
