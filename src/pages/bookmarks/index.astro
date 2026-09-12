@@ -134,12 +134,21 @@ function formatDate(date?: Date) {
 
 <style>
   .main-content {
-    min-height: calc(100vh - 200px);
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: var(--space-2xl) 0;
+  }
+
+  /* Dreams와 동일한 컨테이너 구조 및 최대 폭 적용 */
+  .container {
+    max-width: 800px;
+    margin-inline: auto;
+    padding-inline: var(--space-lg);
   }
 
   .page-header {
-    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
     text-align: center;
+    margin-bottom: var(--space-3xl);
   }
 
   .page-title {
@@ -162,7 +171,7 @@ function formatDate(date?: Date) {
   }
 
   .section {
-    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+    padding: 0; /* Dreams는 별도의 section 패딩 대신 컨테이너 내에서 자연스럽게 떨어지도록 함 */
   }
 
   /* 태그 필터 바 스타일 */
@@ -197,7 +206,7 @@ function formatDate(date?: Date) {
     font-weight: 600;
   }
 
-  /* 블로그와 동일한 목록 폭 및 간격 적용 */
+  /* 북마크 리스트 스타일 (Dreams의 너비감과 일치시킴) */
   .bookmark-list {
     list-style: none;
     padding: 0;
@@ -205,8 +214,7 @@ function formatDate(date?: Date) {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    max-width: 42rem;
-    width: 90%;
+    width: 100%;
     margin-inline: auto;
   }
 
@@ -225,7 +233,6 @@ function formatDate(date?: Date) {
     transition: color var(--transition-fast);
   }
 
-  /* 블로그와 동일한 타이틀 폰트 크기 및 그라데이션 적용 */
   .post-title {
     font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
@@ -273,13 +280,6 @@ function formatDate(date?: Date) {
 
     .bookmark-list-link {
       flex-direction: row;
-    }
-  }
-
-  /* PC 화면에서 블로그와 동일하게 더 좁고 아담한 폭 유지 */
-  @media (min-width: 769px) {
-    .bookmark-list {
-      max-width: 34rem;
     }
   }
 </style>
