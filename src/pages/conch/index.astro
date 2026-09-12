@@ -1,31 +1,32 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import Faq from '@/components/landing/Faq.astro';
 import Container from '@/components/ui/Container.astro';
 
-// Conch 페이지에서 보여줄 토글(질문/답변) 목록 데이터
-const conchItems = [
-  {
-    question: 'Conch 메뉴란 무엇인가요?',
-    answer:
-      '랜딩 페이지에서 사용하던 아코디언 토글 컴포넌트를 그대로 재사용하여 만든 새로운 Conch 페이지입니다.',
-  },
-  {
-    question: '토글은 어떻게 동작하나요?',
-    answer:
-      '클릭하면 부드럽게 열리고 닫히며, HTML 표준 details와 summary 태그를 기반으로 작동하여 가볍고 깔끔합니다.',
-  },
-  {
-    question: '내용을 수정하려면 어떻게 하나요?',
-    answer:
-      '위쪽 conchItems 배열 안에 있는 question과 answer 내용을 원하시는 대로 자유롭게 수정해서 사용하실 수 있습니다.',
-  },
-];
+// src/content/conch 폴더 안의 마크다운 파일들을 가져옵니다. (초안 draft 제외)
+const conchEntries = await getCollection('conch', ({ data }) => !data.draft);
+
+// 마크다운 본문을 HTML로 렌더링하기 위해 각 항목의 rendered 콘텐츠를 변환합니다.
+const conchItems = await Promise.all(
+  conchEntries.map(async (entry) => {
+    const { Content } = await entry.render();
+    return {
+      question: entry.data.title,
+      // Faq 컴포넌트가 문자열이나 HTML 구조를 받을 수 있도록 처리
+      // (만약 Faq 컴포넌트 구조상 HTML 렌더링이 필요하면 아래와 같이 전달)
+      renderContent: Content,
+    };
+  }),
+);
 ---
 
-<BaseLayout title="Conch" description="Conch 토글 메뉴 페이지입니다.">
+<BaseLayout
+  title="Conch"
+  description="옵시디언 노트로 관리하는 Conch 토글 페이지입니다."
+>
   <Header />
 
   <main id="main" tabindex="-1" class="main-content">
@@ -33,15 +34,33 @@ const conchItems = [
       <Container>
         <h1 class="page-title">Conch</h1>
         <p class="page-description">
-          토글 컴포넌트를 활용한 새로운 공간입니다.
+          옵시디언 노트가 자동으로 토글 목록으로 변환되는 공간입니다.
         </p>
       </Container>
     </header>
 
     <section class="section">
       <Container>
-        <!-- 랜딩 페이지의 토글(Faq) 컴포넌트 재사용 -->
-        <Faq items={conchItems} />
+        <!-- 기존 Faq 컴포넌트 활용 (노트가 없을 때의 안내 문구 추가 가능) -->
+        {
+          conchItems.length > 0 ? (
+            <div class="conch-list">
+              {conchItems.map((item) => (
+                <details class="conch-item">
+                  <summary>{item.question}</summary>
+                  <div class="conch-answer">
+                    <item.renderContent />
+                  </div>
+                </details>
+              ))}
+            </div>
+          ) : (
+            <p style="text-align: center; color: var(--color-text-muted);">
+              작성된 노트가 없습니다. src/content/conch 폴더에 마크다운 파일을
+              추가해보세요!
+            </p>
+          )
+        }
       </Container>
     </section>
   </main>
@@ -63,7 +82,6 @@ const conchItems = [
     font-size: var(--text-4xl);
     font-weight: 800;
     margin-bottom: var(--space-sm);
-    /* 블로그 및 Dreams 페이지와 통일감 있는 선명한 그라데이션 적용 */
     background: linear-gradient(
       135deg,
       var(--color-text),
@@ -81,5 +99,47 @@ const conchItems = [
 
   .section {
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
+  }
+
+  /* 랜딩 페이지 FAQ 스타일과 조화되도록 아코디언 디자인 정돈 */
+  .conch-list {
+    max-width: 42rem;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+  }
+
+  .conch-item {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-md) var(--space-lg);
+    transition: background var(--transition-fast);
+  }
+
+  .conch-item[open] {
+    background: var(--color-bg-card);
+  }
+
+  .conch-item summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--color-text);
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .conch-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .conch-answer {
+    margin-top: var(--space-md);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    line-height: 1.6;
   }
 </style>

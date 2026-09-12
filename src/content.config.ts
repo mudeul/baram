@@ -91,6 +91,18 @@ const windAlly = defineCollection({
     }),
 });
 
+// Conch collection 추가
+const conch = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/conch' }),
+  schema: () =>
+    z.object({
+      title: z.string(), // 토글의 질문이 될 제목
+      description: z.string().optional(),
+      pubDate: z.coerce.date().optional(),
+      draft: z.boolean().default(false),
+    }),
+});
+
 // Landing page sections
 const landing = defineCollection({
   loader: glob({
@@ -178,4 +190,5 @@ export const collections = {
   dreams,
   'wind-ally': windAlly,
   landing,
+  conch,
 };
