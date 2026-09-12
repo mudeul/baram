@@ -118,10 +118,9 @@ function formatDate(date: Date) {
   }
 
   .post-title {
-    font-size: var(--text-lg);
+    font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
     flex: 1;
-    /* 모바일에서 제목이 길 경우 처리 (말줄임표를 원치 않으시면 이 줄은 지우셔도 됩니다) */
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -129,9 +128,9 @@ function formatDate(date: Date) {
   }
 
   .post-date {
-    font-size: var(--text-sm);
+    font-size: calc(var(--text-sm) * 0.9);
     color: var(--color-text-muted);
-    white-space: nowrap; /* 날짜는 절대 줄바꿈 되지 않음 */
+    white-space: nowrap;
     flex-shrink: 0;
   }
 
