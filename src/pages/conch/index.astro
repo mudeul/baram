@@ -1,9 +1,8 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
-import Faq from '@/components/landing/Faq.astro';
 import Container from '@/components/ui/Container.astro';
 
 // src/content/conch 폴더 안의 마크다운 파일들을 가져옵니다. (초안 draft 제외)
@@ -12,7 +11,7 @@ const conchEntries = await getCollection('conch', ({ data }) => !data.draft);
 // 마크다운 본문을 HTML로 렌더링하기 위해 각 항목의 rendered 콘텐츠를 변환합니다.
 const conchItems = await Promise.all(
   conchEntries.map(async (entry) => {
-    const { Content } = await entry.render();
+    const { Content } = await render(entry);
     return {
       question: entry.data.title,
       // Faq 컴포넌트가 문자열이나 HTML 구조를 받을 수 있도록 처리
