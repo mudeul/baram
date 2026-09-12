@@ -48,7 +48,7 @@ const dreams = defineCollection({
     }),
 });
 
-// 🌟 변수 이름은 일반 식별자(windAlly)로 선언합니다.
+// Wind-ally collection
 const windAlly = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/wind-ally' }),
   schema: ({ image }) =>
@@ -91,16 +91,29 @@ const windAlly = defineCollection({
     }),
 });
 
-// Conch collection 추가
+// Conch collection
 const conch = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/conch' }),
   schema: () =>
     z.object({
-      title: z.string(), // 토글의 질문이 될 제목
+      title: z.string(),
       description: z.string().optional(),
       pubDate: z.coerce.date().optional(),
       draft: z.boolean().default(false),
     }),
+});
+
+// 🌟 Bookmarks collection
+const bookmarks = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/bookmarks' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    author: z.string().default('Anonymous'),
+    pubDate: z.coerce.date().optional(),
+    tags: z.array(z.string()).optional(),
+    draft: z.boolean().default(false),
+  }),
 });
 
 // Landing page sections
@@ -184,11 +197,12 @@ const landing = defineCollection({
   }),
 });
 
-// 🌟 내보낼 때 키 이름에만 따옴표를 사용해 줍니다.
+// 🌟 collections 목록에 bookmarks 추가 완료!
 export const collections = {
   blog,
   dreams,
   'wind-ally': windAlly,
-  landing,
   conch,
+  bookmarks,
+  landing,
 };

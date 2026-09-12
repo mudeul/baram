@@ -1,0 +1,263 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import Footer from '@/components/common/Footer.astro';
+import Container from '@/components/ui/Container.astro';
+import { withBase } from '@/lib/url';
+
+// 1. bookmarks 컬렉션 가져오기 및 최신순 정렬
+const entries = (
+  await getCollection('bookmarks', ({ data }) => !data.draft)
+).sort(
+  (a, b) => (b.data.pubDate?.valueOf() || 0) - (a.data.pubDate?.valueOf() || 0),
+);
+
+// 2. 모든 북마크에서 태그 추출 및 중복 제거
+const allTagsSet = new Set<string>();
+entries.forEach((entry) => {
+  if (entry.data.tags && Array.isArray(entry.data.tags)) {
+    entry.data.tags.forEach((tag: string) => allTagsSet.add(tag));
+  }
+});
+const tags = Array.from(allTagsSet);
+
+// 날짜 포맷 함수
+function formatDate(date?: Date) {
+  if (!date) return '';
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
+---
+
+<BaseLayout title="Bookmarks" description="유용한 노트와 아카이브">
+  <Header />
+
+  <main id="main" tabindex="-1" class="main-content">
+    <section class="page-header">
+      <Container>
+        <h1 class="page-title">Bookmarks</h1>
+        <p class="page-description">필요한 내용들을 정리해두는 공간입니다.</p>
+      </Container>
+    </section>
+
+    <section class="section">
+      <Container>
+        {/* 태그 필터 버튼 영역 */}
+        {
+          tags.length > 0 && (
+            <div class="filter-tags" aria-label="Filter by tags">
+              <button class="tag-btn active" data-tag="all">
+                All
+              </button>
+              {tags.map((tag) => (
+                <button class="tag-btn" data-tag={tag}>
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )
+        }
+
+        {/* 리스트형 목록 */}
+        <ul class="bookmark-list">
+          {
+            entries.length > 0 ? (
+              entries.map((entry) => {
+                const entryTags = entry.data.tags || [];
+                const dataTagsAttr = entryTags.join(',');
+                return (
+                  <li class="bookmark-list-item" data-tags={dataTagsAttr}>
+                    <a
+                      href={withBase(`/bookmarks/${entry.id}/`)}
+                      class="bookmark-list-link"
+                    >
+                      <span class="post-title">{entry.data.title}</span>
+                      <div class="post-meta">
+                        {entry.data.author && (
+                          <span class="post-author">{entry.data.author}</span>
+                        )}
+                        <span class="post-date">
+                          {formatDate(entry.data.pubDate)}
+                        </span>
+                      </div>
+                    </a>
+                  </li>
+                );
+              })
+            ) : (
+              <p style="text-align: center; color: var(--color-text-muted);">
+                등록된 북마크가 없습니다. src/content/bookmarks 폴더에 마크다운
+                파일을 추가해보세요!
+              </p>
+            )
+          }
+        </ul>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  // 태그 필터링 스크립트
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterButtons = document.querySelectorAll('.tag-btn');
+    const items = document.querySelectorAll('.bookmark-list-item');
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const selectedTag = btn.getAttribute('data-tag');
+
+        items.forEach((item) => {
+          const itemTags = item.getAttribute('data-tags')?.split(',') || [];
+          if (
+            selectedTag === 'all' ||
+            (selectedTag && itemTags.includes(selectedTag))
+          ) {
+            (item as HTMLElement).style.display = 'block';
+          } else {
+            (item as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .main-content {
+    min-height: calc(100vh - 200px);
+  }
+
+  .page-header {
+    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
+    text-align: center;
+  }
+
+  .page-title {
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    margin-bottom: var(--space-sm);
+    background: linear-gradient(
+      135deg,
+      var(--color-text),
+      var(--color-accent-dark)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+  }
+
+  .section {
+    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+  }
+
+  /* 태그 필터 바 스타일 */
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .tag-btn {
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .tag-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .tag-btn.active {
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    border-color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  /* 북마크 리스트 스타일 */
+  .bookmark-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 48rem;
+    margin-inline: auto;
+  }
+
+  .bookmark-list-item {
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: var(--space-md);
+  }
+
+  .bookmark-list-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+
+  .bookmark-list-link:hover .post-title {
+    color: var(--color-accent);
+  }
+
+  .post-title {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .post-meta {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    flex-shrink: 0;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .post-author {
+    font-weight: 500;
+  }
+
+  .post-date {
+    font-family: var(--font-mono);
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: var(--text-3xl);
+    }
+  }
+</style>
