@@ -3,22 +3,33 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import Container from '@/components/ui/Container.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { withBase } from '@/lib/url';
+import type { Page, PaginateFunction } from 'astro';
 
-export async function getStaticPaths({ paginate }) {
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: PaginateFunction;
+}) {
   const bookmarks = (await getCollection('bookmarks')).sort(
-    (a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf(),
+    (a, b) =>
+      new Date(b.data.pubDate ?? 0).valueOf() -
+      new Date(a.data.pubDate ?? 0).valueOf(),
   );
 
   return paginate(bookmarks, { pageSize: 5 });
 }
 
+interface Props {
+  page: Page<CollectionEntry<'bookmarks'>>;
+}
+
 const { page } = Astro.props;
 
-function formatDate(dateString: string) {
-  if (!dateString) return '';
-  const d = new Date(dateString);
+function formatDate(date: Date | undefined) {
+  if (!date) return '';
+  const d = new Date(date);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
@@ -56,7 +67,7 @@ function formatDate(dateString: string) {
                       <span class="post-author">{bookmark.data.author}</span>
                     )}
                     <span class="post-date">
-                      {formatDate(bookmark.data.date)}
+                      {formatDate(bookmark.data.pubDate)}
                     </span>
                   </div>
                 </a>
@@ -101,15 +112,13 @@ function formatDate(dateString: string) {
   .main-content {
     min-height: 100vh;
     min-height: 100dvh;
-    padding: var(--space-2xl) 0;
+    padding: 0;
   }
-
   .page-header {
     text-align: center;
     padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
-    margin-bottom: var(--space-3xl);
+    margin-bottom: 0;
   }
-
   .page-title {
     font-size: var(--text-4xl);
     font-weight: 800;
@@ -123,16 +132,13 @@ function formatDate(dateString: string) {
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
   .page-description {
     color: var(--color-text-muted);
     font-size: var(--text-base);
   }
-
   .section {
-    padding: 0;
+    padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
-
   .bookmark-list {
     list-style: none;
     padding: 0;
@@ -144,12 +150,10 @@ function formatDate(dateString: string) {
     width: 90%;
     margin-inline: auto;
   }
-
   .bookmark-list-item {
     border-bottom: 1px solid var(--glass-border);
     padding-bottom: var(--space-md);
   }
-
   .bookmark-list-link {
     display: flex;
     justify-content: space-between;
@@ -159,7 +163,6 @@ function formatDate(dateString: string) {
     color: var(--color-text);
     transition: color var(--transition-fast);
   }
-
   .post-title {
     font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
@@ -168,7 +171,6 @@ function formatDate(dateString: string) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
     background: linear-gradient(
       135deg,
       var(--color-text),
@@ -178,11 +180,9 @@ function formatDate(dateString: string) {
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
   .bookmark-list-link:hover .post-title {
     filter: brightness(1.2);
   }
-
   .post-meta {
     display: flex;
     gap: var(--space-sm);
@@ -191,11 +191,9 @@ function formatDate(dateString: string) {
     font-size: calc(var(--text-sm) * 0.9);
     color: var(--color-text-muted);
   }
-
   .post-author {
     font-weight: 500;
   }
-
   .pagination {
     display: flex;
     justify-content: center;
@@ -205,7 +203,6 @@ function formatDate(dateString: string) {
     max-width: 34rem;
     margin-inline: auto;
   }
-
   .page-btn {
     padding: var(--space-xs) var(--space-md);
     font-size: var(--text-sm);
@@ -216,22 +213,18 @@ function formatDate(dateString: string) {
     text-decoration: none;
     transition: all var(--transition-fast);
   }
-
   .page-btn:hover:not(.disabled) {
     border-color: var(--color-accent);
     color: var(--color-accent);
   }
-
   .page-btn.disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
-
   .page-info {
     font-size: var(--text-sm);
     color: var(--color-text-muted);
   }
-
   @media (max-width: 768px) {
     .page-title {
       font-size: var(--text-3xl);
