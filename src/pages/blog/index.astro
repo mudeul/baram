@@ -80,7 +80,7 @@ function formatDate(date: Date) {
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
 
-  /* 리스트형 스타일 (PC/모바일 모두 폭 10% 축소 적용) */
+  /* 모바일에서 지금 마음에 드는 좁아진 상태를 기본값으로 유지 */
   .blog-list {
     list-style: none;
     padding: 0;
@@ -89,8 +89,8 @@ function formatDate(date: Date) {
     flex-direction: column;
     gap: var(--space-md);
     max-width: 42rem;
-    margin-inline: auto;
     width: 90%;
+    margin-inline: auto;
   }
 
   .blog-list-item {
@@ -146,6 +146,13 @@ function formatDate(date: Date) {
 
     .blog-list-link {
       flex-direction: row;
+    }
+  }
+
+  /* 🌟 PC 화면에서만 기존보다 20% 정도 더 좁게 제한 */
+  @media (min-width: 769px) {
+    .blog-list {
+      max-width: 34rem; /* PC 전용으로 더 좁게 설정한 폭 */
     }
   }
 </style>
