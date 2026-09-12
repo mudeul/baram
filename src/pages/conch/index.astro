@@ -8,28 +8,33 @@ import Container from '@/components/ui/Container.astro';
 // Conch 페이지에서 보여줄 토글(질문/답변) 목록 데이터
 const conchItems = [
   {
-    question: "Conch 메뉴란 무엇인가요?",
-    answer: "랜딩 페이지에서 사용하던 아코디언 토글 컴포넌트를 그대로 재사용하여 만든 새로운 Conch 페이지입니다."
+    question: 'Conch 메뉴란 무엇인가요?',
+    answer:
+      '랜딩 페이지에서 사용하던 아코디언 토글 컴포넌트를 그대로 재사용하여 만든 새로운 Conch 페이지입니다.',
   },
   {
-    question: "토글은 어떻게 동작하나요?",
-    answer: "클릭하면 부드럽게 열리고 닫히며, HTML 표준 details와 summary 태그를 기반으로 작동하여 가볍고 깔끔합니다."
+    question: '토글은 어떻게 동작하나요?',
+    answer:
+      '클릭하면 부드럽게 열리고 닫히며, HTML 표준 details와 summary 태그를 기반으로 작동하여 가볍고 깔끔합니다.',
   },
   {
-    question: "내용을 수정하려면 어떻게 하나요?",
-    answer: "위쪽 conchItems 배열 안에 있는 question과 answer 내용을 원하시는 대로 자유롭게 수정해서 사용하실 수 있습니다."
-  }
+    question: '내용을 수정하려면 어떻게 하나요?',
+    answer:
+      '위쪽 conchItems 배열 안에 있는 question과 answer 내용을 원하시는 대로 자유롭게 수정해서 사용하실 수 있습니다.',
+  },
 ];
 ---
 
 <BaseLayout title="Conch" description="Conch 토글 메뉴 페이지입니다.">
   <Header />
-  
+
   <main id="main" tabindex="-1" class="main-content">
     <header class="page-header">
       <Container>
         <h1 class="page-title">Conch</h1>
-        <p class="page-description">토글 컴포넌트를 활용한 새로운 공간입니다.</p>
+        <p class="page-description">
+          토글 컴포넌트를 활용한 새로운 공간입니다.
+        </p>
       </Container>
     </header>
 
