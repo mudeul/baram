@@ -63,12 +63,19 @@ function formatDate(date: Date) {
     text-align: center;
   }
 
-  /* 상단 대제목은 기본 색상으로 복원 */
+  /* Dreams 페이지의 제목과 동일한 사이즈와 보라색 그라데이션 적용 */
   .page-title {
     font-size: var(--text-4xl);
     font-weight: 800;
     margin-bottom: var(--space-sm);
-    color: var(--color-text);
+    background: linear-gradient(
+      135deg,
+      var(--color-text),
+      var(--color-accent-dark)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .page-description {
