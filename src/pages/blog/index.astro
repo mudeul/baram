@@ -115,7 +115,7 @@ function formatDate(date: Date) {
     transition: color var(--transition-fast);
   }
 
-  /* 목록 각 포스트 제목: 20% 축소 + 보라색 그라데이션 적용 */
+  /* 목록 각 포스트 제목: 페이지 대제목(Blog)과 동일한 선명한 그라데이션 적용 */
   .post-title {
     font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
@@ -127,8 +127,8 @@ function formatDate(date: Date) {
 
     background: linear-gradient(
       135deg,
-      var(--color-accent),
-      var(--color-accent-light)
+      var(--color-text),
+      var(--color-accent-dark)
     );
     -webkit-background-clip: text;
     background-clip: text;
