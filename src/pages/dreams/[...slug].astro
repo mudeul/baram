@@ -43,7 +43,7 @@ const formattedDate = `${year}.${month}.${day}`;
           <h1 class="post-title">{dream.data.title}</h1>
         </GlassPanel>
 
-        <!-- 본문 카드 (블로그와 동일한 상단 간격 적용) -->
+        <!-- 본문 카드 -->
         <GlassPanel variant="solid" padding="xl" className="post-content-panel">
           <div class="prose">
             <Content />
@@ -68,13 +68,16 @@ const formattedDate = `${year}.${month}.${day}`;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
+    /* Flexbox를 사용하여 카드 사이의 간격을 확실하게 확보합니다 */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
   }
 
-  /* 제목 카드와 본문 카드 사이의 간격을 블로그와 똑같이 확보 (var(--space-xl)) */
   .post-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: var(--space-xl);
+    /* 기존 margin-bottom 대신 컨테이너의 gap을 믿습니다 */
   }
 
   .post-back {
@@ -114,7 +117,7 @@ const formattedDate = `${year}.${month}.${day}`;
   }
 
   .post-content-panel {
-    margin-bottom: var(--space-2xl);
+    /* 간섭 방지 */
   }
 
   .prose {
