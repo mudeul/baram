@@ -127,8 +127,9 @@ const conchItems = await Promise.all(
     transition: background var(--transition-fast);
   }
 
+  /* 아코디언이 열려있을 때도 닫혀있을 때와 똑같은 불투명 배경(var(--glass-bg)) 유지 */
   .conch-item[open] {
-    background: var(--color-bg-card);
+    background: var(--glass-bg);
   }
 
   .conch-summary {
