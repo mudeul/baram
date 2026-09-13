@@ -32,18 +32,18 @@ const formattedDate = `${year}.${month}.${day}`;
   <Header />
 
   <main id="main" tabindex="-1" class="main-content">
-    <article class="dream-post">
+    <article class="post-layout">
       <div class="container">
-        <!-- 뒤로 가기 및 헤더 카드 -->
-        <GlassPanel variant="solid" padding="xl" className="post-header">
+        <!-- 헤더 카드 -->
+        <GlassPanel variant="solid" padding="xl" className="post-header-panel">
           <a href={withBase('/dreams/')} class="post-back">← Back to dreams</a>
-          <time class="post-date" datetime={pubDate.toISOString()}
-            >{formattedDate}</time
-          >
+          <time class="post-date" datetime={pubDate.toISOString()}>
+            {formattedDate}
+          </time>
           <h1 class="post-title">{dream.data.title}</h1>
         </GlassPanel>
 
-        <!-- 본문 카드 (블로그와 완벽히 동일한 마진 구조 적용) -->
+        <!-- 본문 카드 -->
         <GlassPanel variant="solid" padding="xl" className="post-content-panel">
           <div class="prose">
             <Content />
@@ -70,10 +70,7 @@ const formattedDate = `${year}.${month}.${day}`;
     padding-inline: var(--space-md);
   }
 
-  /* 블로그 상세 페이지와 똑같은 간격 설정 */
-  .post-header {
-    display: flex;
-    flex-direction: column;
+  .post-header-panel {
     margin-bottom: var(--space-md);
   }
 
@@ -84,7 +81,6 @@ const formattedDate = `${year}.${month}.${day}`;
     font-size: var(--text-sm);
     margin-bottom: var(--space-md);
     transition: color var(--transition-fast);
-    align-self: flex-start;
   }
 
   .post-back:hover {
