@@ -41,8 +41,13 @@ function formatDate(date: Date) {
                 <a href={withBase(`/blog/${post.id}/`)} class="blog-list-link">
                   <span class="post-title">{post.data.title}</span>
                   <div class="post-meta">
-                    {post.data.author && (
-                      <span class="post-author">{post.data.author}</span>
+                    {post.data.pubDate && (
+                      <time
+                        datetime={post.data.pubDate.toISOString()}
+                        class="post-date"
+                      >
+                        {formatDate(post.data.pubDate)}
+                      </time>
                     )}
                   </div>
                 </a>
@@ -144,8 +149,9 @@ function formatDate(date: Date) {
     color: #513664;
   }
 
-  .post-author {
+  .post-date {
     font-weight: 500;
+    color: #513664;
   }
 
   @media (max-width: 768px) {
