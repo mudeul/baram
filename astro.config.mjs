@@ -59,8 +59,8 @@ const LASTMOD = blogLastmod();
 
 // https://astro.build/config
 export default defineConfig({
-  site: SITE,
-  base: BASE,
+  site: 'https://mudeul.page',
+  // base: BASE,
   // MDX is always enabled so `.mdx` files in the content collections render
   // (the blog/projects globs already accept them). Sitemap and Pagefind are
   // gated by their `features` flags in site.config. Pagefind indexes the
