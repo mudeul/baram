@@ -84,7 +84,8 @@ function formatDate(date: Date | undefined) {
 
   .page-header {
     text-align: center;
-    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
+    /* 기존보다 상단 패딩을 줄여 제목과 본문 사이의 공간을 약 1/3 축소 */
+    padding: calc(var(--space-xl) + var(--space-xs)) 0 var(--space-md) 0;
     margin-bottom: 0;
   }
 
@@ -108,7 +109,7 @@ function formatDate(date: Date | undefined) {
   }
 
   .section {
-    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+    padding: var(--space-lg) 0 var(--space-3xl) 0;
   }
 
   /* 타임라인 컨테이너 */
