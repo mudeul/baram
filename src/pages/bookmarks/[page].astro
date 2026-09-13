@@ -80,11 +80,11 @@ function formatDate(date: Date | undefined) {
           {
             page.currentPage > 1 ? (
               <a
-                href={
+                href={withBase(
                   page.currentPage === 2
-                    ? '/baram/bookmarks/'
-                    : `/baram/bookmarks/page/${page.currentPage - 1}/`
-                }
+                    ? '/bookmarks/'
+                    : `/bookmarks/page/${page.currentPage - 1}/`,
+                )}
                 class="page-btn"
               >
                 &larr; Prev
@@ -101,7 +101,7 @@ function formatDate(date: Date | undefined) {
           {
             page.currentPage < page.lastPage ? (
               <a
-                href={`/baram/bookmarks/page/${page.currentPage + 1}/`}
+                href={withBase(`/bookmarks/page/${page.currentPage + 1}/`)}
                 class="page-btn"
               >
                 Next &rarr;
