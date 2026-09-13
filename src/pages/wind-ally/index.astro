@@ -134,9 +134,10 @@ const tags = Array.from(allTagsSet);
     padding: 0;
   }
 
+  /* Dreams 페이지와 동일하게 하단 패딩 축소 */
   .page-header {
     text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xl) 0;
+    padding: var(--space-3xl) 0 var(--space-xs) 0;
     margin-bottom: 0;
   }
 
@@ -169,11 +170,13 @@ const tags = Array.from(allTagsSet);
   .portfolio-wrapper {
     width: 100%;
     margin-inline: auto;
+    padding-top: var(--space-md);
     padding-bottom: var(--space-3xl);
   }
 
   .filter-tags {
     display: flex;
+    flex-expr: wrap;
     flex-wrap: wrap;
     justify-content: center;
     gap: var(--space-xs);
