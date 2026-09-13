@@ -6,41 +6,43 @@ import Container from '@/components/ui/Container.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '@/lib/url';
 
-const bookmarks = (await getCollection('bookmarks')).sort(
-  (a, b) =>
-    new Date(b.data.pubDate ?? 0).valueOf() -
-    new Date(a.data.pubDate ?? 0).valueOf(),
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
-const pageBookmarks = bookmarks.slice(0, 5);
-const hasNextPage = bookmarks.length > 5;
+const pagePosts = posts.slice(0, 10);
+
+function formatDate(date: Date) {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
 ---
 
-<BaseLayout title="Bookmarks" description="유용한 링크 모음">
+<BaseLayout title="Blog" description="♪ 무서운 얘기를 해 줄까">
   <Header />
 
   <main id="main" class="main-content">
     <section class="page-header">
       <Container>
-        <h1 class="page-title">Bookmarks</h1>
-        <p class="page-description">유용한 링크 모음</p>
+        <h1 class="page-title">Blog</h1>
+        <p class="page-description">♪ 무서운 얘기를 해 줄까</p>
       </Container>
     </section>
 
     <section class="section">
       <Container>
-        <ul class="bookmark-list">
+        <ul class="blog-list">
           {
-            pageBookmarks.map((bookmark) => (
-              <li class="bookmark-list-item">
-                <a
-                  href={withBase(`/bookmarks/${bookmark.id}/`)}
-                  class="bookmark-list-link"
-                >
-                  <span class="post-title">{bookmark.data.title}</span>
+            pagePosts.map((post) => (
+              <li class="blog-list-item">
+                <a href={withBase(`/blog/${post.id}/`)} class="blog-list-link">
+                  <span class="post-title">{post.data.title}</span>
                   <div class="post-meta">
-                    {bookmark.data.author && (
-                      <span class="post-author">{bookmark.data.author}</span>
+                    {post.data.author && (
+                      <span class="post-author">{post.data.author}</span>
                     )}
                   </div>
                 </a>
@@ -48,20 +50,6 @@ const hasNextPage = bookmarks.length > 5;
             ))
           }
         </ul>
-
-        <nav class="pagination" aria-label="Pagination">
-          <span class="page-btn disabled">&larr; Prev</span>
-          <span class="page-info">1 / {Math.ceil(bookmarks.length / 5)}</span>
-          {
-            hasNextPage ? (
-              <a href={withBase('/bookmarks/page/2/')} class="page-btn">
-                Next &rarr;
-              </a>
-            ) : (
-              <span class="page-btn disabled">Next &rarr;</span>
-            )
-          }
-        </nav>
       </Container>
     </section>
   </main>
@@ -75,11 +63,13 @@ const hasNextPage = bookmarks.length > 5;
     min-height: 100dvh;
     padding: 0;
   }
+
   .page-header {
     text-align: center;
     padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
     margin-bottom: 0;
   }
+
   .page-title {
     font-size: var(--text-4xl);
     font-weight: 800;
@@ -93,14 +83,17 @@ const hasNextPage = bookmarks.length > 5;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+
   .page-description {
     color: var(--color-text-muted);
     font-size: var(--text-base);
   }
+
   .section {
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
-  .bookmark-list {
+
+  .blog-list {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -111,11 +104,13 @@ const hasNextPage = bookmarks.length > 5;
     width: 90%;
     margin-inline: auto;
   }
-  .bookmark-list-item {
+
+  .blog-list-item {
     border-bottom: 1px solid var(--glass-border);
     padding-bottom: var(--space-md);
   }
-  .bookmark-list-link {
+
+  .blog-list-link {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
@@ -124,6 +119,7 @@ const hasNextPage = bookmarks.length > 5;
     color: var(--color-text);
     transition: color var(--transition-fast);
   }
+
   .post-title {
     font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
@@ -134,9 +130,11 @@ const hasNextPage = bookmarks.length > 5;
     white-space: nowrap;
     color: #3f0766;
   }
-  .bookmark-list-link:hover .post-title {
+
+  .blog-list-link:hover .post-title {
     filter: brightness(1.2);
   }
+
   .post-meta {
     display: flex;
     gap: var(--space-sm);
@@ -145,46 +143,14 @@ const hasNextPage = bookmarks.length > 5;
     font-size: calc(var(--text-sm) * 0.9);
     color: #513664;
   }
+
   .post-author {
     font-weight: 500;
   }
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: var(--space-md);
-    margin-top: var(--space-2xl);
-    max-width: 34rem;
-    margin-inline: auto;
-  }
-  .page-btn {
-    padding: var(--space-xs) var(--space-md);
-    font-size: var(--text-sm);
-    color: var(--color-text);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    text-decoration: none;
-    transition: all var(--transition-fast);
-  }
-  .page-btn:hover:not(.disabled) {
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-  .page-btn.disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-  .page-info {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-  }
+
   @media (max-width: 768px) {
     .page-title {
       font-size: var(--text-3xl);
-    }
-    .bookmark-list-link {
-      flex-direction: row;
     }
   }
 </style>
