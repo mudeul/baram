@@ -14,15 +14,6 @@ const bookmarks = (await getCollection('bookmarks')).sort(
 
 const pageBookmarks = bookmarks.slice(0, 5);
 const hasNextPage = bookmarks.length > 5;
-
-function formatDate(date: Date | undefined) {
-  if (!date) return '';
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
 ---
 
 <BaseLayout title="Bookmarks" description="유용한 링크 모음">
@@ -51,9 +42,6 @@ function formatDate(date: Date | undefined) {
                     {bookmark.data.author && (
                       <span class="post-author">{bookmark.data.author}</span>
                     )}
-                    <span class="post-date">
-                      {formatDate(bookmark.data.pubDate)}
-                    </span>
                   </div>
                 </a>
               </li>
