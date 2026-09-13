@@ -123,11 +123,10 @@ const socialIcons = {
     gap: var(--space-md);
   }
 
-  /* 🌟 Connect 섹션만 오른쪽으로 밀어내기 (PC 화면 기준) */
+  /* 🌟 Connect 섹션을 살짝만 우측으로 밀기 */
   @media (min-width: 769px) {
     .social-section {
-      margin-left: auto; /* 여백을 자동으로 채워 오른쪽 끝으로 보냄 */
-      /* 혹은 고정된 값으로 밀고 싶다면 margin-left: var(--space-3xl); 등으로 변경 가능합니다 */
+      margin-left: 1.5rem; /* 원하는 만큼의 살짝 미세 조정 값 (예: 1rem ~ 2rem) */
     }
   }
 
@@ -177,7 +176,6 @@ const socialIcons = {
     align-items: center;
     justify-content: center;
     width: 40px;
-    px;
     height: 40px;
     border-radius: var(--radius-md);
     background: var(--glass-bg);
