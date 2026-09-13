@@ -7,7 +7,6 @@ import Footer from '@/components/common/Footer.astro';
 import GlassPanel from '@/components/common/GlassPanel.astro';
 import { withBase } from '@/lib/url';
 
-// 🌟 projects 대신 dreams 컬렉션을 가져오도록 수정합니다.
 export async function getStaticPaths() {
   const dreams = await getCollection('dreams');
   return dreams.map((dream) => ({
@@ -21,7 +20,7 @@ type Props = CollectionEntry<'dreams'>;
 const dream = Astro.props;
 const { Content } = await render(dream);
 
-// 🌟 날짜 포맷팅 (2026.09.11 형태)
+// 날짜 포맷팅 (2026.09.11 형태)
 const pubDate = dream.data.pubDate;
 const year = pubDate.getFullYear();
 const month = String(pubDate.getMonth() + 1).padStart(2, '0');
@@ -70,10 +69,11 @@ const formattedDate = `${year}.${month}.${day}`;
     padding-inline: var(--space-lg);
   }
 
+  /* Blog 상세 페이지와 동일하게 카드 간 여백 축소 */
   .post-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-md);
   }
 
   .post-back {
