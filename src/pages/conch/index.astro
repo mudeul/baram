@@ -66,9 +66,10 @@ const conchItems = await Promise.all(
     padding: 0;
   }
 
+  /* Dreams 페이지와 동일하게 하단 패딩 축소 */
   .page-header {
     text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xl) 0;
+    padding: var(--space-3xl) 0 var(--space-xs) 0;
     margin-bottom: 0;
   }
 
@@ -91,8 +92,9 @@ const conchItems = await Promise.all(
     font-size: var(--text-base);
   }
 
+  /* Dreams 페이지와 동일하게 상단 패딩 축소 */
   .section {
-    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+    padding: var(--space-md) 0 var(--space-3xl) 0;
   }
 
   /* Container 컴포넌트 내부 너비를 34rem으로 제한 */
