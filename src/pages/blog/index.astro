@@ -121,15 +121,15 @@ function formatDate(date: Date) {
   }
 
   .post-title {
-    /* 크기를 원래대로 되돌림 (calc 연산 제거) */
-    font-size: var(--text-lg);
+    /* 북마크 목록처럼 크기를 줄임 (0.8 곱하기) */
+    font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
     flex: 1;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    /* 색상을 #5c1d80 단색으로 변경 */
+    /* 색상은 #5c1d80 단색 유지 */
     color: #5c1d80;
   }
 
