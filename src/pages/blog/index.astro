@@ -120,26 +120,7 @@ function formatDate(date: Date) {
     transition: color var(--transition-fast);
   }
 
-  .post-title {
-    font-size: calc(var(--text-lg) * 0.8);
-    font-weight: 500;
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    /* 북마크와 동일한 그라데이션 적용 */
-    background: linear-gradient(
-      135deg,
-      var(--color-text),
-      var(--color-accent-dark)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .blog-list-link:hover .post-title {
+  npx prettier --write . .blog-list-link:hover .post-title {
     filter: brightness(1.2);
   }
 
