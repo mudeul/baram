@@ -142,10 +142,12 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
     padding: var(--space-2xl) 0;
   }
 
+  /* 목록 페이지(.blog-list)와 동일한 34rem 너비로 설정하여 좌우 여백 일치화 */
   .blog-post .container {
-    max-width: var(--container-5xl);
+    max-width: 34rem;
+    width: 100%;
     margin-inline: auto;
-    padding-inline: var(--space-lg);
+    padding-inline: var(--space-md);
   }
 
   .post-back {
