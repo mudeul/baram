@@ -5,39 +5,40 @@ import Footer from '@/components/common/Footer.astro';
 import Container from '@/components/ui/Container.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { withBase } from '@/lib/url';
+import type { Page, PaginateFunction } from 'astro';
 
-// 1. [page] 파라미터가 없거나 '1'이면 1페이지로 처리
-export async function getStaticPaths() {
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: PaginateFunction;
+}) {
   const bookmarks = (await getCollection('bookmarks')).sort(
     (a, b) =>
       new Date(b.data.pubDate ?? 0).valueOf() -
       new Date(a.data.pubDate ?? 0).valueOf(),
   );
 
-  const pageSize = 5;
-  const totalPages = Math.ceil(bookmarks.length / pageSize) || 1;
-
-  // 1페이지부터 마지막 페이지까지 경로를 직접 생성 (절대 /page/ 안 씀!)
-  return Array.from({ length: totalPages }, (_, i) => {
-    const pageNum = i + 1;
-    const start = i * pageSize;
-    const end = start + pageSize;
-    return {
-      params: { page: pageNum === 1 ? undefined : String(pageNum) },
-      props: {
-        pageData: bookmarks.slice(start, end),
-        currentPage: pageNum,
-        lastPage: totalPages,
-      },
-    };
-  });
+  return paginate(bookmarks, { pageSize: 5 });
 }
 
-const { pageData, currentPage, lastPage } = Astro.props;
+interface Props {
+  page: Page<CollectionEntry<'bookmarks'>>;
+}
+
+const { page } = Astro.props;
+
+function formatDate(date: Date | undefined) {
+  if (!date) return '';
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
 ---
 
 <BaseLayout
-  title={`Bookmarks - Page ${currentPage}`}
+  title={`Bookmarks - Page ${page.currentPage}`}
   description="유용한 링크 모음"
 >
   <Header />
@@ -54,7 +55,7 @@ const { pageData, currentPage, lastPage } = Astro.props;
       <Container>
         <ul class="bookmark-list">
           {
-            pageData.map((bookmark) => (
+            page.data.map((bookmark) => (
               <li class="bookmark-list-item">
                 <a
                   href={withBase(`/bookmarks/${bookmark.id}/`)}
@@ -74,15 +75,8 @@ const { pageData, currentPage, lastPage } = Astro.props;
 
         <nav class="pagination" aria-label="Pagination">
           {
-            currentPage > 1 ? (
-              <a
-                href={withBase(
-                  currentPage === 2
-                    ? '/bookmarks/'
-                    : `/bookmarks/${currentPage - 1}/`,
-                )}
-                class="page-btn"
-              >
+            page.url.prev ? (
+              <a href={page.url.prev} class="page-btn">
                 &larr; Prev
               </a>
             ) : (
@@ -91,15 +85,12 @@ const { pageData, currentPage, lastPage } = Astro.props;
           }
 
           <span class="page-info">
-            {currentPage} / {lastPage}
+            {page.currentPage} / {page.lastPage}
           </span>
 
           {
-            currentPage < lastPage ? (
-              <a
-                href={withBase(`/bookmarks/${currentPage + 1}/`)}
-                class="page-btn"
-              >
+            page.url.next ? (
+              <a href={page.url.next} class="page-btn">
                 Next &rarr;
               </a>
             ) : (
