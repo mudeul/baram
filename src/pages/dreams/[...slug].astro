@@ -68,16 +68,13 @@ const formattedDate = `${year}.${month}.${day}`;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
-    /* Flexbox를 사용하여 카드 사이의 간격을 확실하게 확보합니다 */
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2xl);
   }
 
+  /* 블로그 상세 페이지와 동일한 제목 카드 하단 여백(var(--space-xl)) 적용 */
   .post-header {
     display: flex;
     flex-direction: column;
-    /* 기존 margin-bottom 대신 컨테이너의 gap을 믿습니다 */
+    margin-bottom: var(--space-xl);
   }
 
   .post-back {
@@ -117,7 +114,7 @@ const formattedDate = `${year}.${month}.${day}`;
   }
 
   .post-content-panel {
-    /* 간섭 방지 */
+    margin-bottom: var(--space-2xl);
   }
 
   .prose {
