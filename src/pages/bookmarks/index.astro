@@ -30,15 +30,16 @@ const hasNextPage = bookmarks.length > 5;
 
     <section class="section">
       <Container>
-        <ul class="bookmark-list">
-          {
-            pageBookmarks.map((bookmark) => (
-              <li class="bookmark-list-item">
-                <GlassPanel
-                  variant="solid"
-                  padding="md"
-                  className="bookmark-card-panel"
-                >
+        <!-- 리스트 전체를 하나의 GlassPanel 카드로 감쌈 -->
+        <GlassPanel
+          variant="solid"
+          padding="xl"
+          className="list-container-panel"
+        >
+          <ul class="bookmark-list">
+            {
+              pageBookmarks.map((bookmark) => (
+                <li class="bookmark-list-item">
                   <a
                     href={withBase(`/bookmarks/${bookmark.id}/`)}
                     class="bookmark-list-link"
@@ -50,11 +51,11 @@ const hasNextPage = bookmarks.length > 5;
                       )}
                     </div>
                   </a>
-                </GlassPanel>
-              </li>
-            ))
-          }
-        </ul>
+                </li>
+              ))
+            }
+          </ul>
+        </GlassPanel>
 
         <nav class="pagination" aria-label="Pagination">
           <span class="page-btn disabled">&larr; Prev</span>
@@ -114,7 +115,7 @@ const hasNextPage = bookmarks.length > 5;
 
   :global(.section .container),
   :global(.page-header .container) {
-    max-width: 34rem;
+    max-width: 38rem;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
@@ -127,23 +128,17 @@ const hasNextPage = bookmarks.length > 5;
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    max-width: 34rem;
     width: 100%;
-    margin-inline: auto;
   }
 
   .bookmark-list-item {
-    /* 기존 테두리 제거 후 GlassPanel 카드로 대체 */
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: var(--space-md);
   }
 
-  :global(.bookmark-card-panel) {
-    transition:
-      transform var(--transition-fast),
-      border-color var(--transition-fast);
-  }
-
-  :global(.bookmark-card-panel:hover) {
-    border-color: var(--color-accent);
+  .bookmark-list-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
   .bookmark-list-link {
@@ -156,7 +151,7 @@ const hasNextPage = bookmarks.length > 5;
   }
 
   .post-title {
-    font-size: calc(var(--text-lg) * 0.8);
+    font-size: calc(var(--text-lg) * 0.85);
     font-weight: 500;
     flex: 1;
     min-width: 0;
@@ -190,7 +185,7 @@ const hasNextPage = bookmarks.length > 5;
     align-items: center;
     gap: var(--space-md);
     margin-top: var(--space-2xl);
-    max-width: 34rem;
+    max-width: 38rem;
     margin-inline: auto;
   }
 
@@ -223,9 +218,6 @@ const hasNextPage = bookmarks.length > 5;
   @media (max-width: 768px) {
     .page-title {
       font-size: var(--text-3xl);
-    }
-    .bookmark-list-link {
-      flex-direction: row;
     }
   }
 </style>

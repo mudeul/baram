@@ -35,15 +35,16 @@ function formatDate(date: Date) {
 
     <section class="section">
       <Container>
-        <ul class="blog-list">
-          {
-            pagePosts.map((post) => (
-              <li class="blog-list-item">
-                <GlassPanel
-                  variant="solid"
-                  padding="md"
-                  className="blog-card-panel"
-                >
+        <!-- 리스트 전체를 하나의 GlassPanel 카드로 감쌈 -->
+        <GlassPanel
+          variant="solid"
+          padding="xl"
+          className="list-container-panel"
+        >
+          <ul class="blog-list">
+            {
+              pagePosts.map((post) => (
+                <li class="blog-list-item">
                   <a
                     href={withBase(`/blog/${post.id}/`)}
                     class="blog-list-link"
@@ -60,11 +61,11 @@ function formatDate(date: Date) {
                       )}
                     </div>
                   </a>
-                </GlassPanel>
-              </li>
-            ))
-          }
-        </ul>
+                </li>
+              ))
+            }
+          </ul>
+        </GlassPanel>
       </Container>
     </section>
   </main>
@@ -110,7 +111,7 @@ function formatDate(date: Date) {
 
   :global(.section .container),
   :global(.page-header .container) {
-    max-width: 34rem;
+    max-width: 38rem;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
@@ -123,24 +124,17 @@ function formatDate(date: Date) {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    max-width: 34rem;
     width: 100%;
-    margin-inline: auto;
   }
 
   .blog-list-item {
-    /* 개별 리스트 아이템 스타일 초기화 */
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: var(--space-md);
   }
 
-  /* GlassPanel 호버 시 미세한 반응이나 인터랙션 효과 추가 가능 */
-  :global(.blog-card-panel) {
-    transition:
-      transform var(--transition-fast),
-      border-color var(--transition-fast);
-  }
-
-  :global(.blog-card-panel:hover) {
-    border-color: var(--color-accent);
+  .blog-list-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
   }
 
   .blog-list-link {
@@ -153,7 +147,7 @@ function formatDate(date: Date) {
   }
 
   .post-title {
-    font-size: calc(var(--text-lg) * 0.8);
+    font-size: calc(var(--text-lg) * 0.85);
     font-weight: 500;
     flex: 1;
     min-width: 0;
