@@ -39,7 +39,7 @@ function formatDate(date: Date | undefined) {
 
 <BaseLayout
   title={`Bookmarks - Page ${page.currentPage}`}
-  description="유용한 링크 모음"
+  description="♪ 다만 내 것이 되지 않았어"
 >
   <Header />
 
@@ -47,7 +47,7 @@ function formatDate(date: Date | undefined) {
     <section class="page-header">
       <Container>
         <h1 class="page-title">Bookmarks</h1>
-        <p class="page-description">유용한 링크 모음</p>
+        <p class="page-description">♪ 다만 내 것이 되지 않았어</p>
       </Container>
     </section>
 
@@ -111,11 +111,14 @@ function formatDate(date: Date | undefined) {
     min-height: 100dvh;
     padding: 0;
   }
+
+  /* 1페이지와 동일한 헤더 하단 여백 축소 */
   .page-header {
     text-align: center;
-    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
+    padding: var(--space-3xl) 0 var(--space-xs) 0;
     margin-bottom: 0;
   }
+
   .page-title {
     font-size: var(--text-4xl);
     font-weight: 800;
@@ -129,13 +132,26 @@ function formatDate(date: Date | undefined) {
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
+
   .page-description {
     color: var(--color-text-muted);
     font-size: var(--text-base);
   }
+
+  /* 1페이지와 동일한 섹션 상단 여백 축소 */
   .section {
-    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+    padding: var(--space-md) 0 var(--space-3xl) 0;
   }
+
+  /* 1페이지와 동일하게 34rem 및 일관된 패딩 적용 */
+  :global(.section .container),
+  :global(.page-header .container) {
+    max-width: 34rem;
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--space-md);
+  }
+
   .bookmark-list {
     list-style: none;
     padding: 0;
@@ -144,13 +160,15 @@ function formatDate(date: Date | undefined) {
     flex-direction: column;
     gap: var(--space-md);
     max-width: 34rem;
-    width: 90%;
+    width: 100%;
     margin-inline: auto;
   }
+
   .bookmark-list-item {
     border-bottom: 1px solid var(--glass-border);
     padding-bottom: var(--space-md);
   }
+
   .bookmark-list-link {
     display: flex;
     justify-content: space-between;
@@ -160,6 +178,7 @@ function formatDate(date: Date | undefined) {
     color: var(--color-text);
     transition: color var(--transition-fast);
   }
+
   .post-title {
     font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
@@ -168,29 +187,27 @@ function formatDate(date: Date | undefined) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    background: linear-gradient(
-      135deg,
-      var(--color-text),
-      var(--color-accent-dark)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #3f0766; /* 1페이지와 동일한 색상 지정 */
   }
+
   .bookmark-list-link:hover .post-title {
     filter: brightness(1.2);
   }
+
   .post-meta {
     display: flex;
     gap: var(--space-sm);
     align-items: center;
     flex-shrink: 0;
     font-size: calc(var(--text-sm) * 0.9);
-    color: var(--color-text-muted);
+    color: #513664;
   }
+
   .post-author {
     font-weight: 500;
+    color: #513664;
   }
+
   .pagination {
     display: flex;
     justify-content: center;
@@ -200,6 +217,7 @@ function formatDate(date: Date | undefined) {
     max-width: 34rem;
     margin-inline: auto;
   }
+
   .page-btn {
     padding: var(--space-xs) var(--space-md);
     font-size: var(--text-sm);
@@ -210,18 +228,22 @@ function formatDate(date: Date | undefined) {
     text-decoration: none;
     transition: all var(--transition-fast);
   }
+
   .page-btn:hover:not(.disabled) {
     border-color: var(--color-accent);
     color: var(--color-accent);
   }
+
   .page-btn.disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
+
   .page-info {
     font-size: var(--text-sm);
     color: var(--color-text-muted);
   }
+
   @media (max-width: 768px) {
     .page-title {
       font-size: var(--text-3xl);
