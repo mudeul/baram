@@ -3,7 +3,6 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import siteConfig from '@/site.config';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
-import Button from '@/components/ui/Button.astro';
 import Container from '@/components/ui/Container.astro';
 ---
 
@@ -27,16 +26,6 @@ import Container from '@/components/ui/Container.astro';
             🌱🐌 잘 안 되지만.. 어쨌든 하긴 하는데, 역시 안 되네... 다시 해
             볼까...? 어떡하지? 못해... 그래도...를 반복하는 사람 🪼🌊
           </p>
-          <div class="home-hero__actions">
-            <Button
-              href={siteConfig.social.github}
-              external
-              variant="outline"
-              size="lg"
-            >
-              View source <span aria-hidden="true">↗</span>
-            </Button>
-          </div>
         </div>
         <div class="home-hero__orbit" aria-hidden="true">
           <span>겨울</span><span>밤바람</span><span>찬공기</span>
@@ -90,9 +79,8 @@ import Container from '@/components/ui/Container.astro';
 
   .home-hero__footer {
     display: grid;
-    grid-template-columns: minmax(18rem, 1fr) auto;
+    grid-template-columns: 1fr;
     align-items: end;
-    gap: var(--space-2xl);
   }
 
   .home-hero__footer > p {
@@ -100,12 +88,6 @@ import Container from '@/components/ui/Container.astro';
     margin: 0;
     color: var(--color-text-muted);
     font-size: var(--text-lg);
-  }
-
-  .home-hero__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm);
   }
 
   .home-hero__orbit {
@@ -160,10 +142,6 @@ import Container from '@/components/ui/Container.astro';
   }
 
   @media (max-width: 768px) {
-    .home-hero__footer {
-      grid-template-columns: 1fr;
-    }
-
     .home-hero__orbit {
       opacity: 0.25;
     }
