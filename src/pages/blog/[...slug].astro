@@ -10,6 +10,7 @@ import Picture from '@/components/ui/Picture.astro';
 import Toc from '@/components/blog/Toc.astro';
 import { withBase } from '@/lib/url';
 import { getPublishedPosts } from '@/lib/posts';
+import Comments from '@/components/common/Comments.astro';
 import siteConfig from '@/site.config';
 
 export const getStaticPaths = (async () => {
@@ -129,6 +130,11 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
             </aside>
           )
         }
+      </div>
+
+      <!-- 🌟 3. 본문이 완전히 끝난 직후 하단에 댓글창 컴포넌트 추가 -->
+      <div class="container container--narrow">
+        <Comments />
       </div>
     </article>
   </main>
@@ -303,7 +309,6 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
       padding: var(--space-md) 0;
     }
 
-    /* 🌟 모바일에서도 PC와 동일하게 좌우 여백을 주어 카드가 꽉 차지 않도록 고정 */
     .container--narrow,
     .container--wide {
       padding-inline: var(--space-md);
