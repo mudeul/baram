@@ -132,14 +132,8 @@ const hasNextPage = bookmarks.length > 5;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    background: linear-gradient(
-      135deg,
-      var(--color-text),
-      var(--color-accent-dark)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    /* 그라데이션 제거 후 단색 보라색(accent) 적용 */
+    color: var(--color-accent);
   }
   .bookmark-list-link:hover .post-title {
     filter: brightness(1.2);
