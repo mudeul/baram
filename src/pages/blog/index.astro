@@ -128,12 +128,19 @@ function formatDate(date: Date) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: var(--color-text);
-    transition: color var(--transition-fast);
+    /* 북마크와 동일한 그라데이션 적용 */
+    background: linear-gradient(
+      135deg,
+      var(--color-text),
+      var(--color-accent-dark)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .blog-list-link:hover .post-title {
-    color: var(--color-accent);
+    filter: brightness(1.2);
   }
 
   .post-meta {
