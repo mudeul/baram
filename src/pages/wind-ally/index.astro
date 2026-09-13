@@ -36,51 +36,53 @@ const tags = Array.from(allTagsSet);
 
     <section class="section">
       <Container>
-        {/* 기술 스택 카테고리 필터 버튼 영역 */}
-        {
-          tags.length > 0 && (
-            <div class="filter-tags" aria-label="Filter by tech stack">
-              <button class="tag-btn active" data-tag="all">
-                All
-              </button>
-              {tags.map((tag) => (
-                <button class="tag-btn" data-tag={tag}>
-                  {tag}
-                </button>
-              ))}
-            </div>
-          )
-        }
-
-        {/* 인스타그램 스타일 3열 사진 그리드 (오직 사진만 꽉 차게) */}
-        <div class="portfolio-grid">
+        <div class="portfolio-wrapper">
+          {/* 기술 스택 카테고리 필터 버튼 영역 */}
           {
-            allProjects.map((project) => {
-              const projectTechs = project.data.tech || [];
-              const dataTagsAttr = projectTechs.join(',');
-              return (
-                <a
-                  href={withBase(`/wind-ally/${project.id}/`)}
-                  class="portfolio-item"
-                  data-tags={dataTagsAttr}
-                >
-                  {project.data.cover ? (
-                    <Picture
-                      src={project.data.cover}
-                      alt={project.data.title || 'Project Image'}
-                      widths={[400, 800]}
-                      sizes="(min-width: 1024px) 33vw, 100vw"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div class="portfolio-placeholder">
-                      <span>No Image</span>
-                    </div>
-                  )}
-                </a>
-              );
-            })
+            tags.length > 0 && (
+              <div class="filter-tags" aria-label="Filter by tech stack">
+                <button class="tag-btn active" data-tag="all">
+                  All
+                </button>
+                {tags.map((tag) => (
+                  <button class="tag-btn" data-tag={tag}>
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            )
           }
+
+          {/* 인스타그램 스타일 3열 사진 그리드 (오직 사진만 꽉 차게) */}
+          <div class="portfolio-grid">
+            {
+              allProjects.map((project) => {
+                const projectTechs = project.data.tech || [];
+                const dataTagsAttr = projectTechs.join(',');
+                return (
+                  <a
+                    href={withBase(`/wind-ally/${project.id}/`)}
+                    class="portfolio-item"
+                    data-tags={dataTagsAttr}
+                  >
+                    {project.data.cover ? (
+                      <Picture
+                        src={project.data.cover}
+                        alt={project.data.title || 'Project Image'}
+                        widths={[400, 800]}
+                        sizes="(min-width: 1024px) 33vw, 100vw"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div class="portfolio-placeholder">
+                        <span>No Image</span>
+                      </div>
+                    )}
+                  </a>
+                );
+              })
+            }
+          </div>
         </div>
       </Container>
     </section>
@@ -152,6 +154,12 @@ const tags = Array.from(allTagsSet);
 
   .section {
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
+  }
+
+  /* 목록 영역의 최대 너비를 제한하여 가운데 정렬 */
+  .portfolio-wrapper {
+    max-width: 50rem;
+    margin-inline: auto;
   }
 
   /* 카테고리 태그 필터 바 */
