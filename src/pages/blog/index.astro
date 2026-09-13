@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import Container from '@/components/ui/Container.astro';
+import GlassPanel from '@/components/common/GlassPanel.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '@/lib/url';
 
@@ -38,19 +39,28 @@ function formatDate(date: Date) {
           {
             pagePosts.map((post) => (
               <li class="blog-list-item">
-                <a href={withBase(`/blog/${post.id}/`)} class="blog-list-link">
-                  <span class="post-title">{post.data.title}</span>
-                  <div class="post-meta">
-                    {post.data.pubDate && (
-                      <time
-                        datetime={post.data.pubDate.toISOString()}
-                        class="post-date"
-                      >
-                        {formatDate(post.data.pubDate)}
-                      </time>
-                    )}
-                  </div>
-                </a>
+                <GlassPanel
+                  variant="solid"
+                  padding="md"
+                  className="blog-card-panel"
+                >
+                  <a
+                    href={withBase(`/blog/${post.id}/`)}
+                    class="blog-list-link"
+                  >
+                    <span class="post-title">{post.data.title}</span>
+                    <div class="post-meta">
+                      {post.data.pubDate && (
+                        <time
+                          datetime={post.data.pubDate.toISOString()}
+                          class="post-date"
+                        >
+                          {formatDate(post.data.pubDate)}
+                        </time>
+                      )}
+                    </div>
+                  </a>
+                </GlassPanel>
               </li>
             ))
           }
@@ -69,7 +79,6 @@ function formatDate(date: Date) {
     padding: 0;
   }
 
-  /* 다른 페이지들과 동일하게 하단 패딩 축소 */
   .page-header {
     text-align: center;
     padding: var(--space-3xl) 0 var(--space-xs) 0;
@@ -95,12 +104,10 @@ function formatDate(date: Date) {
     font-size: var(--text-base);
   }
 
-  /* 다른 페이지들과 동일하게 상단 패딩 축소 */
   .section {
     padding: var(--space-md) 0 var(--space-3xl) 0;
   }
 
-  /* 다른 페이지들과 동일하게 34rem 및 일관된 패딩 적용 */
   :global(.section .container),
   :global(.page-header .container) {
     max-width: 34rem;
@@ -122,8 +129,18 @@ function formatDate(date: Date) {
   }
 
   .blog-list-item {
-    border-bottom: 1px solid var(--glass-border);
-    padding-bottom: var(--space-md);
+    /* 개별 리스트 아이템 스타일 초기화 */
+  }
+
+  /* GlassPanel 호버 시 미세한 반응이나 인터랙션 효과 추가 가능 */
+  :global(.blog-card-panel) {
+    transition:
+      transform var(--transition-fast),
+      border-color var(--transition-fast);
+  }
+
+  :global(.blog-card-panel:hover) {
+    border-color: var(--color-accent);
   }
 
   .blog-list-link {
@@ -133,7 +150,6 @@ function formatDate(date: Date) {
     gap: var(--space-md);
     text-decoration: none;
     color: var(--color-text);
-    transition: color var(--transition-fast);
   }
 
   .post-title {
