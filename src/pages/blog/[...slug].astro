@@ -61,7 +61,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
       <!-- 1. 타이틀과 히어로 이미지만 감싸는 컴팩트한 컨테이너 (41rem) -->
       <div class="container container--narrow">
         <GlassPanel variant="solid" padding="xl" className="post-header">
-          <a href={withBase('/blog/')} class="post-back">← Back to blog</a>
+          <a href={withBase('/blog/')} class="post-back">← 뒤로</a>
           <h1 class="post-title">{post.data.title}</h1>
 
           <div class="post-meta">
@@ -110,7 +110,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
         }
       </div>
 
-      <!-- 2. 본문 영역만 넓게 확장된 컨테이너 (54rem) -->
+      <!-- 2. 본문 영역 컨테이너 (41rem으로 통일) -->
       <div
         class={`container container--wide post-body ${showToc ? 'post-body--with-toc' : ''}`}
       >
@@ -154,18 +154,12 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
     padding-inline: var(--space-md);
   }
 
-  /* 1. 컨테이너와 본문 카드는 타이틀 카드와 똑같은 좁은 너비(41rem)로 통일 */
+  /* 본문 컨테이너 (타이틀 카드와 똑같은 너비) */
   .container--wide {
     max-width: 41rem;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
-  }
-
-  .post-body :global(.glass-panel.post-content) {
-    max-width: 41rem; /* 카드 크기 자체는 그대로 유지 */
-    margin-inline: auto;
-    width: 100%;
   }
 
   .post-back {
@@ -265,7 +259,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
   }
 
   .post-body :global(.glass-panel.post-content) {
-    max-width: 54rem; /* 본문 카드 너비 제한 */
+    max-width: 41rem;
     margin-inline: auto;
     width: 100%;
   }
@@ -278,7 +272,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
   .prose {
     font-size: var(--text-base);
     line-height: 1.8;
-    max-width: none; /* 혹시 걸려있을 수 있는 내부 최대 너비 제한 해제 */
+    max-width: none;
   }
 
   /* Offset anchored headings from the sticky header */
@@ -309,13 +303,10 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
       padding: var(--space-md) 0;
     }
 
+    /* 🌟 모바일에서도 PC와 동일하게 좌우 여백을 주어 카드가 꽉 차지 않도록 고정 */
     .container--narrow,
     .container--wide {
-      padding-inline: var(--space-xs);
-    }
-
-    .blog-post :global(.glass-panel) {
-      padding: var(--space-md) !important;
+      padding-inline: var(--space-md);
     }
   }
 </style>
