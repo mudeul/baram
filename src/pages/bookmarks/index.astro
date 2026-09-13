@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import Container from '@/components/ui/Container.astro';
-import GlassPanel from '@/components/common/GlassPanel.astro';
+import Tag from '@/components/ui/Tag.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '@/lib/url';
 
@@ -13,8 +13,14 @@ const bookmarks = (await getCollection('bookmarks')).sort(
     new Date(a.data.pubDate ?? 0).valueOf(),
 );
 
-const pageBookmarks = bookmarks.slice(0, 5);
-const hasNextPage = bookmarks.length > 5;
+// 모든 고유 태그 추출
+const allTags = Array.from(
+  new Set(bookmarks.flatMap((bookmark) => bookmark.data.tags || [])),
+).sort();
+
+const pageSize = 5;
+const pageBookmarks = bookmarks.slice(0, pageSize);
+const hasNextPage = bookmarks.length > pageSize;
 ---
 
 <BaseLayout title="Bookmarks" description="♪ 다만 내 것이 되지 않았어">
@@ -30,36 +36,47 @@ const hasNextPage = bookmarks.length > 5;
 
     <section class="section">
       <Container>
-        <!-- 리스트 전체를 하나의 GlassPanel 카드로 감쌈 -->
-        <GlassPanel
-          variant="translucent"
-          padding="xl"
-          className="list-container-panel"
-        >
-          <ul class="bookmark-list">
-            {
-              pageBookmarks.map((bookmark) => (
-                <li class="bookmark-list-item">
-                  <a
-                    href={withBase(`/bookmarks/${bookmark.id}/`)}
-                    class="bookmark-list-link"
-                  >
-                    <span class="post-title">{bookmark.data.title}</span>
-                    <div class="post-meta">
-                      {bookmark.data.author && (
-                        <span class="post-author">{bookmark.data.author}</span>
-                      )}
-                    </div>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </GlassPanel>
+        {/* 태그 카테고리 목록 */}
+        {
+          allTags.length > 0 && (
+            <div class="bookmark-tags-filter">
+              <a href={withBase('/bookmarks/')} class="tag-chip active">
+                All
+              </a>
+              {allTags.map((tag) => (
+                <a href={withBase(`/bookmarks/tag/${tag}/`)} class="tag-chip">
+                  {tag}
+                </a>
+              ))}
+            </div>
+          )
+        }
+
+        <ul class="bookmark-list">
+          {
+            pageBookmarks.map((bookmark) => (
+              <li class="bookmark-list-item">
+                <a
+                  href={withBase(`/bookmarks/${bookmark.id}/`)}
+                  class="bookmark-list-link"
+                >
+                  <span class="post-title">{bookmark.data.title}</span>
+                  <div class="post-meta">
+                    {bookmark.data.author && (
+                      <span class="post-author">{bookmark.data.author}</span>
+                    )}
+                  </div>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
 
         <nav class="pagination" aria-label="Pagination">
           <span class="page-btn disabled">&larr; Prev</span>
-          <span class="page-info">1 / {Math.ceil(bookmarks.length / 5)}</span>
+          <span class="page-info"
+            >1 / {Math.ceil(bookmarks.length / pageSize)}</span
+          >
           {
             hasNextPage ? (
               <a href={withBase('/bookmarks/page/2/')} class="page-btn">
@@ -86,7 +103,7 @@ const hasNextPage = bookmarks.length > 5;
 
   .page-header {
     text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xs) 0;
+    padding: var(--space-3xl) 0 var(--space-xl) 0;
     margin-bottom: 0;
   }
 
@@ -110,15 +127,44 @@ const hasNextPage = bookmarks.length > 5;
   }
 
   .section {
-    padding: var(--space-md) 0 var(--space-3xl) 0;
+    padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
 
   :global(.section .container),
   :global(.page-header .container) {
-    max-width: 38rem;
+    max-width: 34rem;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
+  }
+
+  /* 태그 카테고리 필터 스타일 */
+  .bookmark-tags-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    justify-content: center;
+    margin-bottom: var(--space-xl);
+    max-width: 34rem;
+    margin-inline: auto;
+  }
+
+  .tag-chip {
+    padding: var(--space-2xs) var(--space-sm);
+    font-size: calc(var(--text-xs) * 1.1);
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .tag-chip:hover,
+  .tag-chip.active {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: var(--color-surface-hover, var(--color-surface));
   }
 
   .bookmark-list {
@@ -128,17 +174,14 @@ const hasNextPage = bookmarks.length > 5;
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
+    max-width: 34rem;
     width: 100%;
+    margin-inline: auto;
   }
 
   .bookmark-list-item {
     border-bottom: 1px solid var(--glass-border);
     padding-bottom: var(--space-md);
-  }
-
-  .bookmark-list-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
   }
 
   .bookmark-list-link {
@@ -148,10 +191,11 @@ const hasNextPage = bookmarks.length > 5;
     gap: var(--space-md);
     text-decoration: none;
     color: var(--color-text);
+    transition: color var(--transition-fast);
   }
 
   .post-title {
-    font-size: calc(var(--text-lg) * 0.85);
+    font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
     flex: 1;
     min-width: 0;
@@ -185,7 +229,7 @@ const hasNextPage = bookmarks.length > 5;
     align-items: center;
     gap: var(--space-md);
     margin-top: var(--space-2xl);
-    max-width: 38rem;
+    max-width: 34rem;
     margin-inline: auto;
   }
 
@@ -218,6 +262,9 @@ const hasNextPage = bookmarks.length > 5;
   @media (max-width: 768px) {
     .page-title {
       font-size: var(--text-3xl);
+    }
+    .bookmark-list-link {
+      flex-direction: row;
     }
   }
 </style>
