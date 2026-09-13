@@ -1,132 +1,62 @@
 ---
-import { render } from 'astro:content';
-import type { GetStaticPaths } from 'astro';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
-import GlassPanel from '@/components/common/GlassPanel.astro';
-import Tag from '@/components/ui/Tag.astro';
-import Picture from '@/components/ui/Picture.astro';
-import Toc from '@/components/blog/Toc.astro';
+import Container from '@/components/ui/Container.astro';
+import { getCollection } from 'astro:content';
 import { withBase } from '@/lib/url';
-import { getPublishedPosts } from '@/lib/posts';
-import siteConfig from '@/site.config';
 
-export const getStaticPaths = (async () => {
-  const posts = await getPublishedPosts();
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
-}) satisfies GetStaticPaths;
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
 
-const { post } = Astro.props;
-const { Content, headings } = await render(post);
+const pagePosts = posts.slice(0, 10);
 
-// 🌟 작성일 포맷팅 (YYYY.MM.DD)
-const pubDate = post.data.pubDate;
-const pubYear = pubDate.getFullYear();
-const pubMonth = String(pubDate.getMonth() + 1).padStart(2, '0');
-const pubDay = String(pubDate.getDate()).padStart(2, '0');
-const formattedDate = `${pubYear}.${pubMonth}.${pubDay}`;
-
-// 🌟 수정일 포맷팅 (존재하는 경우 YYYY.MM.DD)
-let updatedDate: string | undefined = undefined;
-if (post.data.updatedDate) {
-  const upDate = post.data.updatedDate;
-  const upYear = upDate.getFullYear();
-  const upMonth = String(upDate.getMonth() + 1).padStart(2, '0');
-  const upDay = String(upDate.getDate()).padStart(2, '0');
-  updatedDate = `${upYear}.${upMonth}.${upDay}`;
+function formatDate(date: Date) {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
 }
-
-const showToc = siteConfig.blog.showToc && headings.length > 0;
 ---
 
-<BaseLayout
-  title={post.data.title}
-  description={post.data.description}
-  ogImage={withBase(`/og/blog/${post.id}.png`)}
-  article={{
-    publishedTime: post.data.pubDate.toISOString(),
-    modifiedTime: post.data.updatedDate?.toISOString(),
-    author: post.data.author,
-    tags: post.data.tags,
-  }}
->
+<BaseLayout title="Blog" description="♪ 무서운 얘기를 해 줄까">
   <Header />
 
-  <main id="main" tabindex="-1" class="main-content">
-    <article class="blog-post">
-      <div class="container">
-        <GlassPanel variant="solid" padding="xl" className="post-header">
-          <a href={withBase('/blog/')} class="post-back">← Back to blog</a>
-          <h1 class="post-title">{post.data.title}</h1>
+  <main id="main" class="main-content">
+    <section class="page-header">
+      <Container>
+        <h1 class="page-title">Blog</h1>
+        <p class="page-description">♪ 무서운 얘기를 해 줄까</p>
+      </Container>
+    </section>
 
-          <div class="post-meta">
-            <time datetime={post.data.pubDate.toISOString()}
-              >{formattedDate}</time
-            >
-            {
-              updatedDate && (
-                <>
-                  <span class="separator" aria-hidden="true">
-                    ·
-                  </span>
-                  <span>Updated {updatedDate}</span>
-                </>
-              )
-            }
-          </div>
-
+    <section class="section">
+      <Container>
+        <ul class="blog-list">
           {
-            post.data.tags.length > 0 && (
-              <div class="post-tags">
-                {post.data.tags.map((tag) => (
-                  <Tag name={tag} />
-                ))}
-              </div>
-            )
+            pagePosts.map((post) => (
+              <li class="blog-list-item">
+                <a href={withBase(`/blog/${post.id}/`)} class="blog-list-link">
+                  <span class="post-title">{post.data.title}</span>
+                  <div class="post-meta">
+                    {post.data.pubDate && (
+                      <time
+                        datetime={post.data.pubDate.toISOString()}
+                        class="post-date"
+                      >
+                        {formatDate(post.data.pubDate)}
+                      </time>
+                    )}
+                  </div>
+                </a>
+              </li>
+            ))
           }
-        </GlassPanel>
-
-        {
-          post.data.heroImage && (
-            <div
-              class="post-hero-image"
-              transition:name={`post-image-${post.id}`}
-            >
-              <Picture
-                src={post.data.heroImage}
-                alt={post.data.heroImageAlt ?? post.data.title}
-                widths={[600, 1200, 1600]}
-                sizes="(min-width: 1024px) 720px, 100vw"
-                loading="eager"
-                fetchpriority="high"
-              />
-            </div>
-          )
-        }
-
-        <div class={`post-body ${showToc ? 'post-body--with-toc' : ''}`}>
-          <GlassPanel variant="solid" padding="xl" className="post-content">
-            <div class="prose">
-              <Content />
-            </div>
-          </GlassPanel>
-
-          {
-            showToc && (
-              <aside class="post-toc">
-                <div class="post-toc__inner">
-                  <Toc headings={headings} />
-                </div>
-              </aside>
-            )
-          }
-        </div>
-      </div>
-    </article>
+        </ul>
+      </Container>
+    </section>
   </main>
 
   <Footer />
@@ -134,52 +64,21 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
 
 <style>
   .main-content {
-    min-height: 100vh; /* fallback */
+    min-height: 100vh;
     min-height: 100dvh;
+    padding: 0;
   }
 
-  .blog-post {
-    padding: var(--space-2xl) 0;
-  }
-
-  /* 목록 페이지(.blog-list)와 동일한 34rem 너비로 설정하여 좌우 여백 일치화 */
-  .blog-post .container {
-    max-width: 34rem;
-    width: 100%;
-    margin-inline: auto;
-    padding-inline: var(--space-md);
-  }
-
-  .post-back {
-    display: inline-block;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    font-size: var(--text-sm);
-    margin-bottom: var(--space-md);
-    transition: color var(--transition-fast);
-  }
-  .post-back:hover {
-    color: var(--color-accent);
-  }
-
-  .post-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .page-header {
     text-align: center;
-    margin-bottom: var(--space-lg);
+    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
+    margin-bottom: 0;
   }
 
-  .post-back {
-    align-self: flex-start;
-  }
-
-  .post-title {
+  .page-title {
     font-size: var(--text-4xl);
     font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: var(--space-lg);
-    text-align: center;
+    margin-bottom: var(--space-sm);
     background: linear-gradient(
       135deg,
       var(--color-text),
@@ -190,98 +89,74 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
     -webkit-text-fill-color: transparent;
   }
 
-  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-    .post-title {
-      background: none;
-      -webkit-text-fill-color: currentColor;
-      color: var(--color-text);
-    }
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+  }
+
+  .section {
+    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+  }
+
+  .blog-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 34rem;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .blog-list-item {
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: var(--space-md);
+  }
+
+  .blog-list-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-md);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: color var(--transition-fast);
+  }
+
+  .post-title {
+    font-size: calc(var(--text-lg) * 0.8);
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #3f0766;
+  }
+
+  .blog-list-link:hover .post-title {
+    filter: brightness(1.2);
   }
 
   .post-meta {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
     gap: var(--space-sm);
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-md);
+    align-items: center;
+    flex-shrink: 0;
+    font-size: calc(var(--text-sm) * 0.9);
+    color: #513664;
   }
 
-  .separator {
-    opacity: 0.5;
-  }
-
-  .post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-xs);
-    margin-top: var(--space-md);
-  }
-
-  .post-hero-image {
-    margin-bottom: var(--space-lg);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--glass-shadow);
-  }
-
-  .post-hero-image :global(img) {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  /* Body + optional TOC sidebar (상단 간격을 xs로 밀착) */
-  .post-body {
-    display: grid;
-    gap: var(--space-xl);
-    margin-top: var(--space-xs);
-    margin-bottom: var(--space-2xl);
-  }
-
-  .post-body--with-toc {
-    grid-template-columns: minmax(0, 1fr) 16rem;
-  }
-
-  .post-toc__inner {
-    position: sticky;
-    top: calc(var(--space-3xl) + var(--space-md));
-  }
-
-  .prose {
-    font-size: var(--text-base);
-    line-height: 1.8;
-  }
-
-  /* Offset anchored headings from the sticky header */
-  .prose :global(:is(h2, h3, h4)) {
-    scroll-margin-top: var(--space-3xl);
-  }
-
-  @media (max-width: 900px) {
-    .post-body--with-toc {
-      grid-template-columns: 1fr;
-    }
-    .post-toc {
-      order: -1;
-    }
-    .post-toc__inner {
-      position: static;
-    }
+  .post-date {
+    font-weight: 500;
+    color: #513664;
   }
 
   @media (max-width: 768px) {
-    .post-title {
+    .page-title {
       font-size: var(--text-3xl);
-    }
-    .post-meta {
-      font-size: var(--text-xs);
-    }
-    .blog-post {
-      padding: var(--space-lg) 0;
     }
   }
 </style>
