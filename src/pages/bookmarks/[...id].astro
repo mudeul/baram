@@ -19,15 +19,6 @@ interface Props {
 
 const { bookmark } = Astro.props;
 const { Content } = await render(bookmark);
-
-function formatDate(date: Date | undefined) {
-  if (!date) return '';
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
 ---
 
 <BaseLayout
@@ -40,15 +31,14 @@ function formatDate(date: Date | undefined) {
     <article class="post-container">
       <header class="post-header">
         <Container>
-          <div class="post-meta">
-            {
-              bookmark.data.author && (
-                <span class="post-author">{bookmark.data.author}</span>
-              )
-            }
-            <span class="post-date">{formatDate(bookmark.data.pubDate)}</span>
-          </div>
           <h1 class="post-title">{bookmark.data.title}</h1>
+          {
+            bookmark.data.author && (
+              <div class="post-meta">
+                <span class="post-author">{bookmark.data.author}</span>
+              </div>
+            )
+          }
         </Container>
       </header>
 
@@ -76,18 +66,10 @@ function formatDate(date: Date | undefined) {
     padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
     margin-bottom: var(--space-2xl);
   }
-  .post-meta {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-md);
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-sm);
-  }
   .post-title {
     font-size: var(--text-3xl);
     font-weight: 800;
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-sm);
     background: linear-gradient(
       135deg,
       var(--color-text),
@@ -96,6 +78,16 @@ function formatDate(date: Date | undefined) {
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+  }
+  .post-meta {
+    display: flex;
+    justify-content: center;
+    font-size: var(--text-sm);
+    color: #513664;
+    margin-top: var(--space-xs);
+  }
+  .post-author {
+    font-weight: 500;
   }
   .markdown-body {
     max-width: 42rem;
