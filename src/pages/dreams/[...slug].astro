@@ -43,7 +43,7 @@ const formattedDate = `${year}.${month}.${day}`;
           <h1 class="post-title">{dream.data.title}</h1>
         </GlassPanel>
 
-        <!-- 본문 카드 -->
+        <!-- 본문 카드 (헤더와의 여백 적용됨) -->
         <GlassPanel variant="solid" padding="xl" className="post-content-panel">
           <div class="prose">
             <Content />
@@ -70,6 +70,7 @@ const formattedDate = `${year}.${month}.${day}`;
     padding-inline: var(--space-md);
   }
 
+  /* ★ 이 부분이 헤더 카드와 본문 카드 사이의 여백을 만들어 줍니다 */
   .post-header-panel {
     margin-bottom: var(--space-md);
   }
