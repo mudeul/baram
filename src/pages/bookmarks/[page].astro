@@ -79,7 +79,7 @@ function formatDate(date: Date | undefined) {
         <nav class="pagination" aria-label="Pagination">
           {
             page.url.prev ? (
-              <a href={page.url.prev} class="page-btn">
+              <a href={withBase(page.url.prev)} class="page-btn">
                 &larr; Prev
               </a>
             ) : (
@@ -93,7 +93,7 @@ function formatDate(date: Date | undefined) {
 
           {
             page.url.next ? (
-              <a href={page.url.next} class="page-btn">
+              <a href={withBase(page.url.next)} class="page-btn">
                 Next &rarr;
               </a>
             ) : (
