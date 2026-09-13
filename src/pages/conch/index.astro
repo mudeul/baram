@@ -38,7 +38,7 @@ const conchItems = await Promise.all(
             <div class="conch-list">
               {conchItems.map((item) => (
                 <details class="conch-item">
-                  <summary>
+                  <summary class="conch-summary">
                     <span class="summary-text">{item.question}</span>
                     <span class="toggle-icon" aria-hidden="true">
                       ›
@@ -131,7 +131,7 @@ const conchItems = await Promise.all(
     background: var(--color-bg-card);
   }
 
-  .conch-item summary {
+  .conch-summary {
     font-weight: 600;
     cursor: pointer;
     color: var(--color-text);
@@ -142,7 +142,7 @@ const conchItems = await Promise.all(
     gap: var(--space-md);
   }
 
-  .conch-item summary::-webkit-details-marker {
+  .conch-summary::-webkit-details-marker {
     display: none;
   }
 
@@ -151,7 +151,7 @@ const conchItems = await Promise.all(
     min-width: 0;
   }
 
-  /* 오른쪽 끝에 위치하는 토글 아이콘 (1.25rem -> 1.4rem으로 10% 가량 확대) */
+  /* 화살표 아이콘만 기존보다 10% 키움 (1.25rem -> 1.4rem) */
   .toggle-icon {
     font-size: 1.4rem;
     font-weight: 500;
@@ -159,6 +159,7 @@ const conchItems = await Promise.all(
     transition: transform var(--transition-fast);
     flex-shrink: 0;
     user-select: none;
+    line-height: 1;
   }
 
   .conch-item[open] .toggle-icon {
