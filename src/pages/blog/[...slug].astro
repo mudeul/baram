@@ -58,7 +58,8 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
 
   <main id="main" tabindex="-1" class="main-content">
     <article class="blog-post">
-      <div class="container">
+      <!-- 1. 타이틀과 히어로 이미지만 감싸는 기존 컴팩트한 컨테이너 (예: 41rem) -->
+      <div class="container container--narrow">
         <GlassPanel variant="solid" padding="xl" className="post-header">
           <a href={withBase('/blog/')} class="post-back">← Back to blog</a>
           <h1 class="post-title">{post.data.title}</h1>
@@ -107,24 +108,27 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
             </div>
           )
         }
+      </div>
 
-        <div class={`post-body ${showToc ? 'post-body--with-toc' : ''}`}>
-          <GlassPanel variant="solid" padding="xl" className="post-content">
-            <div class="prose">
-              <Content />
-            </div>
-          </GlassPanel>
+      <!-- 2. 본문 영역만 더 넓게 확장된 컨테이너 (예: 52rem) -->
+      <div
+        class={`container container--wide post-body ${showToc ? 'post-body--with-toc' : ''}`}
+      >
+        <GlassPanel variant="solid" padding="xl" className="post-content">
+          <div class="prose">
+            <Content />
+          </div>
+        </GlassPanel>
 
-          {
-            showToc && (
-              <aside class="post-toc">
-                <div class="post-toc__inner">
-                  <Toc headings={headings} />
-                </div>
-              </aside>
-            )
-          }
-        </div>
+        {
+          showToc && (
+            <aside class="post-toc">
+              <div class="post-toc__inner">
+                <Toc headings={headings} />
+              </div>
+            </aside>
+          )
+        }
       </div>
     </article>
   </main>
@@ -134,7 +138,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
 
 <style>
   .main-content {
-    min-height: 100vh; /* fallback */
+    min-height: 100vh;
     min-height: 100dvh;
   }
 
@@ -142,9 +146,17 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
     padding: var(--space-2xl) 0;
   }
 
-  /* 상세 페이지 너비: 목록보다 넓은 41rem */
-  .blog-post .container {
+  /* 기본 컨테이너 (제목/상단용 - 기존 아담한 너비 유지) */
+  .container--narrow {
     max-width: 41rem;
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--space-md);
+  }
+
+  /* 본문 전용 컨테이너 (원하시는 대로 넓게 확장, 예: 54rem) */
+  .container--wide {
+    max-width: 54rem;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
@@ -281,15 +293,14 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
       font-size: var(--text-xs);
     }
     .blog-post {
-      padding: var(--space-md) 0; /* 상하 여백을 살짝 줄여서 공간 확보 */
+      padding: var(--space-md) 0;
     }
 
-    /* 모바일에서 컨테이너 좌우 여백을 줄여서 전체 폭 넓히기 */
-    .blog-post .container {
+    .container--narrow,
+    .container--wide {
       padding-inline: var(--space-xs);
     }
 
-    /* 모바일에서 GlassPanel 내부 패딩을 줄여 본문 공간(글자 수) 확보 */
     .blog-post :global(.glass-panel) {
       padding: var(--space-md) !important;
     }
