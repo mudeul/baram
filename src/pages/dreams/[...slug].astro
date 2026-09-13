@@ -44,11 +44,17 @@ const formattedDate = `${year}.${month}.${day}`;
         </GlassPanel>
 
         <!-- 본문 내용 -->
-        <GlassPanel variant="solid" padding="xl" className="post-content-panel">
-          <div class="prose">
-            <Content />
-          </div>
-        </GlassPanel>
+        <div class="post-body">
+          <GlassPanel
+            variant="solid"
+            padding="xl"
+            className="post-content-panel"
+          >
+            <div class="prose">
+              <Content />
+            </div>
+          </GlassPanel>
+        </div>
       </div>
     </article>
   </main>
@@ -63,17 +69,18 @@ const formattedDate = `${year}.${month}.${day}`;
     padding: var(--space-2xl) 0;
   }
 
+  /* 블로그 상세 페이지와 동일한 컨테이너 및 카드 간격 구조 적용 */
   .container {
     max-width: 800px;
+    width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
   }
 
-  /* 블로그 상세 페이지와 동일한 카드 하단 여백 적용 (var(--space-lg)) */
   .post-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-xl);
   }
 
   .post-back {
@@ -112,8 +119,9 @@ const formattedDate = `${year}.${month}.${day}`;
     -webkit-text-fill-color: transparent;
   }
 
-  .post-content-panel {
-    margin-bottom: 0;
+  .post-body {
+    margin-top: 0;
+    margin-bottom: var(--space-2xl);
   }
 
   .prose {
