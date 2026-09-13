@@ -71,7 +71,7 @@ function formatDate(date: Date) {
 
   .page-header {
     text-align: center;
-    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
+    padding: var(--space-3xl) 0 var(--space-xl) 0;
     margin-bottom: 0;
   }
 
@@ -98,6 +98,15 @@ function formatDate(date: Date) {
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
 
+  /* 다른 페이지들과 동일하게 34rem 및 일관된 패딩 적용 */
+  :global(.section .container),
+  :global(.page-header .container) {
+    max-width: 34rem;
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--space-md);
+  }
+
   .blog-list {
     list-style: none;
     padding: 0;
@@ -105,7 +114,7 @@ function formatDate(date: Date) {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
-    max-width: 41rem;
+    max-width: 34rem;
     width: 100%;
     margin-inline: auto;
   }
