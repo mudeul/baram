@@ -10,10 +10,10 @@
     data-category-id="DIC_kwDOUR8NH84DFgWZ"
     data-mapping="pathname"
     data-strict="0"
-    data-reactions-enabled="1"
+    data-reactions-enabled="0"
     data-emit-metadata="0"
     data-input-position="bottom"
-    data-theme="noborder_light"
+    data-theme="catppuccin_latte"
     data-lang="ko"
     crossorigin="anonymous"
     async
@@ -21,10 +21,47 @@
 </div>
 
 <style>
+---
+// src/components/common/Comments.astro
+---
+
+<div class="giscus-container">
+  <script src="https://giscus.app/client.js"
+        data-repo="mudeul/baram"
+        data-repo-id="R_kgDOUR8NHw"
+        data-category-id="DIC_kwDOUR8NH84DFgWZ"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="noborder_light"
+        data-lang="ko"
+        crossorigin="anonymous"
+        async
+        is:inline>
+  </script>
+</div>
+
+<style>
   .giscus-container {
-    margin-top: 3rem;
+    margin-top: 3.5rem;
     width: 100%;
-    border-top: 1px solid var(--glass-border, #eaeaea);
-    padding-top: 2rem;
+    /* 반투명 유리 스타일과 테두리 적용 */
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 1rem;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
   }
+
+  /* 다크모드가 적용될 때의 반투명 배경 대응 */
+  :global(.dark) .giscus-container {
+    background: rgba(18, 18, 18, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  }
+</style>
 </style>
