@@ -43,6 +43,9 @@ const formattedDate = `${year}.${month}.${day}`;
           <h1 class="post-title">{dream.data.title}</h1>
         </GlassPanel>
 
+        <!-- 강제로 적당한 간격을 만들기 위한 스페이서 -->
+        <div class="post-spacer"></div>
+
         <!-- 본문 카드 -->
         <GlassPanel variant="solid" padding="xl" className="post-content-panel">
           <div class="prose">
@@ -70,11 +73,14 @@ const formattedDate = `${year}.${month}.${day}`;
     padding-inline: var(--space-md);
   }
 
-  /* 블로그 상세 페이지와 동일한 제목 카드 하단 여백(var(--space-xl)) 적용 */
   .post-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: var(--space-xl);
+  }
+
+  /* 제목 카드와 본문 카드 사이의 간격을 딱 알맞은 크기(1.5rem)로 고정합니다 */
+  .post-spacer {
+    height: 1.5rem;
   }
 
   .post-back {
@@ -111,10 +117,6 @@ const formattedDate = `${year}.${month}.${day}`;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-  }
-
-  .post-content-panel {
-    margin-bottom: var(--space-2xl);
   }
 
   .prose {
