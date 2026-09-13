@@ -121,7 +121,6 @@ function formatDate(date: Date) {
   }
 
   .post-title {
-    /* 북마크 목록처럼 크기를 줄임 (0.8 곱하기) */
     font-size: calc(var(--text-lg) * 0.8);
     font-weight: 500;
     flex: 1;
@@ -129,7 +128,6 @@ function formatDate(date: Date) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    /* 색상은 #3f0766 단색 유지 */
     color: #3f0766;
   }
 
@@ -143,6 +141,9 @@ function formatDate(date: Date) {
     align-items: center;
     flex-shrink: 0;
     font-size: calc(var(--text-sm) * 0.9);
+  }
+
+  .post-date {
     color: #513664;
   }
 
