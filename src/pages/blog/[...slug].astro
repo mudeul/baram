@@ -281,7 +281,17 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
       font-size: var(--text-xs);
     }
     .blog-post {
-      padding: var(--space-lg) 0;
+      padding: var(--space-md) 0; /* 상하 여백을 살짝 줄여서 공간 확보 */
+    }
+
+    /* 모바일에서 컨테이너 좌우 여백을 줄여서 전체 폭 넓히기 */
+    .blog-post .container {
+      padding-inline: var(--space-xs);
+    }
+
+    /* 모바일에서 GlassPanel 내부 패딩을 줄여 본문 공간(글자 수) 확보 */
+    .blog-post :global(.glass-panel) {
+      padding: var(--space-md) !important;
     }
   }
 </style>
