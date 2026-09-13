@@ -33,6 +33,7 @@ const blog = defineCollection({
       author: z.string().default('Anonymous'),
       draft: z.boolean().default(false),
       featured: z.boolean().default(false),
+      pinned: z.boolean().optional(), //
     }),
 });
 
