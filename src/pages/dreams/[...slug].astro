@@ -66,16 +66,14 @@ const formattedDate = `${year}.${month}.${day}`;
   .container {
     max-width: 800px;
     margin-inline: auto;
-    padding-inline: var(--space-lg);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md); /* 블로그 상세 페이지와 동일한 카드 간 여백 적용 */
+    padding-inline: var(--space-md);
   }
 
+  /* 블로그 상세 페이지와 동일한 카드 하단 여백 적용 (var(--space-lg)) */
   .post-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: 0; /* 컨테이너의 gap으로 제어하므로 0으로 초기화 */
+    margin-bottom: var(--space-lg);
   }
 
   .post-back {
