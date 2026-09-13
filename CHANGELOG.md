@@ -5,6 +5,14 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.0 (2026-09-13)
+
+
+### Bug Fixes
+
+* Giscus 댓글 컴포넌트 연동 및 포맷 정리 ([d351b86](https://github.com/mudeul/baram/commit/d351b86fbc2e0853924be98ffef65b7db618f7f9))
+* resolve case-sensitivity issue for Comments.astro ([7845a47](https://github.com/mudeul/baram/commit/7845a477f6e5b4df062df3865de31fcdf29da547))
+
 ## [1.3.0](https://github.com/kpab/astro-haze/compare/v1.2.1...v1.3.0) (2026-08-16)
 
 ### Features
