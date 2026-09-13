@@ -1,14 +1,79 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import Footer from '@/components/common/Footer.astro';
+import Container from '@/components/ui/Container.astro';
+import { getCollection } from 'astro:content';
+import { withBase } from '@/lib/url';
+
+// dreams 컨텐츠 컬렉션 가져오기 (컬렉션 이름이 다르면 수정하세요)
+const dreams = (await getCollection('dreams')).sort(
+  (a, b) =>
+    new Date(b.data.pubDate ?? 0).valueOf() -
+    new Date(a.data.pubDate ?? 0).valueOf(),
+);
+
+function formatDate(date: Date | undefined) {
+  if (!date) return '';
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}.${month}.${day}`;
+}
+---
+
+<BaseLayout title="Dreams" description="꿈 기록 저장소">
+  <Header />
+
+  <main id="main" class="main-content">
+    <section class="page-header">
+      <Container>
+        <h1 class="page-title">Dreams</h1>
+        <p class="page-description">꿈 기록 저장소</p>
+      </Container>
+    </section>
+
+    <section class="section">
+      <Container>
+        {
+          dreams.length > 0 ? (
+            <div class="timeline">
+              {dreams.map((dream) => (
+                <div class="timeline-item">
+                  <div class="timeline-dot" />
+                  <div class="timeline-content">
+                    <span class="timeline-date">
+                      {formatDate(dream.data.pubDate)}
+                    </span>
+                    <h2 class="timeline-post-title">
+                      <a href={withBase(`/dreams/${dream.id}/`)}>
+                        {dream.data.title}
+                      </a>
+                    </h2>
+                    {dream.data.description && (
+                      <p class="timeline-excerpt">{dream.data.description}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p class="empty-state">아직 기록된 꿈이 없습니다.</p>
+          )
+        }
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
 <style>
   .main-content {
     min-height: 100vh;
     min-height: 100dvh;
     padding: 0;
-  }
-
-  .container {
-    max-width: 800px;
-    margin-inline: auto;
-    padding-inline: var(--space-lg);
   }
 
   .page-header {
@@ -36,12 +101,18 @@
     font-size: var(--text-base);
   }
 
+  .section {
+    padding: var(--space-2xl) 0 var(--space-3xl) 0;
+  }
+
   /* 타임라인 섹션에 상단 여백 추가 */
   .timeline {
     position: relative;
     padding-left: 2rem;
     padding-top: var(--space-2xl);
     padding-bottom: var(--space-3xl);
+    max-width: 800px;
+    margin-inline: auto;
   }
 
   /* 타임라인 수직 연결선 */
@@ -63,11 +134,11 @@
     margin-bottom: var(--space-xl);
   }
 
-  /* 타임라인 동그라미 마커: 선보다 1mm 더 왼쪽으로 미세 조정 */
+  /* 타임라인 동그라미 마커 */
   .timeline-dot {
     position: absolute;
     left: calc(-2rem + 0.7rem);
-    top: 1.5rem;
+    top: 0.5rem;
     transform: translateX(-50%);
     width: 10px;
     height: 10px;
