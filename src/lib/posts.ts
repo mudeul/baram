@@ -27,9 +27,17 @@ export async function getPublishedPosts(): Promise<Post[]> {
   const posts = await getCollection('blog', ({ data }) =>
     import.meta.env.PROD ? data.draft !== true : true,
   );
-  return posts.sort(
-    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-  );
+  return posts.sort((a, b) => {
+    // 1순위: pinned가 true인 글을 맨 위로 올림
+    const aPinned = a.data.pinned ? 1 : 0;
+    const bPinned = b.data.pinned ? 1 : 0;
+    if (aPinned !== bPinned) {
+      return bPinned - aPinned; // 값이 큰(true인) 쪽이 앞으로 정렬됨
+    }
+
+    // 2순위: 기존 최신순 정렬 (pubDate 기준)
+    return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+  });
 }
 
 /**

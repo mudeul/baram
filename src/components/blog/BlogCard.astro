@@ -12,10 +12,10 @@ export interface Props {
   heroImageAlt?: string;
   tags?: string[];
   href: string;
-  /** Entry id, used to pair this card's image with the post's hero image. */
   slug: string;
   readingTime?: number;
   featured?: boolean;
+  pinned?: boolean; // 🌟 추가
   class?: string;
 }
 
@@ -29,6 +29,7 @@ const {
   href,
   slug,
   featured = false,
+  pinned = false, // 🌟 추가
   class: className = '',
 } = Astro.props;
 
@@ -73,7 +74,30 @@ const formattedDate = `${year}.${month}.${day}`;
     </header>
 
     <h3 class="blog-card__title">
-      <a href={href}>{title}</a>
+      <a href={href}>
+        {title}
+        {/* 🌟 pinned가 true일 때 SVG 핀 아이콘 표시 */}
+        {
+          pinned && (
+            <span class="pinned-badge" title="Pinned">
+              <svg
+                class="pinned-icon-svg"
+                viewBox="0 0 24 24"
+                width="1em"
+                height="1em"
+                stroke="currentColor"
+                stroke-width="2"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="12" y1="17" x2="12" y2="22" />
+                <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-.89 1.79l-1.78.9A2 2 0 0 0 5 15.24Z" />
+              </svg>
+            </span>
+          )
+        }
+      </a>
     </h3>
 
     <p class="blog-card__description">{description}</p>
@@ -226,5 +250,19 @@ const formattedDate = `${year}.${month}.${day}`;
     .blog-card:hover .blog-card__image :global(img) {
       transform: none;
     }
+  }
+
+  .pinned-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 0.4rem;
+    font-size: 0.9em;
+    vertical-align: middle;
+    color: var(--color-accent); /* 포인트 컬러(테마 색상) 연동 */
+  }
+
+  .pinned-icon-svg {
+    /* 필요에 따라 미세한 위치나 회전 조절 가능 */
+    transform: rotate(45deg); /* 핀을 대각선으로 예쁘게 꽂힌 모양으로 회전 */
   }
 </style>

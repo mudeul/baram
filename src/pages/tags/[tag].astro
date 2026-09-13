@@ -71,8 +71,7 @@ const { tag, posts } = Astro.props;
 
   .tag-header {
     text-align: center;
-    /* 🌟 헤더(제목, 개수 등)와 아래 콘텐츠 사이의 여백을 넉넉하게 넓혀줍니다 */
-    margin-bottom: var(--space-3xl);
+    margin-bottom: calc(var(--space-3xl) * 1.05);
   }
 
   .tag-back {
