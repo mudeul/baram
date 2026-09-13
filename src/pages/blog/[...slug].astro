@@ -58,7 +58,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
 
   <main id="main" tabindex="-1" class="main-content">
     <article class="blog-post">
-      <!-- 1. 타이틀과 히어로 이미지만 감싸는 기존 컴팩트한 컨테이너 (예: 41rem) -->
+      <!-- 1. 타이틀과 히어로 이미지만 감싸는 컴팩트한 컨테이너 (41rem) -->
       <div class="container container--narrow">
         <GlassPanel variant="solid" padding="xl" className="post-header">
           <a href={withBase('/blog/')} class="post-back">← Back to blog</a>
@@ -110,7 +110,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
         }
       </div>
 
-      <!-- 2. 본문 영역만 더 넓게 확장된 컨테이너 (예: 52rem) -->
+      <!-- 2. 본문 영역만 넓게 확장된 컨테이너 (54rem) -->
       <div
         class={`container container--wide post-body ${showToc ? 'post-body--with-toc' : ''}`}
       >
@@ -146,7 +146,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
     padding: var(--space-2xl) 0;
   }
 
-  /* 기본 컨테이너 (제목/상단용 - 기존 아담한 너비 유지) */
+  /* 기본 컨테이너 (제목/상단용 - 아담한 너비 유지) */
   .container--narrow {
     max-width: 41rem;
     width: 100%;
@@ -154,12 +154,18 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
     padding-inline: var(--space-md);
   }
 
-  /* 본문 전용 컨테이너 (원하시는 대로 넓게 확장, 예: 54rem) */
+  /* 1. 컨테이너와 본문 카드는 타이틀 카드와 똑같은 좁은 너비(41rem)로 통일 */
   .container--wide {
-    max-width: 54rem;
+    max-width: 41rem;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
+  }
+
+  .post-body :global(.glass-panel.post-content) {
+    max-width: 41rem; /* 카드 크기 자체는 그대로 유지 */
+    margin-inline: auto;
+    width: 100%;
   }
 
   .post-back {
@@ -246,7 +252,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
     display: block;
   }
 
-  /* Body + optional TOC sidebar */
+  /* Body + optional TOC sidebar 그리드 설정 */
   .post-body {
     display: grid;
     gap: var(--space-xl);
@@ -258,6 +264,12 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
     grid-template-columns: minmax(0, 1fr) 16rem;
   }
 
+  .post-body :global(.glass-panel.post-content) {
+    max-width: 54rem; /* 본문 카드 너비 제한 */
+    margin-inline: auto;
+    width: 100%;
+  }
+
   .post-toc__inner {
     position: sticky;
     top: calc(var(--space-3xl) + var(--space-md));
@@ -266,6 +278,7 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
   .prose {
     font-size: var(--text-base);
     line-height: 1.8;
+    max-width: none; /* 혹시 걸려있을 수 있는 내부 최대 너비 제한 해제 */
   }
 
   /* Offset anchored headings from the sticky header */

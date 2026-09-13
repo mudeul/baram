@@ -291,7 +291,7 @@ button {
 
 /* Prose styling for content */
 .prose {
-  max-width: 65ch;
+  max-width: 80ch;
   color: var(--color-text);
 }
 
