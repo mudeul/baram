@@ -6,7 +6,6 @@ import Container from '@/components/ui/Container.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '@/lib/url';
 
-// dreams 컨텐츠 컬렉션 가져오기 (컬렉션 이름이 다르면 수정하세요)
 const dreams = (await getCollection('dreams')).sort(
   (a, b) =>
     new Date(b.data.pubDate ?? 0).valueOf() -
@@ -38,24 +37,23 @@ function formatDate(date: Date | undefined) {
       <Container>
         {
           dreams.length > 0 ? (
-            <div class="timeline">
+            <div class="dreams-list">
               {dreams.map((dream) => (
-                <div class="timeline-item">
-                  <div class="timeline-dot" />
-                  <div class="timeline-content">
-                    <span class="timeline-date">
+                <article class="glass-panel dream-card">
+                  <div class="dream-content">
+                    <span class="dream-date">
                       {formatDate(dream.data.pubDate)}
                     </span>
-                    <h2 class="timeline-post-title">
+                    <h2 class="dream-post-title">
                       <a href={withBase(`/dreams/${dream.id}/`)}>
                         {dream.data.title}
                       </a>
                     </h2>
                     {dream.data.description && (
-                      <p class="timeline-excerpt">{dream.data.description}</p>
+                      <p class="dream-excerpt">{dream.data.description}</p>
                     )}
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           ) : (
@@ -105,82 +103,51 @@ function formatDate(date: Date | undefined) {
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
 
-  /* 타임라인 섹션에 상단 여백 추가 */
-  .timeline {
-    position: relative;
-    padding-left: 2rem;
-    padding-top: var(--space-2xl);
-    padding-bottom: var(--space-3xl);
-    max-width: 800px;
+  .dreams-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-width: 40rem;
     margin-inline: auto;
   }
 
-  /* 타임라인 수직 연결선 */
-  .timeline::before {
-    content: '';
-    position: absolute;
-    top: var(--space-2xl);
-    bottom: var(--space-3xl);
-    left: 0.75rem;
-    width: 1px;
-    background-color: var(--color-accent);
-    opacity: 0.3;
-    z-index: 1;
+  .dream-card {
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    transition:
+      transform var(--transition-fast),
+      border-color var(--transition-fast);
   }
 
-  /* 각 타임라인 아이템 */
-  .timeline-item {
-    position: relative;
-    margin-bottom: var(--space-xl);
-  }
-
-  /* 타임라인 동그라미 마커 */
-  .timeline-dot {
-    position: absolute;
-    left: calc(-2rem + 0.7rem);
-    top: 0.5rem;
-    transform: translateX(-50%);
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--color-accent);
-    border: 2px solid var(--color-bg);
-    box-shadow: 0 0 0 1px var(--color-border);
-    z-index: 2;
-  }
-
-  .timeline-content {
-    transition: transform var(--transition-fast);
-  }
-
-  .timeline-content:hover {
+  .dream-card:hover {
     transform: translateY(-2px);
+    border-color: var(--color-accent);
   }
 
-  .timeline-date {
+  .dream-date {
     display: block;
     font-size: var(--text-xs);
     color: var(--color-text-muted);
     margin-bottom: var(--space-xs);
   }
 
-  .timeline-post-title {
+  .dream-post-title {
     font-size: var(--text-xl);
     font-weight: 700;
     margin-bottom: var(--space-xs);
   }
 
-  .timeline-post-title a {
+  .dream-post-title a {
     color: var(--color-text);
     text-decoration: none;
     transition: color var(--transition-fast);
   }
 
-  .timeline-post-title a:hover {
+  .dream-post-title a:hover {
     color: var(--color-accent);
   }
 
-  .timeline-excerpt {
+  .dream-excerpt {
     color: var(--color-text-muted);
     font-size: var(--text-sm);
     line-height: 1.6;
@@ -193,13 +160,8 @@ function formatDate(date: Date | undefined) {
   }
 
   @media (max-width: 768px) {
-    .timeline {
-      padding-left: 1.75rem;
-    }
-    .timeline-dot {
-      left: calc(-1.75rem + 0.75rem);
-      width: 9px;
-      height: 9px;
+    .page-title {
+      font-size: var(--text-3xl);
     }
   }
 </style>
