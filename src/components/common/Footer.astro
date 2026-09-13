@@ -25,8 +25,8 @@ const socialIcons = {
           <p class="footer-description">{siteConfig.description}</p>
         </div>
 
-        <!-- Social Links -->
-        <div class="footer-section">
+        <!-- Social Links (Connect 섹션) -->
+        <div class="footer-section social-section">
           <h4 class="footer-subtitle">Connect</h4>
           <div class="social-links">
             {
@@ -123,6 +123,14 @@ const socialIcons = {
     gap: var(--space-md);
   }
 
+  /* 🌟 Connect 섹션만 오른쪽으로 밀어내기 (PC 화면 기준) */
+  @media (min-width: 769px) {
+    .social-section {
+      margin-left: auto; /* 여백을 자동으로 채워 오른쪽 끝으로 보냄 */
+      /* 혹은 고정된 값으로 밀고 싶다면 margin-left: var(--space-3xl); 등으로 변경 가능합니다 */
+    }
+  }
+
   .footer-title {
     font-size: var(--text-2xl);
     font-weight: 700;
@@ -150,7 +158,6 @@ const socialIcons = {
     font-weight: 600;
     margin: 0;
     color: var(--color-text);
-    margin-left: 4px; /* 🌟 이 줄을 추가해서 오른쪽으로 살짝 밀어줍니다 (간격이 부족하면 6px 등으로 늘려보세요) */
   }
 
   .footer-description {
@@ -170,6 +177,7 @@ const socialIcons = {
     align-items: center;
     justify-content: center;
     width: 40px;
+    px;
     height: 40px;
     border-radius: var(--radius-md);
     background: var(--glass-bg);
@@ -228,10 +236,8 @@ const socialIcons = {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
-  /* 🌟 두 번째 소셜 링크(블루스키)의 아이콘 전체 위치를 아래로 살짝 조정 */
+
   .social-links a:nth-child(2) svg {
-    transform: translateY(
-      1.5px
-    ); /* 필요에 따라 1px ~ 2px 사이로 조절해보세요 */
+    transform: translateY(1.5px);
   }
 </style>
