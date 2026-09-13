@@ -9,7 +9,7 @@ import { satteri } from '@astrojs/markdown-satteri';
 import satteriBaseUrls from './src/lib/satteri-base-urls.ts';
 
 // Served from a GitHub Pages project site: https://kpab.github.io/astro-haze/
-const SITE = 'https://mudeul.page';
+// const SITE = 'https://mudeul.page';
 const BASE = ''; // '/baram' 에서 빈 문자열('')로 변경!
 const BLOG_DIR = 'src/content/blog';
 
