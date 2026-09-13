@@ -112,7 +112,7 @@ const hasNextPage = bookmarks.length > pageSize;
   /* Blog와 완전히 동일한 헤더 여백 및 패딩 적용 */
   .page-header {
     text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xs) 0;
+    padding: var(--space-3xl) 0 var(--space-xl) 0; /* 👈 하단 패딩을 키워줍니다 */
     margin-bottom: 0;
   }
 
@@ -136,7 +136,7 @@ const hasNextPage = bookmarks.length > pageSize;
   }
 
   .section {
-    padding: var(--space-md) 0 var(--space-3xl) 0;
+    padding: 0 0 var(--space-3xl) 0; /* 👈 상단 패딩을 없애고 헤더와 자연스럽게 연결 */
   }
 
   :global(.section .container),

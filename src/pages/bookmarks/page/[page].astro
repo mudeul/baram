@@ -115,7 +115,7 @@ function formatDate(date: Date | undefined) {
   /* 1페이지와 동일한 헤더 하단 여백 축소 */
   .page-header {
     text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xs) 0;
+    padding: var(--space-3xl) 0 var(--space-xl) 0; /* 👈 하단 여백 넓히기 */
     margin-bottom: 0;
   }
 
@@ -140,7 +140,7 @@ function formatDate(date: Date | undefined) {
 
   /* 1페이지와 동일한 섹션 상단 여백 축소 */
   .section {
-    padding: var(--space-md) 0 var(--space-3xl) 0;
+    padding: 0 0 var(--space-3xl) 0; /* 👈 상단 패딩을 없애고 헤더와 자연스럽게 연결 */
   }
 
   /* 1페이지와 동일하게 34rem 및 일관된 패딩 적용 */
