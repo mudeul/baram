@@ -92,34 +92,47 @@ const tags = Array.from(allTagsSet);
 </BaseLayout>
 
 <script>
-  // 클라이언트 측 기술 스택 필터링 스크립트
-  document.addEventListener('DOMContentLoaded', () => {
+  // Astro 뷰 트랜지션 환경 및 일반 로드 시 모두 안전하게 동작하도록 수정
+  function initWindAllyFilter() {
     const filterButtons = document.querySelectorAll('.tag-btn');
     const items = document.querySelectorAll('.portfolio-item');
 
+    if (filterButtons.length === 0 || items.length === 0) return;
+
     filterButtons.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        filterButtons.forEach((b) => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const selectedTag = btn.getAttribute('data-tag');
-
-        items.forEach((item) => {
-          const itemTags = item.getAttribute('data-tags')?.split(',') || [];
-          if (
-            selectedTag === 'all' ||
-            (selectedTag && itemTags.includes(selectedTag))
-          ) {
-            (item as HTMLElement).style.display = 'block';
-          } else {
-            (item as HTMLElement).style.display = 'none';
-          }
-        });
-      });
+      // 기존 이벤트가 중복으로 쌓이는 것을 방지하기 위해 clone 대신 간단히 처리하거나 체크
+      btn.removeEventListener('click', handleFilterClick);
+      btn.addEventListener('click', handleFilterClick);
     });
-  });
-</script>
+  }
 
+  function handleFilterClick(this: HTMLElement) {
+    const filterButtons = document.querySelectorAll('.tag-btn');
+    const items = document.querySelectorAll('.portfolio-item');
+
+    filterButtons.forEach((b) => b.classList.remove('active'));
+    this.classList.add('active');
+
+    const selectedTag = this.getAttribute('data-tag');
+
+    items.forEach((item) => {
+      const itemTags = item.getAttribute('data-tags')?.split(',') || [];
+      if (
+        selectedTag === 'all' ||
+        (selectedTag && itemTags.includes(selectedTag))
+      ) {
+        (item as HTMLElement).style.display = 'block';
+      } else {
+        (item as HTMLElement).style.display = 'none';
+      }
+    });
+  }
+
+  // 페이지가 처음 로드될 때 실행
+  document.addEventListener('DOMContentLoaded', initWindAllyFilter);
+  // Astro 뷰 트랜지션으로 페이지가 전환되어 들어올 때 실행
+  document.addEventListener('astro:page-load', initWindAllyFilter);
+</script>
 <style>
   .main-content {
     min-height: 100vh;
