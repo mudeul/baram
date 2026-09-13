@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
-import Container from '@/components/ui/Container.astro';
 import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
@@ -27,72 +26,67 @@ const tags = Array.from(allTagsSet);
   <Header />
 
   <main id="main" tabindex="-1" class="main-content">
-    <section class="page-header">
-      <Container>
+    <div class="container">
+      <div class="page-header">
         <h1 class="page-title">Wind-Ally</h1>
         <p class="page-description">찰나의 목격자</p>
-      </Container>
-    </section>
+      </div>
 
-    <section class="section">
-      <Container>
-        <div class="portfolio-wrapper">
-          {/* 기술 스택 카테고리 필터 버튼 영역 */}
-          {
-            tags.length > 0 && (
-              <div class="filter-tags" aria-label="Filter by tech stack">
-                <button class="tag-btn active" data-tag="all">
-                  All
+      <div class="portfolio-wrapper">
+        {/* 기술 스택 카테고리 필터 버튼 영역 */}
+        {
+          tags.length > 0 && (
+            <div class="filter-tags" aria-label="Filter by tech stack">
+              <button class="tag-btn active" data-tag="all">
+                All
+              </button>
+              {tags.map((tag) => (
+                <button class="tag-btn" data-tag={tag}>
+                  {tag}
                 </button>
-                {tags.map((tag) => (
-                  <button class="tag-btn" data-tag={tag}>
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            )
-          }
+              ))}
+            </div>
+          )
+        }
 
-          {/* 인스타그램 스타일 3열 사진 그리드 (오직 사진만 꽉 차게) */}
-          <div class="portfolio-grid">
-            {
-              allProjects.map((project) => {
-                const projectTechs = project.data.tech || [];
-                const dataTagsAttr = projectTechs.join(',');
-                return (
-                  <a
-                    href={withBase(`/wind-ally/${project.id}/`)}
-                    class="portfolio-item"
-                    data-tags={dataTagsAttr}
-                  >
-                    {project.data.cover ? (
-                      <Picture
-                        src={project.data.cover}
-                        alt={project.data.title || 'Project Image'}
-                        widths={[400, 800]}
-                        sizes="(min-width: 1024px) 33vw, 100vw"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div class="portfolio-placeholder">
-                        <span>No Image</span>
-                      </div>
-                    )}
-                  </a>
-                );
-              })
-            }
-          </div>
+        {/* 인스타그램 스타일 3열 사진 그리드 (오직 사진만 꽉 차게) */}
+        <div class="portfolio-grid">
+          {
+            allProjects.map((project) => {
+              const projectTechs = project.data.tech || [];
+              const dataTagsAttr = projectTechs.join(',');
+              return (
+                <a
+                  href={withBase(`/wind-ally/${project.id}/`)}
+                  class="portfolio-item"
+                  data-tags={dataTagsAttr}
+                >
+                  {project.data.cover ? (
+                    <Picture
+                      src={project.data.cover}
+                      alt={project.data.title || 'Project Image'}
+                      widths={[400, 800]}
+                      sizes="(min-width: 1024px) 33vw, 100vw"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="portfolio-placeholder">
+                      <span>No Image</span>
+                    </div>
+                  )}
+                </a>
+              );
+            })
+          }
         </div>
-      </Container>
-    </section>
+      </div>
+    </div>
   </main>
 
   <Footer />
 </BaseLayout>
 
 <script>
-  // Astro 뷰 트랜지션 환경 및 일반 로드 시 모두 안전하게 동작하도록 수정
   function initWindAllyFilter() {
     const filterButtons = document.querySelectorAll('.tag-btn');
     const items = document.querySelectorAll('.portfolio-item');
@@ -100,7 +94,6 @@ const tags = Array.from(allTagsSet);
     if (filterButtons.length === 0 || items.length === 0) return;
 
     filterButtons.forEach((btn) => {
-      // 기존 이벤트가 중복으로 쌓이는 것을 방지하기 위해 clone 대신 간단히 처리하거나 체크
       btn.removeEventListener('click', handleFilterClick);
       btn.addEventListener('click', handleFilterClick);
     });
@@ -128,28 +121,32 @@ const tags = Array.from(allTagsSet);
     });
   }
 
-  // 페이지가 처음 로드될 때 실행
   document.addEventListener('DOMContentLoaded', initWindAllyFilter);
-  // Astro 뷰 트랜지션으로 페이지가 전환되어 들어올 때 실행
   document.addEventListener('astro:page-load', initWindAllyFilter);
 </script>
+
 <style>
   .main-content {
     min-height: 100vh;
     min-height: 100dvh;
-    padding: 0;
+    padding: var(--space-2xl) 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin-inline: auto;
+    padding-inline: var(--space-lg);
   }
 
   .page-header {
     text-align: center;
-    padding: calc(var(--space-3xl) - 4px) 0 var(--space-xl) 0;
-    margin-bottom: 0;
+    margin-bottom: var(--space-xl);
   }
 
   .page-title {
     font-size: var(--text-4xl);
     font-weight: 800;
-    margin-bottom: var(--space-sm);
+    margin-bottom: var(--space-xs);
     background: linear-gradient(
       135deg,
       var(--color-text),
@@ -165,11 +162,7 @@ const tags = Array.from(allTagsSet);
     font-size: var(--text-base);
   }
 
-  .section {
-    padding: var(--space-2xl) 0 var(--space-3xl) 0;
-  }
-
-  /* 목록 영역의 최대 너비를 제한하여 가운데 정렬 */
+  /* 목록 및 필터 영역 최대 너비 제한 */
   .portfolio-wrapper {
     max-width: 50rem;
     margin-inline: auto;
