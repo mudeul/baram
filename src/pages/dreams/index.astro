@@ -37,23 +37,26 @@ function formatDate(date: Date | undefined) {
       <Container>
         {
           dreams.length > 0 ? (
-            <div class="dreams-list">
+            <div class="timeline">
               {dreams.map((dream) => (
-                <article class="glass-panel dream-card">
-                  <div class="dream-content">
-                    <span class="dream-date">
-                      {formatDate(dream.data.pubDate)}
-                    </span>
-                    <h2 class="dream-post-title">
-                      <a href={withBase(`/dreams/${dream.id}/`)}>
-                        {dream.data.title}
-                      </a>
-                    </h2>
-                    {dream.data.description && (
-                      <p class="dream-excerpt">{dream.data.description}</p>
-                    )}
-                  </div>
-                </article>
+                <div class="timeline-item">
+                  <div class="timeline-dot" />
+                  <article class="glass-panel dream-card">
+                    <div class="dream-content">
+                      <span class="dream-date">
+                        {formatDate(dream.data.pubDate)}
+                      </span>
+                      <h2 class="dream-post-title">
+                        <a href={withBase(`/dreams/${dream.id}/`)}>
+                          {dream.data.title}
+                        </a>
+                      </h2>
+                      {dream.data.description && (
+                        <p class="dream-excerpt">{dream.data.description}</p>
+                      )}
+                    </div>
+                  </article>
+                </div>
               ))}
             </div>
           ) : (
@@ -103,14 +106,51 @@ function formatDate(date: Date | undefined) {
     padding: var(--space-2xl) 0 var(--space-3xl) 0;
   }
 
-  .dreams-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    max-width: 40rem;
+  /* 타임라인 컨테이너 */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-3xl);
+    max-width: 44rem;
     margin-inline: auto;
   }
 
+  /* 타임라인 수직 연결선 */
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: var(--space-md);
+    bottom: var(--space-3xl);
+    left: 0.75rem;
+    width: 1px;
+    background-color: var(--color-accent);
+    opacity: 0.3;
+    z-index: 1;
+  }
+
+  /* 각 타임라인 아이템 */
+  .timeline-item {
+    position: relative;
+    margin-bottom: var(--space-lg);
+  }
+
+  /* 타임라인 동그라미 마커 */
+  .timeline-dot {
+    position: absolute;
+    left: calc(-2rem + 0.75rem);
+    top: 1.5rem;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    border: 2px solid var(--color-bg);
+    box-shadow: 0 0 0 1px var(--color-border);
+    z-index: 2;
+  }
+
+  /* 카드 스타일 결합 */
   .dream-card {
     padding: var(--space-lg);
     border-radius: var(--radius-lg);
@@ -162,6 +202,14 @@ function formatDate(date: Date | undefined) {
   @media (max-width: 768px) {
     .page-title {
       font-size: var(--text-3xl);
+    }
+    .timeline {
+      padding-left: 1.75rem;
+    }
+    .timeline-dot {
+      left: calc(-1.75rem + 0.75rem);
+      width: 9px;
+      height: 9px;
     }
   }
 </style>
