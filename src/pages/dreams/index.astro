@@ -84,8 +84,8 @@ function formatDate(date: Date | undefined) {
 
   .page-header {
     text-align: center;
-    /* 제목과 본문 사이의 공간을 기존보다 반 정도 더 축소 */
-    padding: var(--space-md) 0 var(--space-xs) 0;
+    /* 제목과 본문 사이의 간격은 유지한 채, 전체 상단 여백을 약 2cm(2rem) 가량 아래로 내림 */
+    padding: calc(var(--space-2xl) + var(--space-md)) 0 var(--space-xs) 0;
     margin-bottom: 0;
   }
 
