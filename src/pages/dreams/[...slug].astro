@@ -34,7 +34,7 @@ const formattedDate = `${year}.${month}.${day}`;
   <main id="main" tabindex="-1" class="main-content">
     <article class="dream-post">
       <div class="container">
-        <!-- 뒤로 가기 및 헤더 -->
+        <!-- 뒤로 가기 및 헤더 카드 -->
         <GlassPanel variant="solid" padding="xl" className="post-header">
           <a href={withBase('/dreams/')} class="post-back">← Back to dreams</a>
           <time class="post-date" datetime={pubDate.toISOString()}
@@ -43,18 +43,12 @@ const formattedDate = `${year}.${month}.${day}`;
           <h1 class="post-title">{dream.data.title}</h1>
         </GlassPanel>
 
-        <!-- 본문 내용 -->
-        <div class="post-body">
-          <GlassPanel
-            variant="solid"
-            padding="xl"
-            className="post-content-panel"
-          >
-            <div class="prose">
-              <Content />
-            </div>
-          </GlassPanel>
-        </div>
+        <!-- 본문 카드 (블로그와 동일한 상단 간격 적용) -->
+        <GlassPanel variant="solid" padding="xl" className="post-content-panel">
+          <div class="prose">
+            <Content />
+          </div>
+        </GlassPanel>
       </div>
     </article>
   </main>
@@ -69,14 +63,14 @@ const formattedDate = `${year}.${month}.${day}`;
     padding: var(--space-2xl) 0;
   }
 
-  /* 블로그 상세 페이지와 동일한 컨테이너 및 카드 간격 구조 적용 */
   .container {
-    max-width: 800px;
+    max-width: 41rem;
     width: 100%;
     margin-inline: auto;
     padding-inline: var(--space-md);
   }
 
+  /* 제목 카드와 본문 카드 사이의 간격을 블로그와 똑같이 확보 (var(--space-xl)) */
   .post-header {
     display: flex;
     flex-direction: column;
@@ -119,8 +113,7 @@ const formattedDate = `${year}.${month}.${day}`;
     -webkit-text-fill-color: transparent;
   }
 
-  .post-body {
-    margin-top: 0;
+  .post-content-panel {
     margin-bottom: var(--space-2xl);
   }
 
