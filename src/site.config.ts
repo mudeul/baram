@@ -98,7 +98,7 @@ const siteConfig: SiteConfig = {
       { name: 'Blog', href: '/blog/' },
       { name: 'Dreams', href: '/dreams/' },
       { name: 'Wind-Ally', href: '/wind-ally/' },
-      { name: 'Landing', href: '/landing/' },
+      // { name: 'Landing', href: '/landing/' },
       { name: 'Conch', href: '/conch/' },
       { name: 'Bookmarks', href: '/bookmarks/' },
       { name: 'About', href: '/about/' },
@@ -108,7 +108,7 @@ const siteConfig: SiteConfig = {
   features: {
     blog: true,
     portfolio: true,
-    landing: true,
+    landing: false,
     rss: true,
     sitemap: true,
     search: true,
