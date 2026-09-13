@@ -120,7 +120,20 @@ function formatDate(date: Date) {
     transition: color var(--transition-fast);
   }
 
-  npx prettier --write . .blog-list-link:hover .post-title {
+  .post-title {
+    /* 크기를 원래대로 되돌림 (calc 연산 제거) */
+    font-size: var(--text-lg);
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    /* 색상을 #5c1d80 단색으로 변경 */
+    color: #5c1d80;
+  }
+
+  .blog-list-link:hover .post-title {
     filter: brightness(1.2);
   }
 
