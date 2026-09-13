@@ -38,7 +38,12 @@ const conchItems = await Promise.all(
             <div class="conch-list">
               {conchItems.map((item) => (
                 <details class="conch-item">
-                  <summary>{item.question}</summary>
+                  <summary>
+                    <span class="summary-text">{item.question}</span>
+                    <span class="toggle-icon" aria-hidden="true">
+                      ›
+                    </span>
+                  </summary>
                   <div class="conch-answer">
                     <item.renderContent />
                   </div>
@@ -66,7 +71,7 @@ const conchItems = await Promise.all(
     padding: 0;
   }
 
-  /* Dreams 페이지와 동일하게 하단 패딩 축소 */
+  /* 하단 패딩 축소 */
   .page-header {
     text-align: center;
     padding: var(--space-3xl) 0 var(--space-xs) 0;
@@ -92,7 +97,7 @@ const conchItems = await Promise.all(
     font-size: var(--text-base);
   }
 
-  /* Dreams 페이지와 동일하게 상단 패딩 축소 */
+  /* 상단 패딩 축소 */
   .section {
     padding: var(--space-md) 0 var(--space-3xl) 0;
   }
@@ -134,10 +139,30 @@ const conchItems = await Promise.all(
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: var(--space-md);
   }
 
   .conch-item summary::-webkit-details-marker {
     display: none;
+  }
+
+  .summary-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* 오른쪽 끝에 위치하는 토글 아이콘 (열릴 때 회전) */
+  .toggle-icon {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+    transition: transform var(--transition-fast);
+    flex-shrink: 0;
+    user-select: none;
+  }
+
+  .conch-item[open] .toggle-icon {
+    transform: rotate(90deg);
   }
 
   .conch-answer {
