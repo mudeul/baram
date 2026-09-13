@@ -101,10 +101,10 @@ const hasNextPage = bookmarks.length > pageSize;
     padding: 0;
   }
 
-  /* 🌟 헤더 하단 여백을 줄여서 목록과의 간격을 다른 메뉴들과 통일 */
+  /* 🌟 헤더 하단 패딩을 최소화하여 설명 문구와 아래 요소들의 간격을 슬림하게 밀착 */
   .page-header {
     text-align: center;
-    padding: var(--space-2xl) 0 var(--space-md) 0;
+    padding: var(--space-2xl) 0 var(--space-xs) 0;
     margin-bottom: 0;
   }
 
@@ -125,11 +125,11 @@ const hasNextPage = bookmarks.length > pageSize;
   .page-description {
     color: var(--color-text-muted);
     font-size: var(--text-base);
+    margin-bottom: 0;
   }
 
-  /* 🌟 섹션 상단 여백 축소 */
   .section {
-    padding: var(--space-md) 0 var(--space-3xl) 0;
+    padding: var(--space-xs) 0 var(--space-3xl) 0;
   }
 
   :global(.section .container),
@@ -140,14 +140,15 @@ const hasNextPage = bookmarks.length > pageSize;
     padding-inline: var(--space-md);
   }
 
-  /* 태그 카테고리 필터 스타일 */
+  /* 🌟 태그 카테고리 필터 스타일 (위쪽 간격은 좁히고, 아래 리스트와의 간격은 적당히 확보) */
   .bookmark-tags-filter {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-xs);
     justify-content: center;
     align-items: center;
-    margin-bottom: var(--space-lg);
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-xl);
     max-width: 34rem;
     margin-inline: auto;
   }
