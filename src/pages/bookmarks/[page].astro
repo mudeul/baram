@@ -78,12 +78,12 @@ function formatDate(date: Date | undefined) {
 
         <nav class="pagination" aria-label="Pagination">
           {
-            page.currentPage > 1 ? (
+            page.url.prev ? (
               <a
                 href={withBase(
                   page.currentPage === 2
                     ? '/bookmarks/'
-                    : `/bookmarks/page/${page.currentPage - 1}/`,
+                    : `/bookmarks/${page.currentPage - 1}/`,
                 )}
                 class="page-btn"
               >
@@ -99,9 +99,9 @@ function formatDate(date: Date | undefined) {
           </span>
 
           {
-            page.currentPage < page.lastPage ? (
+            page.url.next ? (
               <a
-                href={withBase(`/bookmarks/page/${page.currentPage + 1}/`)}
+                href={withBase(`/bookmarks/${page.currentPage + 1}/`)}
                 class="page-btn"
               >
                 Next &rarr;
