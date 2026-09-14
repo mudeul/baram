@@ -133,7 +133,7 @@ const projectLinks = [
   .case-content {
     min-width: 0;
     width: 100%;
-    max-width: 48rem;
+    max-width: 36rem; /* 🌟 기존 48rem에서 75% 수준인 36rem으로 축소 */
   }
 
   .prose :global(h2) {
@@ -176,11 +176,13 @@ const projectLinks = [
     color: inherit;
   }
 
-  /* 본문 안의 이미지 모서리 곡률을 더 작게 줄임 (0.375rem / 약 6px) */
+  /* 본문 안의 이미지 모서리 곡률 및 크기 축소 반영 */
   .prose :global(img) {
     border-radius: 0.375rem;
     overflow: hidden;
     margin-block: var(--space-lg);
+    width: 100%; /* 줄어든 본문 너비(36rem)에 맞춰 자동으로 꽉 차게 조절됩니다 */
+    height: auto;
   }
 
   .case-actions {
