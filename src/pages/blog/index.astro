@@ -7,9 +7,14 @@ import GlassPanel from '@/components/common/GlassPanel.astro';
 import { getCollection } from 'astro:content';
 import { withBase } from '@/lib/url';
 
-const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+// 블로그 포스트 가져오기 및 정렬 (pinned -> pubDate 최신순)
+const posts = (await getCollection('blog')).sort((a, b) => {
+  const aPinned = a.data.pinned ? 1 : 0;
+  const bPinned = b.data.pinned ? 1 : 0;
+  if (aPinned !== bPinned) return bPinned - aPinned; // pinned가 true인 것을 위로
+
+  return b.data.pubDate.valueOf() - a.data.pubDate.valueOf(); // 그 외에는 최신 날짜순
+});
 
 const pagePosts = posts.slice(0, 10);
 

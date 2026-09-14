@@ -6,18 +6,17 @@ import Footer from '@/components/common/Footer.astro';
 import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
-// 프로젝트 컬렉션 가져오기 및 정렬 (featured 여부만 정렬)
+// 프로젝트 컬렉션 가져오기 및 정렬 (pinned -> featured 순서)
 const allProjects = (await getCollection('wind-ally')).sort((a, b) => {
-  if (a.data.featured !== b.data.featured) return a.data.featured ? -1 : 1;
-  return 0;
-});
+  const aPinned = a.data.pinned ? 1 : 0;
+  const bPinned = b.data.pinned ? 1 : 0;
+  if (aPinned !== bPinned) return bPinned - aPinned; // pinned가 true인 것을 위로
 
-// 모든 프로젝트에서 tech(기술 스택) 목록 추출 및 중복 제거
-const allTagsSet = new Set<string>();
-allProjects.forEach((project) => {
-  if (project.data.tech && Array.isArray(project.data.tech)) {
-    project.data.tech.forEach((techItem: string) => allTagsSet.add(techItem));
-  }
+  const aFeatured = a.data.featured ? 1 : 0;
+  const bFeatured = b.data.featured ? 1 : 0;
+  if (aFeatured !== bFeatured) return bFeatured - aFeatured; // featured가 true인 것을 위로
+
+  return 0;
 });
 const tags = Array.from(allTagsSet);
 ---
