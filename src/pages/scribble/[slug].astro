@@ -45,17 +45,7 @@ const { Content } = await render(item);
           {item.data.title && <h1 class="scribble-title">{item.data.title}</h1>}
         </div>
 
-        {
-          item.data.cover && (
-            <div class="scribble-cover-wrapper">
-              <img
-                src={item.data.cover}
-                alt={item.data.coverAlt || item.data.title || ''}
-                class="scribble-cover-img"
-              />
-            </div>
-          )
-        }
+        {/* 상세 페이지 상단 커버 이미지 영역 제거 완료 */}
 
         <GlassPanel variant="translucent" className="scribble-content-box">
           <div class="prose">
@@ -91,19 +81,6 @@ const { Content } = await render(item);
     font-size: var(--text-3xl);
     font-weight: 700;
     color: var(--color-text);
-  }
-
-  .scribble-cover-wrapper {
-    margin-bottom: var(--space-xl);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-  }
-
-  .scribble-cover-img {
-    width: 100%;
-    height: auto;
-    max-height: 500px;
-    object-fit: cover;
   }
 
   :global(.scribble-content-box) {
