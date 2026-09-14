@@ -89,11 +89,24 @@ const { Content } = await render(item);
 
   .prose {
     white-space: pre-wrap;
-    word-break: break-all;
-    font-size: var(
-      --text-base
-    ); /* 블로그 본문과 동일한 글자 크기 변수 (또는 원하시는 크기) */
-    line-height: 1.8; /* 블로그 본문과 유사한 쾌적한 줄 간격 */
-    color: var(--color-text); /* 본문 글자 색상 동기화 */
+    word-break: keep-all;
+    font-size: var(--text-sm); /* 기존보다 작은 크기(sm)로 강제 조정 */
+    line-height: 1.7;
+    color: var(--color-text);
+  }
+
+  /* 👇 마크다운 본문 안의 문단(p)이나 텍스트들도 확실하게 작은 크기로 고정 */
+  .prose :global(p),
+  .prose :global(span),
+  .prose :global(li) {
+    font-size: var(--text-sm) !important;
+  }
+
+  .prose :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: var(--space-md) auto;
+    border-radius: var(--radius-md);
   }
 </style>
