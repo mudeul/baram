@@ -17,38 +17,34 @@ const socialIcons = {
 <footer class="site-footer" data-pagefind-ignore>
   <GlassPanel variant="solid" padding="xl" radius="none">
     <div class="container footer-container">
-      <!-- Main Footer Content -->
-      <div class="footer-grid">
-        <!-- Brand Section -->
-        <div class="footer-section">
+      <!-- 중앙 정렬된 메인 콘텐츠 영역 -->
+      <div class="footer-center-content">
+        <div class="footer-brand-box">
           <h3 class="footer-title">{siteConfig.name}</h3>
           <p class="footer-description">{siteConfig.description}</p>
         </div>
 
-        <!-- Social Links (Connect 텍스트 제거됨) -->
-        <div class="footer-section social-section">
-          <div class="social-links">
-            {
-              Object.entries(siteConfig.social).map(
-                ([platform, url]) =>
-                  url && (
-                    <a
-                      href={url}
-                      class="social-link"
-                      aria-label={`Follow us on ${platform} (opens in new tab)`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Fragment
-                        set:html={
-                          socialIcons[platform as keyof typeof socialIcons]
-                        }
-                      />
-                    </a>
-                  ),
-              )
-            }
-          </div>
+        <div class="social-links">
+          {
+            Object.entries(siteConfig.social).map(
+              ([platform, url]) =>
+                url && (
+                  <a
+                    href={url}
+                    class="social-link"
+                    aria-label={`Follow us on ${platform} (opens in new tab)`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Fragment
+                      set:html={
+                        socialIcons[platform as keyof typeof socialIcons]
+                      }
+                    />
+                  </a>
+                ),
+            )
+          }
         </div>
       </div>
 
@@ -99,54 +95,44 @@ const socialIcons = {
   .footer-container {
     max-width: var(--container-max);
     margin: 0 auto;
-    container-type: inline-size;
   }
 
-  .footer-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
-    gap: var(--space-2xl);
+  /* 🌟 메인 콘텐츠 그룹을 화면 중앙에 배치하되, 내용은 왼쪽 정렬 */
+  .footer-center-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 전체 블록은 가운데로 정렬 */
     margin-bottom: var(--space-xl);
   }
 
-  @container (max-width: 768px) {
-    .footer-grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-xl);
-    }
-  }
-
-  .footer-section {
+  .footer-brand-box {
     display: flex;
     flex-direction: column;
-    gap: var(--space-md);
+    gap: var(--space-xs);
+    text-align: left; /* 텍스트는 왼쪽 정렬 */
+    width: fit-content; /* 텍스트 길이만큼만 박스를 잡아 정중앙 안에서 예쁘게 좌측 정렬되도록 함 */
+    margin-bottom: var(--space-lg);
   }
 
-  @media (min-width: 769px) {
-    .social-section {
-      margin-left: 0;
-    }
+  .footer-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    margin: 0;
+    background: linear-gradient(
+      135deg,
+      var(--color-accent),
+      var(--color-accent-light)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
     .footer-title {
-      font-size: var(--text-2xl);
-      font-weight: 700;
-      margin: 0;
-      background: linear-gradient(
-        135deg,
-        var(--color-accent),
-        var(--color-accent-light)
-      );
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
-      .footer-title {
-        background: none;
-        -webkit-text-fill-color: currentColor;
-        color: var(--color-text);
-      }
+      background: none;
+      -webkit-text-fill-color: currentColor;
+      color: var(--color-text);
     }
   }
 
@@ -156,9 +142,10 @@ const socialIcons = {
     margin: 0;
   }
 
-  /* Social Links */
+  /* Social Links (가운데 정렬) */
   .social-links {
     display: flex;
+    justify-content: center;
     gap: var(--space-sm);
   }
 
