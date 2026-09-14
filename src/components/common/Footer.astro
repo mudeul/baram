@@ -97,11 +97,10 @@ const socialIcons = {
     margin: 0 auto;
   }
 
-  /* 🌟 메인 콘텐츠 그룹을 화면 중앙에 배치하되, 내용은 왼쪽 정렬 */
   .footer-center-content {
     display: flex;
     flex-direction: column;
-    align-items: center; /* 전체 블록은 가운데로 정렬 */
+    align-items: center;
     margin-bottom: var(--space-xl);
   }
 
@@ -109,8 +108,8 @@ const socialIcons = {
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
-    text-align: left; /* 텍스트는 왼쪽 정렬 */
-    width: fit-content; /* 텍스트 길이만큼만 박스를 잡아 정중앙 안에서 예쁘게 좌측 정렬되도록 함 */
+    width: fit-content; /* 텍스트 너비에 맞게 박스 크기를 잡아 화면 중앙에 배치 */
+    max-width: 100%;
     margin-bottom: var(--space-lg);
   }
 
@@ -118,6 +117,7 @@ const socialIcons = {
     font-size: var(--text-2xl);
     font-weight: 700;
     margin: 0;
+    text-align: center; /* 🌟 타이틀은 가운데 정렬 */
     background: linear-gradient(
       135deg,
       var(--color-accent),
@@ -140,6 +140,7 @@ const socialIcons = {
     color: var(--color-text-muted);
     line-height: 1.6;
     margin: 0;
+    text-align: left; /* 🌟 설명 문구는 왼쪽 정렬 */
   }
 
   /* Social Links (가운데 정렬) */

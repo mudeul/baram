@@ -60,7 +60,7 @@ const tags = Array.from(allTagsSet);
               return (
                 <a
                   href={withBase(`/wind-ally/${project.id}/`)}
-                  class="portfolio-item"
+                  class="portfolio-item show"
                   data-tags={dataTagsAttr}
                 >
                   {project.data.cover ? (
@@ -111,14 +111,26 @@ const tags = Array.from(allTagsSet);
     const selectedTag = this.getAttribute('data-tag');
 
     items.forEach((item) => {
-      const itemTags = item.getAttribute('data-tags')?.split(',') || [];
-      if (
+      const el = item as HTMLElement;
+      const itemTags = el.getAttribute('data-tags')?.split(',') || [];
+      const matches =
         selectedTag === 'all' ||
-        (selectedTag && itemTags.includes(selectedTag))
-      ) {
-        (item as HTMLElement).style.display = 'block';
+        (selectedTag && itemTags.includes(selectedTag));
+
+      if (matches) {
+        el.style.display = 'block';
+        // 미세한 딜레이를 주어 display가 적용된 직후 애니메이션이 실행되도록 함
+        requestAnimationFrame(() => {
+          el.classList.add('show');
+        });
       } else {
-        (item as HTMLElement).style.display = 'none';
+        el.classList.remove('show');
+        // 애니메이션이 끝난 후 display: none 처리 (CSS transition 시간과 맞춤)
+        setTimeout(() => {
+          if (!el.classList.contains('show')) {
+            el.style.display = 'none';
+          }
+        }, 300);
       }
     });
   }
@@ -134,7 +146,6 @@ const tags = Array.from(allTagsSet);
     padding: 0;
   }
 
-  /* Dreams 페이지와 동일하게 하단 패딩 축소 */
   .page-header {
     text-align: center;
     padding: var(--space-3xl) 0 var(--space-xs) 0;
@@ -176,7 +187,6 @@ const tags = Array.from(allTagsSet);
 
   .filter-tags {
     display: flex;
-    flex-expr: wrap;
     flex-wrap: wrap;
     justify-content: center;
     gap: var(--space-xs);
@@ -212,6 +222,7 @@ const tags = Array.from(allTagsSet);
     gap: var(--space-xs);
   }
 
+  /* 🌟 부드러운 전환을 위한 애니메이션 스타일 적용 */
   .portfolio-item {
     position: relative;
     aspect-ratio: 1 / 1;
@@ -219,6 +230,21 @@ const tags = Array.from(allTagsSet);
     border-radius: 0.25rem;
     background-color: var(--color-surface);
     display: block;
+
+    /* 기본 숨김 상태 (필터링 되었을 때) */
+    opacity: 0;
+    transform: scale(0.95);
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+    pointer-events: none;
+  }
+
+  /* 필터에 일치하여 보여질 때의 상태 */
+  .portfolio-item.show {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
   }
 
   .portfolio-item :global(figure),
