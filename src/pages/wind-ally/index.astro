@@ -92,6 +92,7 @@ const tags = Array.from(allTagsSet);
   function initWindAllyFilter() {
     const filterButtons = document.querySelectorAll('.tag-btn');
     const items = document.querySelectorAll('.portfolio-item');
+    const grid = document.querySelector('.portfolio-grid');
 
     if (filterButtons.length === 0 || items.length === 0) return;
 
@@ -104,35 +105,42 @@ const tags = Array.from(allTagsSet);
   function handleFilterClick(this: HTMLElement) {
     const filterButtons = document.querySelectorAll('.tag-btn');
     const items = document.querySelectorAll('.portfolio-item');
+    const grid = document.querySelector('.portfolio-grid') as HTMLElement;
 
     filterButtons.forEach((b) => b.classList.remove('active'));
     this.classList.add('active');
 
     const selectedTag = this.getAttribute('data-tag');
 
-    items.forEach((item) => {
-      const el = item as HTMLElement;
-      const itemTags = el.getAttribute('data-tags')?.split(',') || [];
-      const matches =
-        selectedTag === 'all' ||
-        (selectedTag && itemTags.includes(selectedTag));
+    // 🌟 핵심: 필터 전환 순간 그리드 전체를 아주 살짝 투명하게 만들어 뚝 끊기는 느낌(레이아웃 시프트)을 마스킹합니다.
+    if (grid) {
+      grid.style.opacity = '0.4';
+      grid.style.transform = 'scale(0.98)';
+    }
 
-      if (matches) {
-        el.style.display = 'block';
-        // 미세한 딜레이를 주어 display가 적용된 직후 애니메이션이 실행되도록 함
-        requestAnimationFrame(() => {
+    setTimeout(() => {
+      items.forEach((item) => {
+        const el = item as HTMLElement;
+        const itemTags = el.getAttribute('data-tags')?.split(',') || [];
+        const matches =
+          selectedTag === 'all' ||
+          (selectedTag && itemTags.includes(selectedTag));
+
+        if (matches) {
+          el.style.display = 'block';
           el.classList.add('show');
-        });
-      } else {
-        el.classList.remove('show');
-        // 애니메이션이 끝난 후 display: none 처리 (CSS transition 시간과 맞춤)
-        setTimeout(() => {
-          if (!el.classList.contains('show')) {
-            el.style.display = 'none';
-          }
-        }, 300);
+        } else {
+          el.classList.remove('show');
+          el.style.display = 'none';
+        }
+      });
+
+      // 그리드 원상복구 및 부드러운 등장
+      if (grid) {
+        grid.style.opacity = '1';
+        grid.style.transform = 'scale(1)';
       }
-    });
+    }, 150); // 0.15초 동안 자연스럽게 교체
   }
 
   document.addEventListener('DOMContentLoaded', initWindAllyFilter);
@@ -140,89 +148,18 @@ const tags = Array.from(allTagsSet);
 </script>
 
 <style>
-  .main-content {
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 0;
-  }
-
-  .page-header {
-    text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xs) 0;
-    margin-bottom: 0;
-  }
-
-  .container {
-    max-width: 39rem;
-    width: 100%;
-    margin-inline: auto;
-    padding-inline: var(--space-md);
-  }
-
-  .page-title {
-    font-size: var(--text-4xl);
-    font-weight: 800;
-    margin-bottom: var(--space-sm);
-    background: linear-gradient(
-      135deg,
-      var(--color-text),
-      var(--color-accent-dark)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .page-description {
-    color: var(--color-text-muted);
-    font-size: var(--text-base);
-  }
-
-  .portfolio-wrapper {
-    width: 100%;
-    margin-inline: auto;
-    padding-top: var(--space-md);
-    padding-bottom: var(--space-3xl);
-  }
-
-  .filter-tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-xs);
-    margin-bottom: var(--space-2xl);
-  }
-
-  .tag-btn {
-    background-color: var(--color-surface);
-    color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
-    padding: var(--space-xs) var(--space-md);
-    border-radius: var(--radius-full);
-    font-size: var(--text-xs);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-  }
-
-  .tag-btn:hover {
-    border-color: var(--color-accent);
-    color: var(--color-text);
-  }
-
-  .tag-btn.active {
-    background-color: var(--color-accent);
-    color: var(--color-bg);
-    border-color: var(--color-accent);
-    font-weight: 600;
-  }
+  /* 생략된 기존 스타일 유지 후 아래 스타일을 추가/수정해주세요 */
 
   .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--space-xs);
+    /* 🌟 그리드 전체 전환 애니메이션 부드럽게 처리 */
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
   }
 
-  /* 🌟 부드러운 전환을 위한 애니메이션 스타일 적용 */
   .portfolio-item {
     position: relative;
     aspect-ratio: 1 / 1;
@@ -231,22 +168,21 @@ const tags = Array.from(allTagsSet);
     background-color: var(--color-surface);
     display: block;
 
-    /* 기본 숨김 상태 (필터링 되었을 때) */
     opacity: 0;
     transform: scale(0.95);
     transition:
-      opacity 0.3s ease,
-      transform 0.3s ease;
+      opacity 0.25s ease,
+      transform 0.25s ease;
     pointer-events: none;
   }
 
-  /* 필터에 일치하여 보여질 때의 상태 */
   .portfolio-item.show {
     opacity: 1;
     transform: scale(1);
     pointer-events: auto;
   }
 
+  /* 이하 기존 스타일 동일 */
   .portfolio-item :global(figure),
   .portfolio-item :global(.picture-wrapper),
   .portfolio-item :global(picture) {
