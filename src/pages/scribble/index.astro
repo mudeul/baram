@@ -1,0 +1,172 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/common/Header.astro';
+import Footer from '@/components/common/Footer.astro';
+import Container from '@/components/ui/Container.astro';
+import GlassPanel from '@/components/common/GlassPanel.astro';
+import { getCollection } from 'astro:content';
+import { withBase } from '@/lib/url';
+import { Image } from 'astro:assets';
+
+const scribbles = (
+  await getCollection('scribble', ({ data }) => !data.draft)
+).sort(
+  (a, b) =>
+    new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf(),
+);
+---
+
+<BaseLayout
+  title="Scribble — 높이 부는 바람"
+  description="가볍게 끄적이는 생각의 조각들"
+>
+  <Header />
+
+  <main id="main" class="main-content">
+    <section class="page-header">
+      <Container>
+        <h1 class="page-title">Scribble</h1>
+        <p class="page-description">
+          순간의 생각과 조각들을 가볍게 기록합니다.
+        </p>
+      </Container>
+    </section>
+
+    <section class="section">
+      <Container>
+        <div class="scribble-grid">
+          {
+            scribbles.map((item) => (
+              <a
+                href={withBase(`/scribble/${item.id}/`)}
+                class="scribble-card-link"
+              >
+                <GlassPanel
+                  variant="translucent"
+                  padding="none"
+                  className="scribble-card"
+                >
+                  {item.data.cover ? (
+                    <div class="scribble-image-wrapper">
+                      <Image
+                        src={item.data.cover}
+                        alt={
+                          item.data.coverAlt ||
+                          item.data.title ||
+                          'Scribble image'
+                        }
+                        class="scribble-img"
+                      />
+                    </div>
+                  ) : (
+                    <div class="scribble-text-preview">
+                      <p>
+                        {item.data.description || item.data.title || '끄적임'}
+                      </p>
+                    </div>
+                  )}
+                  <div class="scribble-overlay">
+                    <span class="scribble-title">{item.data.title}</span>
+                  </div>
+                </GlassPanel>
+              </a>
+            ))
+          }
+        </div>
+      </Container>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .main-content {
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: 0;
+  }
+
+  .page-header {
+    text-align: center;
+    padding: var(--space-3xl) 0 var(--space-xl) 0;
+  }
+
+  .page-title {
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    margin-bottom: var(--space-sm);
+    background: linear-gradient(
+      135deg,
+      var(--color-text),
+      var(--color-accent-dark)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+  }
+
+  .section {
+    padding: 0 0 var(--space-3xl) 0;
+  }
+
+  .scribble-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+  }
+
+  .scribble-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: var(--radius-lg, 12px);
+    transition: transform var(--transition-fast);
+  }
+
+  .scribble-card-link:hover {
+    transform: translateY(-4px);
+  }
+
+  :global(.scribble-card) {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .scribble-image-wrapper,
+  .scribble-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .scribble-text-preview {
+    padding: var(--space-md);
+    text-align: center;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .scribble-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-sm);
+    }
+  }
+</style>

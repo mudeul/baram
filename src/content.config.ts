@@ -92,18 +92,17 @@ const windAlly = defineCollection({
     }),
 });
 
-// 🌟 Scribble collection (wind-ally 구조를 참고하여 태그 없이 깔끔하게 구성)
+// 🌟 Scribble collection (옵시디언 외부 이미지 URL을 쓰기 위해 image 필드 사용)
 const scribble = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/scribble' }),
-  schema: ({ image }) =>
-    z.object({
-      title: z.string().optional(),
-      pubDate: z.coerce.date(),
-      cover: image().optional(), // 인스타 대표 이미지
-      coverAlt: z.string().optional(),
-      description: z.string().optional(),
-      draft: z.boolean().default(false),
-    }),
+  schema: z.object({
+    title: z.string().optional(),
+    pubDate: z.coerce.date(),
+    cover: imageSrc.optional(),
+    coverAlt: z.string().optional(),
+    description: z.string().optional(),
+    draft: z.boolean().default(false),
+  }),
 });
 
 // Conch collection
