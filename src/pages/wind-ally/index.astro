@@ -60,7 +60,7 @@ const tags = Array.from(allTagsSet);
               return (
                 <a
                   href={withBase(`/wind-ally/${project.id}/`)}
-                  class="portfolio-item show"
+                  class="portfolio-item"
                   data-tags={dataTagsAttr}
                 >
                   {project.data.cover ? (
@@ -110,7 +110,6 @@ const tags = Array.from(allTagsSet);
 
     const selectedTag = this.getAttribute('data-tag');
 
-    // 깜빡임 없이 아이템별로 부드럽게 토글
     items.forEach((item) => {
       const el = item as HTMLElement;
       const itemTags = el.getAttribute('data-tags')?.split(',') || [];
@@ -120,18 +119,8 @@ const tags = Array.from(allTagsSet);
 
       if (matches) {
         el.classList.remove('hidden');
-        // 브라우저가 그리드 배치를 인지한 후 애니메이션이 발동하도록 미세 딜레이 부여
-        requestAnimationFrame(() => {
-          el.classList.add('show');
-        });
       } else {
-        el.classList.remove('show');
-        // 페이드아웃 전환 효과(0.25초)가 끝난 뒤 display: none 처리하여 레이아웃 유지
-        setTimeout(() => {
-          if (!el.classList.contains('show')) {
-            el.classList.add('hidden');
-          }
-        }, 250);
+        el.classList.add('hidden');
       }
     });
   }
@@ -188,19 +177,6 @@ const tags = Array.from(allTagsSet);
     overflow: hidden;
     background-color: var(--color-surface);
     display: block;
-
-    opacity: 0;
-    transform: scale(0.95);
-    transition:
-      opacity 0.25s ease,
-      transform 0.25s ease;
-    pointer-events: none;
-  }
-
-  .portfolio-item.show {
-    opacity: 1;
-    transform: scale(1);
-    pointer-events: auto;
   }
 
   /* 숨겨진 아이템 처리 */
