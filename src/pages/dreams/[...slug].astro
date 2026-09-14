@@ -133,6 +133,9 @@ const formattedDate = `${year}.${month}.${day}`;
   .prose {
     font-size: var(--text-sm);
     line-height: 1.6;
+    max-width: 44rem; /* 블로그와 동일하게 살짝 넓힌 너비 (원하시면 조절 가능해요!) */
+    text-align: justify; /* 양쪽 정렬 적용 */
+    word-break: keep-all; /* 한글 단어 간격 깔끔하게 유지 */
     color: var(--color-text);
   }
 

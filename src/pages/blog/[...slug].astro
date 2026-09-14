@@ -278,7 +278,10 @@ const showToc = siteConfig.blog.showToc && headings.length > 0;
   .prose {
     font-size: var(--text-sm);
     line-height: 1.6;
-    max-width: none;
+    max-width: 44rem; /* 원하시는 너비 */
+    text-align: justify; /* 양쪽 정렬 적용 */
+    word-break: keep-all; /* 한글 단어가 어색하게 벌어지는 것 방지 */
+    color: var(--color-text);
   }
 
   /* Offset anchored headings from the sticky header */
