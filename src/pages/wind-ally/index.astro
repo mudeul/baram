@@ -7,17 +7,23 @@ import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
 // 프로젝트 컬렉션 가져오기 및 정렬 (pinned -> featured 순서)
-const allProjects = (await getCollection('wind-ally')).sort((a, b) => {
-  const aPinned = (a.data as any).pinned ? 1 : 0;
-  const bPinned = (b.data as any).pinned ? 1 : 0;
-  if (aPinned !== bPinned) return bPinned - aPinned;
+let allProjects = [];
+try {
+  const collection = await getCollection('wind-ally');
+  allProjects = collection.sort((a, b) => {
+    const aPinned = (a.data as any).pinned ? 1 : 0;
+    const bPinned = (b.data as any).pinned ? 1 : 0;
+    if (aPinned !== bPinned) return bPinned - aPinned;
 
-  const aFeatured = a.data.featured ? 1 : 0;
-  const bFeatured = b.data.featured ? 1 : 0;
-  if (aFeatured !== bFeatured) return bFeatured - aFeatured;
+    const aFeatured = (a.data as any).featured ? 1 : 0;
+    const bFeatured = (b.data as any).featured ? 1 : 0;
+    if (aFeatured !== bFeatured) return bFeatured - aFeatured;
 
-  return 0;
-});
+    return 0;
+  });
+} catch (e) {
+  allProjects = [];
+}
 
 // 모든 프로젝트에서 tech(기술 스택) 목록 추출 및 중복 제거
 const allTagsSet = new Set<string>();
@@ -28,3 +34,255 @@ allProjects.forEach((project) => {
 });
 const tags = Array.from(allTagsSet);
 ---
+
+<BaseLayout title="Wind-ally" description="찰나의 목격자">
+  <Header />
+
+  <main id="main" tabindex="-1" class="main-content">
+    <section class="page-header">
+      <div class="container">
+        <h1 class="page-title">Wind-Ally</h1>
+        <p class="page-description">찰나의 목격자</p>
+      </div>
+    </section>
+
+    <div class="container">
+      <div class="portfolio-wrapper">
+        {/* 기술 스택 카테고리 필터 버튼 영역 */}
+        {
+          tags.length > 0 && (
+            <div class="filter-tags" aria-label="Filter by tech stack">
+              <button class="tag-btn active" data-tag="all">
+                All
+              </button>
+              {tags.map((tag) => (
+                <button class="tag-btn" data-tag={tag}>
+                  {tag}
+                </button>
+              ))}
+            </div>
+          )
+        }
+
+        {/* 인스타그램 스타일 3열 사진 그리드 */}
+        <div class="portfolio-grid">
+          {
+            allProjects.map((project) => {
+              const projectTechs = project.data.tech || [];
+              const dataTagsAttr = projectTechs.join(',');
+              const isPinned = (project.data as any).pinned;
+
+              return (
+                <a
+                  href={withBase(`/wind-ally/${project.id}/`)}
+                  class="portfolio-item"
+                  data-tags={dataTagsAttr}
+                >
+                  {/* 블로그와 동일한 핑크빛 SVG 핀 아이콘 */}
+                  {isPinned && (
+                    <span class="pinned-badge" title="Pinned">
+                      <svg
+                        class="pinned-icon"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="14"
+                        height="14"
+                        fill="currentColor"
+                        aria-label="Pinned"
+                      >
+                        <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+                      </svg>
+                    </span>
+                  )}
+
+                  {project.data.cover ? (
+                    <Picture
+                      src={project.data.cover}
+                      alt={project.data.title || 'Project Image'}
+                      widths={[400, 800]}
+                      sizes="(min-width: 1024px) 33vw, 100vw"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="portfolio-placeholder">
+                      <span>No Image</span>
+                    </div>
+                  )}
+                </a>
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  function initWindAllyFilter() {
+    const filterButtons = document.querySelectorAll('.tag-btn');
+    const items = document.querySelectorAll('.portfolio-item');
+
+    if (filterButtons.length === 0 || items.length === 0) return;
+
+    filterButtons.forEach((btn) => {
+      btn.removeEventListener('click', handleFilterClick);
+      btn.addEventListener('click', handleFilterClick);
+    });
+  }
+
+  function handleFilterClick(this: HTMLElement) {
+    const filterButtons = document.querySelectorAll('.tag-btn');
+    const items = document.querySelectorAll('.portfolio-item');
+
+    filterButtons.forEach((b) => b.classList.remove('active'));
+    this.classList.add('active');
+
+    const selectedTag = this.getAttribute('data-tag');
+
+    items.forEach((item) => {
+      const el = item as HTMLElement;
+      const itemTags = el.getAttribute('data-tags')?.split(',') || [];
+      const matches =
+        selectedTag === 'all' ||
+        (selectedTag && itemTags.includes(selectedTag));
+
+      if (matches) {
+        el.classList.remove('hidden');
+      } else {
+        el.classList.add('hidden');
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initWindAllyFilter);
+  document.addEventListener('astro:page-load', initWindAllyFilter);
+</script>
+
+<style>
+  .portfolio-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  /* 필터 버튼 영역 정렬 및 깨짐 방지 */
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    justify-content: center;
+    margin-bottom: var(--space-md);
+  }
+
+  .tag-btn {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    padding: var(--space-xs) var(--space-md);
+    border-radius: 9999px;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .tag-btn.active,
+  .tag-btn:hover {
+    background: var(--color-accent);
+    color: white;
+    border-color: var(--color-accent);
+  }
+
+  .portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+  }
+
+  .portfolio-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background-color: var(--color-surface);
+    display: block;
+  }
+
+  /* 썸네일 위 고정(핀) 뱃지 스타일 */
+  .pinned-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 2;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pinned-icon {
+    color: var(--color-accent, #e066ff);
+    transform: rotate(45deg);
+  }
+
+  /* 숨겨진 아이템 처리 */
+  .portfolio-item.hidden {
+    display: none !important;
+  }
+
+  .portfolio-item :global(figure),
+  .portfolio-item :global(.picture-wrapper),
+  .portfolio-item :global(picture) {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important;
+  }
+
+  .portfolio-item :global(figcaption) {
+    display: none !important;
+  }
+
+  .portfolio-item :global(img) {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    transition:
+      transform 0.2s ease,
+      filter 0.2s ease;
+  }
+
+  .portfolio-item:hover :global(img) {
+    transform: scale(1.02);
+    filter: brightness(0.95);
+  }
+
+  .portfolio-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: var(--text-3xl);
+    }
+    .portfolio-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+  }
+</style>

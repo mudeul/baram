@@ -54,7 +54,23 @@ function formatDate(date: Date) {
                     href={withBase(`/blog/${post.id}/`)}
                     class="blog-list-link"
                   >
-                    <span class="post-title">{post.data.title}</span>
+                    <span class="post-title-wrapper">
+                      {/* 🌟 SVG 핀 아이콘 */}
+                      {(post.data as any).pinned && (
+                        <svg
+                          class="pinned-icon"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          width="14"
+                          height="14"
+                          fill="currentColor"
+                          aria-label="Pinned"
+                        >
+                          <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+                        </svg>
+                      )}
+                      <span class="post-title">{post.data.title}</span>
+                    </span>
                     <div class="post-meta">
                       {post.data.pubDate && (
                         <time
@@ -184,5 +200,19 @@ function formatDate(date: Date) {
     .page-title {
       font-size: var(--text-3xl);
     }
+  }
+  .post-title-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .pinned-icon {
+    /* 🌟 밝은 분홍 계열 포인트 컬러 (테마 액센트 컬러 활용) */
+    color: var(--color-accent, #e066ff);
+    flex-shrink: 0;
+    transform: rotate(45deg); /* 핀을 살짝 비스듬하게 꽂힌 모양으로 연출 */
   }
 </style>
