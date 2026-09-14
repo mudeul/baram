@@ -1,12 +1,11 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
-import Container from '@/components/ui/Container.astro';
-import GlassPanel from '@/components/common/GlassPanel.astro';
-import { getCollection } from 'astro:content';
 import { withBase } from '@/lib/url';
 
+// scribble 컬렉션 가져오기 및 최신순 정렬
 const scribbles = (
   await getCollection('scribble', ({ data }) => !data.draft)
 ).sort(
@@ -15,61 +14,49 @@ const scribbles = (
 );
 ---
 
-<BaseLayout
-  title="Scribble — 높이 부는 바람"
-  description="가볍게 끄적이는 생각의 조각들"
->
+<BaseLayout title="Scribble — 높이 부는 바람" description="찰나의 목격자">
   <Header />
 
-  <main id="main" class="main-content">
+  <main id="main" tabindex="-1" class="main-content">
     <section class="page-header">
-      <Container>
+      <div class="container">
         <h1 class="page-title">Scribble</h1>
         <p class="page-description">
           순간의 생각과 조각들을 가볍게 기록합니다.
         </p>
-      </Container>
+      </div>
     </section>
 
-    <section class="section">
-      <Container>
-        <div class="scribble-grid">
+    <div class="container">
+      <div class="portfolio-wrapper">
+        {/* 인스타그램 스타일 3열 사진 그리드 (오직 사진만 꽉 차게) */}
+        <div class="portfolio-grid">
           {
             scribbles.map((item) => (
               <a
                 href={withBase(`/scribble/${item.id}/`)}
-                class="scribble-card-link"
+                class="portfolio-item"
               >
-                <GlassPanel
-                  variant="translucent"
-                  padding="none"
-                  className="scribble-card"
-                >
-                  {item.data.cover ? (
-                    <div class="scribble-image-wrapper">
-                      <img
-                        src={item.data.cover}
-                        alt={
-                          item.data.coverAlt ||
-                          item.data.title ||
-                          'Scribble image'
-                        }
-                        class="scribble-img"
-                        loading="lazy"
-                      />
-                    </div>
-                  ) : (
-                    <div class="scribble-no-image">
-                      <span>{item.data.title || 'No Image'}</span>
-                    </div>
-                  )}
-                </GlassPanel>
+                {item.data.cover ? (
+                  <img
+                    src={item.data.cover}
+                    alt={
+                      item.data.coverAlt || item.data.title || 'Scribble image'
+                    }
+                    loading="lazy"
+                    class="portfolio-img"
+                  />
+                ) : (
+                  <div class="portfolio-placeholder">
+                    <span>{item.data.title || 'No Image'}</span>
+                  </div>
+                )}
               </a>
             ))
           }
         </div>
-      </Container>
-    </section>
+      </div>
+    </div>
   </main>
 
   <Footer />
@@ -84,7 +71,15 @@ const scribbles = (
 
   .page-header {
     text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xl) 0;
+    padding: var(--space-3xl) 0 var(--space-xs) 0;
+    margin-bottom: 0;
+  }
+
+  .container {
+    max-width: 39rem;
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--space-md);
   }
 
   .page-title {
@@ -106,68 +101,62 @@ const scribbles = (
     font-size: var(--text-base);
   }
 
-  .section {
-    padding: 0 0 var(--space-3xl) 0;
+  .portfolio-wrapper {
+    width: 100%;
+    margin-inline: auto;
+    padding-top: var(--space-md);
+    padding-bottom: var(--space-3xl);
   }
 
-  .scribble-grid {
+  .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-md);
+    gap: var(--space-xs);
   }
 
-  .scribble-card-link {
-    text-decoration: none;
-    color: inherit;
-    display: block;
+  .portfolio-item {
+    position: relative;
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    border-radius: var(--radius-lg, 12px);
+    border-radius: 0.25rem;
+    background-color: var(--color-surface);
+    display: block;
+  }
+
+  .portfolio-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
     transition:
-      transform var(--transition-fast),
-      opacity var(--transition-fast);
+      transform 0.2s ease,
+      filter 0.2s ease;
   }
 
-  .scribble-card-link:hover {
-    transform: translateY(-4px);
-    opacity: 0.92;
+  .portfolio-item:hover .portfolio-img {
+    transform: scale(1.02);
+    filter: brightness(0.95);
   }
 
-  :global(.scribble-card) {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .scribble-image-wrapper {
-    width: 100%;
-    height: 100%;
-  }
-
-  .scribble-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .scribble-no-image {
+  .portfolio-placeholder {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--space-md);
-    text-align: center;
-    font-size: var(--text-sm);
     color: var(--color-text-muted);
-    background: var(--glass-bg);
+    font-size: var(--text-sm);
+    text-align: center;
+    padding: var(--space-xs);
   }
 
   @media (max-width: 768px) {
-    .scribble-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: var(--space-sm);
+    .page-title {
+      font-size: var(--text-3xl);
+    }
+    .portfolio-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
     }
   }
 </style>
