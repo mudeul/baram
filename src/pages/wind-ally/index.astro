@@ -7,30 +7,37 @@ import Container from '@/components/ui/Container.astro';
 import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
-// 🌟 프로젝트 컬렉션 가져오기 및 pinned/pin -> featured 순서 정렬
-let allProjects = [];
+// 🌟 꺽쇠(<> )를 완전히 배제하여 파서 깨짐 방지
+let allProjects: any[] = [];
 try {
   const collection = await getCollection('wind-ally');
   allProjects = collection.sort((a, b) => {
-    const aPinned = (a.data as any).pinned || (a.data as any).pin ? 1 : 0;
-    const bPinned = (b.data as any).pinned || (b.data as any).pin ? 1 : 0;
+    const aData = a.data as any;
+    const bData = b.data as any;
+    const aPinned = aData.pinned || aData.pin ? 1 : 0;
+    const bPinned = bData.pinned || bData.pin ? 1 : 0;
     if (aPinned !== bPinned) return bPinned - aPinned;
 
-    const aFeatured = (a.data as any).featured ? 1 : 0;
-    const bFeatured = (b.data as any).featured ? 1 : 0;
+    const aFeatured = aData.featured ? 1 : 0;
+    const bFeatured = bData.featured ? 1 : 0;
     if (aFeatured !== bFeatured) return bFeatured - aFeatured;
 
     return 0;
   });
-} catch (e) {
+} catch (_e) {
   allProjects = [];
 }
 
 // 모든 프로젝트에서 tech(기술 스택) 목록 추출 및 중복 제거
 const allTagsSet = new Set<string>();
 allProjects.forEach((project) => {
-  if (project.data.tech && Array.isArray(project.data.tech)) {
-    project.data.tech.forEach((techItem: string) => allTagsSet.add(techItem));
+  const projectData = project.data as any;
+  if (projectData.tech && Array.isArray(projectData.tech)) {
+    projectData.tech.forEach((techItem: any) => {
+      if (typeof techItem === 'string') {
+        allTagsSet.add(techItem);
+      }
+    });
   }
 });
 const tags = Array.from(allTagsSet);
@@ -70,10 +77,10 @@ const tags = Array.from(allTagsSet);
           <div class="portfolio-grid">
             {
               allProjects.map((project) => {
-                const projectTechs = project.data.tech || [];
+                const projectData = project.data as any;
+                const projectTechs = projectData.tech || [];
                 const dataTagsAttr = projectTechs.join(',');
-                const isPinned =
-                  (project.data as any).pinned || (project.data as any).pin;
+                const isPinned = Boolean(projectData.pinned || projectData.pin);
 
                 return (
                   <a
@@ -98,10 +105,10 @@ const tags = Array.from(allTagsSet);
                       </span>
                     )}
 
-                    {project.data.cover ? (
+                    {projectData.cover ? (
                       <Picture
-                        src={project.data.cover}
-                        alt={project.data.title || 'Project Image'}
+                        src={projectData.cover}
+                        alt={projectData.title || 'Project Image'}
                         widths={[400, 800]}
                         sizes="(min-width: 1024px) 33vw, 100vw"
                         loading="lazy"
@@ -247,7 +254,7 @@ const tags = Array.from(allTagsSet);
   .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 4px; /* 아이폰 사진 앱처럼 촘촘한 간격 */
+    gap: 4px;
   }
 
   .portfolio-item {
@@ -256,16 +263,15 @@ const tags = Array.from(allTagsSet);
     overflow: hidden;
     background-color: var(--color-surface);
     display: block;
-    border-radius: 6px; /* 🌟 아이폰 사진 앱 / Scribble 감성의 섬세한 곡률 */
+    border-radius: 6px;
   }
 
-  /* 썸네일 위 고정(핀) 뱃지 스타일 (왼쪽 정렬 & 반투명 흰색 배경) */
   .pinned-badge {
     position: absolute;
     top: 6px;
-    left: 6px; /* 🌟 오른쪽에서 왼쪽으로 변경 */
+    left: 6px;
     z-index: 2;
-    background: rgba(255, 255, 255, 0.65); /* 🌟 반투명한 흰색 배경 */
+    background: rgba(255, 255, 255, 0.65);
     backdrop-filter: blur(4px);
     border-radius: 50%;
     width: 26px;
@@ -280,7 +286,6 @@ const tags = Array.from(allTagsSet);
     transform: rotate(45deg);
   }
 
-  /* 숨겨진 아이템 처리 */
   .portfolio-item.hidden {
     display: none !important;
   }
