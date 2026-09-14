@@ -56,6 +56,7 @@ function formatDate(date: Date) {
                   >
                     <span class="post-title-wrapper">
                       {/* 🌟 SVG 핀 아이콘 */}
+                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                       {(post.data as any).pinned && (
                         <svg
                           class="pinned-icon"
@@ -68,7 +69,7 @@ function formatDate(date: Date) {
                         >
                           <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
                         </svg>
-                      )}
+                      )}{' '}
                       <span class="post-title">{post.data.title}</span>
                     </span>
                     <div class="post-meta">
