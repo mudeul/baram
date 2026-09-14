@@ -5,7 +5,6 @@ import Footer from '@/components/common/Footer.astro';
 import Container from '@/components/ui/Container.astro';
 import GlassPanel from '@/components/common/GlassPanel.astro';
 import { getCollection, render } from 'astro:content';
-import { Image } from 'astro:assets';
 
 export async function getStaticPaths() {
   const scribbles = await getCollection('scribble');
@@ -49,7 +48,7 @@ const { Content } = await render(item);
         {
           item.data.cover && (
             <div class="scribble-cover-wrapper">
-              <Image
+              <img
                 src={item.data.cover}
                 alt={item.data.coverAlt || item.data.title || ''}
                 class="scribble-cover-img"
