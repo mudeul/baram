@@ -4,16 +4,22 @@ import Header from '@/components/common/Header.astro';
 import Footer from '@/components/common/Footer.astro';
 import Container from '@/components/ui/Container.astro';
 import GlassPanel from '@/components/common/GlassPanel.astro';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 import { withBase } from '@/lib/url';
+import type { Page, PaginateFunction } from 'astro';
 
-export async function getStaticPaths() {
+export async function getStaticPaths({
+  paginate,
+}: {
+  paginate: PaginateFunction;
+}) {
   const bookmarks = await getCollection('bookmarks');
   const allTags = [
     ...new Set(bookmarks.flatMap((bookmark) => bookmark.data.tags || [])),
   ];
 
-  return allTags.map((tag) => {
+  // 각 태그별로 북마크를 필터링한 후, 각각 5개씩 paginate 적용
+  return allTags.flatMap((tag) => {
     const filteredBookmarks = bookmarks
       .filter((bookmark) => bookmark.data.tags?.includes(tag))
       .sort(
@@ -22,14 +28,20 @@ export async function getStaticPaths() {
           new Date(a.data.pubDate ?? 0).valueOf(),
       );
 
-    return {
+    return paginate(filteredBookmarks, {
       params: { tag },
-      props: { tag, bookmarks: filteredBookmarks },
-    };
+      pageSize: 5,
+      props: { tag },
+    });
   });
 }
 
-const { tag, bookmarks } = Astro.props;
+interface Props {
+  page: Page<CollectionEntry<'bookmarks'>>;
+  tag: string;
+}
+
+const { page, tag } = Astro.props;
 
 // 전체 태그 목록 (상단 필터 칩용)
 const allBookmarks = await getCollection('bookmarks');
@@ -39,7 +51,7 @@ const allTags = Array.from(
 ---
 
 <BaseLayout
-  title={`Bookmarks: #${tag}`}
+  title={`Bookmarks: #${tag} - Page ${page.currentPage}`}
   description={`#${tag} 태그가 포함된 북마크 목록`}
 >
   <Header />
@@ -80,7 +92,7 @@ const allTags = Array.from(
         >
           <ul class="bookmark-list">
             {
-              bookmarks.map((bookmark) => (
+              page.data.map((bookmark) => (
                 <li class="bookmark-list-item">
                   <a
                     href={withBase(`/bookmarks/${bookmark.id}/`)}
@@ -98,6 +110,33 @@ const allTags = Array.from(
             }
           </ul>
         </GlassPanel>
+
+        {/* 페이지네이션 UI 추가 */}
+        <nav class="pagination" aria-label="Pagination">
+          {
+            page.url.prev ? (
+              <a href={page.url.prev} class="page-btn">
+                &larr; Prev
+              </a>
+            ) : (
+              <span class="page-btn disabled">&larr; Prev</span>
+            )
+          }
+
+          <span class="page-info">
+            {page.currentPage} / {page.lastPage}
+          </span>
+
+          {
+            page.url.next ? (
+              <a href={page.url.next} class="page-btn">
+                Next &rarr;
+              </a>
+            ) : (
+              <span class="page-btn disabled">Next &rarr;</span>
+            )
+          }
+        </nav>
       </Container>
     </section>
   </main>
@@ -112,7 +151,6 @@ const allTags = Array.from(
     padding: 0;
   }
 
-  /* 메인 페이지와 동일한 넉넉한 하단 패딩 적용 */
   .page-header {
     text-align: center;
     padding: var(--space-3xl) 0 var(--space-xl) 0;
@@ -239,5 +277,46 @@ const allTags = Array.from(
   .post-author {
     font-weight: 500;
     color: #513664;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+    width: 100%;
+  }
+
+  .page-btn {
+    padding: var(--space-xs) var(--space-md);
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .page-btn:hover:not(.disabled) {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .page-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .page-info {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .page-title {
+      font-size: var(--text-3xl);
+    }
   }
 </style>
