@@ -93,6 +93,8 @@ const windAlly = defineCollection({
       role: z.string().optional(),
       year: z.number().int().min(1000).max(9999).optional(),
       featured: z.boolean().default(false),
+      pinned: z.boolean().optional(),
+      pin: z.boolean().optional(),
       links: z
         .object({
           live: z.string().url().optional(),

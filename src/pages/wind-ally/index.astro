@@ -81,7 +81,7 @@ const tags = Array.from(allTagsSet);
                     class="portfolio-item"
                     data-tags={dataTagsAttr}
                   >
-                    {/* 블로그와 동일한 핑크빛 SVG 핀 아이콘 */}
+                    {/* 🌟 왼쪽 상단에 위치하고 반투명한 흰색 배경이 적용된 핀 아이콘 */}
                     {isPinned && (
                       <span class="pinned-badge" title="Pinned">
                         <svg
@@ -259,13 +259,13 @@ const tags = Array.from(allTagsSet);
     border-radius: 6px; /* 🌟 아이폰 사진 앱 / Scribble 감성의 섬세한 곡률 */
   }
 
-  /* 썸네일 위 고정(핀) 뱃지 스타일 */
+  /* 썸네일 위 고정(핀) 뱃지 스타일 (왼쪽 정렬 & 반투명 흰색 배경) */
   .pinned-badge {
     position: absolute;
     top: 6px;
-    right: 6px;
+    left: 6px; /* 🌟 오른쪽에서 왼쪽으로 변경 */
     z-index: 2;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(255, 255, 255, 0.65); /* 🌟 반투명한 흰색 배경 */
     backdrop-filter: blur(4px);
     border-radius: 50%;
     width: 26px;
