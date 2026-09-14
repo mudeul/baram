@@ -1,14 +1,22 @@
-/* Design Tokens - Authentic Soft Era Theme */
+/* Design Tokens - Custom Soft Era Theme */
+
+/* Breakpoint convention: media query px values across this codebase should
+   use 640 / 768 / 1024, with 900 as an additional large-breakpoint tier for
+   components that need to switch layout later than 768. CSS custom
+   properties cannot be used inside @media conditions, so these are documented
+   here rather than defined as tokens. */
 
 :root {
-  /* Light mode tokens (원본 Soft Era 기반) */
+  /* Light mode tokens */
+
+  /* Glass effect */
   --glass-bg: rgba(249, 245, 245, 0.65);
   --glass-bg-solid: rgba(249, 245, 245, 0.9);
   --glass-blur-xs: 4px;
   --glass-blur-sm: 8px;
   --glass-blur: 12px;
   --glass-blur-lg: 20px;
-  --glass-border: rgba(226, 209, 209, 0.5);
+  --glass-border: rgba(226, 209, 209, 0.5); /* #e2d1d1 기반 구분선 */
   --glass-shadow: 0 8px 32px 0 rgba(200, 179, 179, 0.12);
   --glass-sat: 180%;
 
@@ -18,19 +26,25 @@
   --aurora-3: hsl(20, 60%, 85%);
   --aurora-4: hsl(160, 30%, 85%);
 
-  /* Base colors (원정 Soft Era 핵심 값 반영) */
-  --color-bg: #f9f5f5; /* 원본 editor.background */
-  --color-surface: rgba(255, 255, 255, 0.8);
-  --color-text: #8c7b7b; /* 너무 연하지 않게 가독성을 챙긴 텍스트 톤 */
-  --color-text-muted: #c8b3b3; /* 원본 editor.foreground 감성 */
-  --color-text-inverse: #f9f5f5;
+  /* Base colors (사용자 지정 매핑 반영) */
+  --color-bg: #f9f5f5; /* 전체 배경색 */
+  --color-surface: #f3f3f3; /* 홈화면의 배경색 및 카드 표면 */
+  --color-surface-hover: #fdfbfb;
 
-  /* Accent colors (원본 커서/배지 핑크 포인트 반영) */
-  --color-accent: #eeaabe; /* 원본 editorCursor.foreground */
+  --color-text: #c8b3b3; /* 기본 텍스트 색상 */
+  --color-text-muted: #8f8f8f; /* 홈화면의 글자 등 세컨더리 텍스트 */
+  --color-text-inverse: #f9f5f5;
+  --color-border: #e2d1d1; /* 구분선 색 */
+
+  /* Selection & Interactive */
+  --color-selection: #eceafa; /* 드래그했을 때 배경색 */
+
+  /* Accent colors (목록페이지 제목, 설명, pin 등 강조 요소) */
+  --color-accent: #eeaabe; /* #EEAABE 포인트 */
   --color-accent-light: #f7d5df;
   --color-accent-dark: #d495a7;
   --color-accent-glass: hsla(345, 60%, 83%, 0.2);
-  --color-accent-text: #c7889a;
+  --color-accent-text: #eeaabe; /* 목록 페이지 제목, 설명, pin 강조 */
 
   /* Semantic colors */
   --color-success: hsl(142, 50%, 45%);
@@ -102,15 +116,18 @@
 
   --color-bg: #1e1b1b;
   --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-hover: rgba(255, 255, 255, 0.08);
   --color-text: #f0e6e6;
   --color-text-muted: #c8b3b3;
   --color-text-inverse: #1e1b1b;
+  --color-border: #414141;
+  --color-selection: rgba(236, 234, 250, 0.15);
 
   --color-accent: #eeaabe;
   --color-accent-light: #f7d5df;
   --color-accent-dark: #d495a7;
   --color-accent-glass: hsla(345, 60%, 83%, 0.2);
-  --color-accent-text: #f7d5df;
+  --color-accent-text: #eeaabe;
 }
 
 /* Reduced transparency preference */
@@ -122,7 +139,7 @@
     --glass-blur-sm: 0px;
     --glass-blur: 0px;
     --glass-blur-lg: 0px;
-    --glass-border: rgba(226, 209, 209, 0.8);
+    --glass-border: #e2d1d1;
   }
 
   [data-theme='dark'] {
@@ -132,7 +149,7 @@
     --glass-blur-sm: 0px;
     --glass-blur: 0px;
     --glass-blur-lg: 0px;
-    --glass-border: rgba(80, 70, 70, 0.8);
+    --glass-border: #414141;
   }
 }
 
