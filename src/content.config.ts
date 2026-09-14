@@ -33,7 +33,7 @@ const blog = defineCollection({
       author: z.string().default('Anonymous'),
       draft: z.boolean().default(false),
       featured: z.boolean().default(false),
-      pinned: z.boolean().optional(), //
+      pinned: z.boolean().optional(),
     }),
 });
 
@@ -92,6 +92,20 @@ const windAlly = defineCollection({
     }),
 });
 
+// 🌟 Scribble collection (wind-ally 구조를 참고하여 태그 없이 깔끔하게 구성)
+const scribble = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/scribble' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().optional(),
+      pubDate: z.coerce.date(),
+      cover: image().optional(), // 인스타 대표 이미지
+      coverAlt: z.string().optional(),
+      description: z.string().optional(),
+      draft: z.boolean().default(false),
+    }),
+});
+
 // Conch collection
 const conch = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/conch' }),
@@ -104,7 +118,7 @@ const conch = defineCollection({
     }),
 });
 
-// 🌟 Bookmarks collection
+// Bookmarks collection
 const bookmarks = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/bookmarks' }),
   schema: z.object({
@@ -198,11 +212,11 @@ const landing = defineCollection({
   }),
 });
 
-// 🌟 collections 목록에 bookmarks 추가 완료!
 export const collections = {
   blog,
   dreams,
   'wind-ally': windAlly,
+  scribble, // 🌟 컬렉션 등록 완료
   conch,
   bookmarks,
   landing,
