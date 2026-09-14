@@ -104,40 +104,36 @@ const tags = Array.from(allTagsSet);
   function handleFilterClick(this: HTMLElement) {
     const filterButtons = document.querySelectorAll('.tag-btn');
     const items = document.querySelectorAll('.portfolio-item');
-    const grid = document.querySelector('.portfolio-grid') as HTMLElement;
 
     filterButtons.forEach((b) => b.classList.remove('active'));
     this.classList.add('active');
 
     const selectedTag = this.getAttribute('data-tag');
 
-    // 필터 전환 시 살짝 투명해지며 부드럽게 페이드 효과 주기
-    if (grid) {
-      grid.style.opacity = '0.3';
-    }
+    // 깜빡임 없이 아이템별로 부드럽게 토글
+    items.forEach((item) => {
+      const el = item as HTMLElement;
+      const itemTags = el.getAttribute('data-tags')?.split(',') || [];
+      const matches =
+        selectedTag === 'all' ||
+        (selectedTag && itemTags.includes(selectedTag));
 
-    setTimeout(() => {
-      items.forEach((item) => {
-        const el = item as HTMLElement;
-        const itemTags = el.getAttribute('data-tags')?.split(',') || [];
-        const matches =
-          selectedTag === 'all' ||
-          (selectedTag && itemTags.includes(selectedTag));
-
-        if (matches) {
-          // 🌟 display를 건드리는 대신 클래스만 토글하여 CSS 그리드 구조를 보존합니다!
-          el.classList.remove('hidden');
+      if (matches) {
+        el.classList.remove('hidden');
+        // 브라우저가 그리드 배치를 인지한 후 애니메이션이 발동하도록 미세 딜레이 부여
+        requestAnimationFrame(() => {
           el.classList.add('show');
-        } else {
-          el.classList.remove('show');
-          el.classList.add('hidden');
-        }
-      });
-
-      if (grid) {
-        grid.style.opacity = '1';
+        });
+      } else {
+        el.classList.remove('show');
+        // 페이드아웃 전환 효과(0.25초)가 끝난 뒤 display: none 처리하여 레이아웃 유지
+        setTimeout(() => {
+          if (!el.classList.contains('show')) {
+            el.classList.add('hidden');
+          }
+        }, 250);
       }
-    }, 150);
+    });
   }
 
   document.addEventListener('DOMContentLoaded', initWindAllyFilter);
@@ -149,8 +145,8 @@ const tags = Array.from(allTagsSet);
     display: flex;
     flex-direction: column;
     gap: var(--space-xl);
-    max-width: 700px; /* 🌟 폭을 700px로 설정하여 시원시원하게 배치 */
-    margin: 0 auto; /* 화면 중앙 정렬 */
+    max-width: 700px;
+    margin: 0 auto;
   }
 
   /* 필터 버튼 영역 정렬 및 깨짐 방지 */
@@ -184,7 +180,6 @@ const tags = Array.from(allTagsSet);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 4px;
-    transition: opacity 0.2s ease;
   }
 
   .portfolio-item {
@@ -208,7 +203,7 @@ const tags = Array.from(allTagsSet);
     pointer-events: auto;
   }
 
-  /* 🌟 숨겨진 아이템은 자리를 차지하지 않도록 처리하면서 그리드 파괴를 막습니다 */
+  /* 숨겨진 아이템 처리 */
   .portfolio-item.hidden {
     display: none !important;
   }
