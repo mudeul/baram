@@ -95,6 +95,7 @@ const siteConfig: SiteConfig = {
   nav: {
     main: [
       { name: 'Home', href: '/' },
+      { name: 'BODONG', href: '/bodong/' },
       { name: 'Blog', href: '/blog/' },
       { name: 'Dreams', href: '/dreams/' },
       { name: 'Wind-Ally', href: '/wind-ally/' },
