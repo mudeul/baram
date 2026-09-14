@@ -6,13 +6,13 @@ import Footer from '@/components/common/Footer.astro';
 import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
-// 🌟 프로젝트 컬렉션 가져오기 및 pinned -> featured 순서 정렬
+// 🌟 프로젝트 컬렉션 가져오기 및 pinned/pin -> featured 순서 정렬
 let allProjects = [];
 try {
   const collection = await getCollection('wind-ally');
   allProjects = collection.sort((a, b) => {
-    const aPinned = (a.data as any).pinned ? 1 : 0;
-    const bPinned = (b.data as any).pinned ? 1 : 0;
+    const aPinned = (a.data as any).pinned || (a.data as any).pin ? 1 : 0;
+    const bPinned = (b.data as any).pinned || (b.data as any).pin ? 1 : 0;
     if (aPinned !== bPinned) return bPinned - aPinned;
 
     const aFeatured = (a.data as any).featured ? 1 : 0;
@@ -70,7 +70,8 @@ const tags = Array.from(allTagsSet);
             allProjects.map((project) => {
               const projectTechs = project.data.tech || [];
               const dataTagsAttr = projectTechs.join(',');
-              const isPinned = (project.data as any).pinned;
+              const isPinned =
+                (project.data as any).pinned || (project.data as any).pin;
 
               return (
                 <a
@@ -162,6 +163,32 @@ const tags = Array.from(allTagsSet);
 </script>
 
 <style>
+  /* 상단 헤더 스타일 (가운데 정렬 및 그라데이션 타이틀) */
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+
+  .page-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin: 0 0 var(--space-xs) 0;
+    background: linear-gradient(
+      135deg,
+      var(--color-accent),
+      var(--color-accent-light)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-description {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+    margin: 0;
+  }
+
   .portfolio-wrapper {
     display: flex;
     flex-direction: column;
