@@ -29,22 +29,19 @@
   --aurora-3: hsl(340, 100%, 65%);
   --aurora-4: hsl(150, 70%, 60%);
 
-  /* Base colors */
-  --color-bg: hsl(220, 20%, 97%);
-  --color-surface: rgba(255, 255, 255, 0.4);
-  --color-text: hsl(220, 20%, 10%);
-  --color-text-muted: hsl(220, 15%, 35%);
-  --color-text-inverse: hsl(220, 20%, 95%);
+  /* Base colors (Nord Light Theme) */
+  --color-bg: #eceff4; /* 은은한 북극 설원 같은 회백색 배경 */
+  --color-surface: rgba(255, 255, 255, 0.7); /* 깔끔한 순백색 계열 카드 */
+  --color-text: #2e3440; /* 묵직하고 선명한 딥 차콜 텍스트 (최고의 가독성) */
+  --color-text-muted: #4c566a; /* 차분하고 정돈된 서브 텍스트 */
+  --color-text-inverse: #eceff4;
 
-  /* Accent colors */
-  --color-accent: hsl(280, 70%, 60%);
-  --color-accent-light: hsl(280, 70%, 75%);
-  --color-accent-dark: hsl(280, 70%, 45%);
-  --color-accent-glass: hsla(280, 70%, 60%, 0.1);
-  /* Accent tuned for text on the page background — meets WCAG AA (≈5.9:1 in
-     light mode). Use this for links/labels; --color-accent stays for fills,
-     borders and glows where the brighter purple is wanted. */
-  --color-accent-text: hsl(280, 70%, 45%);
+  /* Accent colors (Nordic Ice Blue / Blue) */
+  --color-accent: #5e81ac; /* 세련된 노르딕 블루 포인트 */
+  --color-accent-light: #81a1c1;
+  --color-accent-dark: #4c566a;
+  --color-accent-glass: hsla(212, 29%, 52%, 0.1);
+  --color-accent-text: #5e81ac; /* 링크나 강조 텍스트 */
 
   /* Semantic colors */
   --color-success: hsl(142, 71%, 45%);
