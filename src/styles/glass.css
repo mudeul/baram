@@ -37,7 +37,8 @@
 }
 
 /* Noise texture overlay for depth */
-.glass-panel::before {
+// .glass-panel::before
+{
   content: '';
   position: absolute;
   top: 0;
