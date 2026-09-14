@@ -6,7 +6,7 @@ import Footer from '@/components/common/Footer.astro';
 import Picture from '@/components/ui/Picture.astro';
 import { withBase } from '@/lib/url';
 
-// 프로젝트 컬렉션 가져오기 및 정렬 (pinned -> featured 순서)
+// 🌟 프로젝트 컬렉션 가져오기 및 pinned -> featured 순서 정렬
 let allProjects = [];
 try {
   const collection = await getCollection('wind-ally');
@@ -277,9 +277,6 @@ const tags = Array.from(allTagsSet);
   }
 
   @media (max-width: 768px) {
-    .page-title {
-      font-size: var(--text-3xl);
-    }
     .portfolio-grid {
       grid-template-columns: repeat(3, 1fr);
       gap: 2px;
