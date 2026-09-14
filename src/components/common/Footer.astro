@@ -25,9 +25,8 @@ const socialIcons = {
           <p class="footer-description">{siteConfig.description}</p>
         </div>
 
-        <!-- Social Links (Connect 섹션) -->
+        <!-- Social Links (Connect 텍스트 제거됨) -->
         <div class="footer-section social-section">
-          <h4 class="footer-subtitle">Connect</h4>
           <div class="social-links">
             {
               Object.entries(siteConfig.social).map(
@@ -123,10 +122,9 @@ const socialIcons = {
     gap: var(--space-md);
   }
 
-  /* 🌟 Connect 섹션을 오른쪽으로 살짝만 밀기 */
   @media (min-width: 769px) {
     .social-section {
-      margin-left: 0; /* 전체 박스는 제자리에 고정 */
+      margin-left: 0;
     }
 
     .footer-title {
@@ -149,10 +147,6 @@ const socialIcons = {
         -webkit-text-fill-color: currentColor;
         color: var(--color-text);
       }
-    }
-
-    .footer-subtitle {
-      margin-left: 0.4rem; /* Connect 글자만 살짝 이동 */
     }
   }
 
