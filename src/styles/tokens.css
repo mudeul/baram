@@ -1,53 +1,53 @@
-/* Design Tokens - Custom Soft Era Theme (Updated) */
+/* Design Tokens - Astro Haze Theme */
+
+/* Breakpoint convention: media query px values across this codebase should
+   use 640 / 768 / 1024, with 900 as an additional large-breakpoint tier for
+   components that need to switch layout later than 768. CSS custom
+   properties cannot be used inside @media conditions, so these are documented
+   here rather than defined as tokens. */
 
 :root {
   /* Light mode tokens */
 
   /* Glass effect */
-  --glass-bg: rgba(249, 245, 245, 0.65);
-  --glass-bg-solid: rgba(249, 245, 245, 0.9);
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-bg-solid: rgba(255, 255, 255, 0.7);
+  /* Blur steps. Only --glass-blur deepens in dark mode; the others describe a
+     surface's weight (a chip vs. the nav bar), which the theme doesn't change.
+     All of them drop to 0 under prefers-reduced-transparency below. */
   --glass-blur-xs: 4px;
   --glass-blur-sm: 8px;
   --glass-blur: 12px;
   --glass-blur-lg: 20px;
-  --glass-border: rgba(231, 208, 200, 0.5);
-  --glass-shadow: 0 8px 32px 0 rgba(238, 170, 190, 0.12);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
   --glass-sat: 180%;
 
   /* Aurora gradient colors */
-  --aurora-1: hsl(350, 70%, 85%);
-  --aurora-2: hsl(300, 40%, 88%);
-  --aurora-3: hsl(20, 60%, 85%);
-  --aurora-4: hsl(160, 30%, 85%);
+  --aurora-1: hsl(280, 100%, 70%);
+  --aurora-2: hsl(200, 100%, 60%);
+  --aurora-3: hsl(340, 100%, 65%);
+  --aurora-4: hsl(150, 70%, 60%);
 
-  /* Base colors (사용자 지정 매핑 반영) */
-  --color-bg: #f9f5f5; /* 배경색 */
-  --color-surface: #e3e6ed; /* 홈화면 상단의 메뉴바 및 상단 컴포넌트 배경 */
-  --color-surface-hover: #eceef3;
+  /* Base colors (Nord Light Theme) */
+  --color-bg: #eceff4; /* 은은한 북극 설원 같은 회백색 배경 */
+  --color-surface: rgba(255, 255, 255, 0.7); /* 깔끔한 순백색 계열 카드 */
+  --color-text: #2e3440; /* 묵직하고 선명한 딥 차콜 텍스트 (최고의 가독성) */
+  --color-text-muted: #4c566a; /* 차분하고 정돈된 서브 텍스트 */
+  --color-text-inverse: #eceff4;
 
-  --color-text: #eceafa; /* 기본 텍스트 색 */
-  --color-text-muted: #e7d0c8; /* 홈화면 글씨 (서브 텍스트) */
-  --color-text-inverse: #f9f5f5;
-  --color-border: #e7d0c8;
-
-  /* Selection */
-  --color-selection: #eceafa;
-
-  /* Accent colors (목록페이지 제목, 설명, pin) */
-  --color-accent: #eeaabe; /* #EEAABE 포인트 */
-  --color-accent-light: #f7d5df;
-  --color-accent-dark: #d495a7;
-  --color-accent-glass: hsla(345, 60%, 83%, 0.2);
-  --color-accent-text: #eeaabe; /* 목록페이지 제목, 설명, pin 강조 */
-
-  /* 전용 추가 커스텀 변수 (목록 페이지 포스트 제목용) */
-  --color-post-title: #eceafa;
+  /* Accent colors (Nordic Ice Blue / Blue) */
+  --color-accent: #5e81ac; /* 세련된 노르딕 블루 포인트 */
+  --color-accent-light: #81a1c1;
+  --color-accent-dark: #4c566a;
+  --color-accent-glass: hsla(212, 29%, 52%, 0.1);
+  --color-accent-text: #5e81ac; /* 링크나 강조 텍스트 */
 
   /* Semantic colors */
-  --color-success: hsl(142, 50%, 45%);
-  --color-warning: hsl(38, 80%, 50%);
-  --color-error: hsl(0, 60%, 55%);
-  --color-info: hsl(207, 70%, 54%);
+  --color-success: hsl(142, 71%, 45%);
+  --color-warning: hsl(45, 93%, 47%);
+  --color-error: hsl(0, 72%, 51%);
+  --color-info: hsl(207, 90%, 54%);
 
   /* Typography */
   --font-sans:
@@ -71,6 +71,9 @@
   --space-md: 1rem;
   --space-lg: 1.5rem;
   --space-xl: 2rem;
+  /* The two largest steps carry section rhythm, where a fixed 3/4rem is too
+     much air on a phone. They scale with the viewport and settle at the
+     previous values on a desktop-width screen. */
   --space-2xl: clamp(2rem, 1.6rem + 2vw, 3rem);
   --space-3xl: clamp(2.5rem, 2rem + 3vw, 4rem);
 
@@ -104,26 +107,59 @@
 
 /* Dark mode tokens */
 [data-theme='dark'] {
-  --glass-bg: rgba(41, 38, 38, 0.7);
-  --glass-bg-solid: rgba(30, 27, 27, 0.9);
+  /* Glass effect - darker, more saturated */
+  --glass-bg: rgba(0, 0, 0, 0.2);
+  --glass-bg-solid: rgba(0, 0, 0, 0.7);
   --glass-blur: 16px;
-  --glass-border: rgba(231, 208, 200, 0.3);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   --glass-sat: 150%;
 
-  --color-bg: #1e1b1b;
-  --color-surface: rgba(227, 230, 237, 0.1);
-  --color-surface-hover: rgba(227, 230, 237, 0.15);
-  --color-text: #eceafa;
-  --color-text-muted: #e7d0c8;
-  --color-text-inverse: #1e1b1b;
-  --color-border: #e7d0c8;
-  --color-selection: rgba(236, 234, 250, 0.15);
+  /* Base colors */
+  --color-bg: hsl(220, 20%, 8%);
+  --color-surface: rgba(255, 255, 255, 0.05);
+  --color-text: hsl(220, 20%, 95%);
+  --color-text-muted: hsl(220, 15%, 65%);
+  --color-text-inverse: hsl(220, 20%, 10%);
 
-  --color-accent: #eeaabe;
-  --color-accent-light: #f7d5df;
-  --color-accent-dark: #d495a7;
-  --color-accent-glass: hsla(345, 60%, 83%, 0.2);
-  --color-accent-text: #eeaabe;
-  --color-post-title: #eceafa;
+  /* Accent colors adjusted for dark mode */
+  --color-accent: hsl(280, 80%, 65%);
+  --color-accent-light: hsl(280, 80%, 75%);
+  --color-accent-dark: hsl(280, 80%, 55%);
+  --color-accent-glass: hsla(280, 80%, 65%, 0.15);
+  /* On dark backgrounds the lighter accent already clears AA, so accent text
+     uses the brighter value here. */
+  --color-accent-text: hsl(280, 80%, 75%);
+}
+
+/* Reduced transparency preference */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-bg-solid: rgba(255, 255, 255, 0.98);
+    --glass-blur-xs: 0px;
+    --glass-blur-sm: 0px;
+    --glass-blur: 0px;
+    --glass-blur-lg: 0px;
+    --glass-border: rgba(0, 0, 0, 0.1);
+  }
+
+  [data-theme='dark'] {
+    --glass-bg: rgba(20, 20, 20, 0.95);
+    --glass-bg-solid: rgba(10, 10, 10, 0.98);
+    --glass-blur-xs: 0px;
+    --glass-blur-sm: 0px;
+    --glass-blur: 0px;
+    --glass-blur-lg: 0px;
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast: 0ms;
+    --transition-base: 0ms;
+    --transition-slow: 0ms;
+  }
 }
