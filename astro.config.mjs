@@ -107,7 +107,10 @@ export default defineConfig({
   // passes through untouched. MDX inherits this config, so `.mdx` bodies get
   // the same treatment.
   markdown: {
-    processor: satteri({ hastPlugins: [satteriBaseUrls(BASE)] }),
+    processor: satteri({
+      breaks: true,
+      hastPlugins: [satteriBaseUrls(BASE)],
+    }),
   },
   server: {
     port: 3000,
