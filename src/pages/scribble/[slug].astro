@@ -90,5 +90,10 @@ const { Content } = await render(item);
   .prose {
     white-space: pre-wrap;
     word-break: break-all;
+    font-size: var(
+      --text-base
+    ); /* 블로그 본문과 동일한 글자 크기 변수 (또는 원하시는 크기) */
+    line-height: 1.8; /* 블로그 본문과 유사한 쾌적한 줄 간격 */
+    color: var(--color-text); /* 본문 글자 색상 동기화 */
   }
 </style>
