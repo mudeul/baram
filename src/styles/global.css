@@ -480,3 +480,10 @@ button {
     margin: 0;
   }
 }
+/* 전역 CSS 파일에 추가 */
+.post-title {
+  background: linear-gradient(135deg, var(--color-text), var(--color-accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
