@@ -18,6 +18,19 @@ const imageSrc = nonBlank.refine(
   { message: 'Must be an http(s) URL or a path to an image file' },
 );
 
+// Bodong collection
+const bodong = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/bodong' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    pubDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    draft: z.boolean().default(false),
+    tags: z.array(z.string()).default([]),
+  }),
+});
+
 // Blog collection
 const blog = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
@@ -212,6 +225,7 @@ const landing = defineCollection({
 });
 
 export const collections = {
+  bodong,
   blog,
   dreams,
   'wind-ally': windAlly,
