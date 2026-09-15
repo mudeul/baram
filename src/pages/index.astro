@@ -48,7 +48,7 @@ const formattedPosts = posts.map((post) => {
 </IndexLayout>
 
 <style>
-  /* about.md가 들어가는 영역을 확실하게 통제 */
+  /* about 영역 전체의 글씨 크기를 강제로 축소하고 바깥으로 튀어나가는 것 방지 */
   .about-section {
     width: 100%;
     max-width: 42rem;
@@ -57,11 +57,13 @@ const formattedPosts = posts.map((post) => {
     box-sizing: border-box;
     word-break: keep-all;
     overflow-wrap: break-word;
+    font-size: 0.75rem !important; /* 전체 글씨 크기 확 줄이기 */
   }
 
-  /* 테마 CSS가 무시하지 못하도록 about.md 내부 폰트 크기를 강제로 더 작게 축소 */
-  .about-section :global(div) {
-    font-size: 80% !important;
+  /* 프로즈(prose) 테마가 내부 태그 크기를 덮어쓰지 못하도록 강제 적용 */
+  .about-section :global(*) {
+    font-size: inherit !important;
+    line-height: 1.4 !important;
   }
 
   .wind-ally-container {
@@ -79,7 +81,7 @@ const formattedPosts = posts.map((post) => {
     width: 100%;
   }
 
-  /* 가로 3개 정방형 그리드, 사진 간격 절반으로 축소 */
+  /* 가로 3개 정방형 그리드, 사진 간격 절반으로 축소 (0.35rem) */
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
