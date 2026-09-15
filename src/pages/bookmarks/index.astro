@@ -16,7 +16,7 @@ const sortedPosts = posts
     id: `bookmarks/${post.id}`
   }))
 
-// 북마크에서 태그 추출 (tech나 tags가 문자열이든 배열이든 모두 안전하게 수집)
+// 북마크에서 태그 안전하게 수집
 const allTagsSet = new Set<string>()
 sortedPosts.forEach((item) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,8 +66,22 @@ const hasNextPage = sortedPosts.length > pageSize
         )
       }
 
+      <!-- 각 북마크 데이터의 태그를 data-tags 속성으로 직접 주입하여 스크립트가 인식하도록 수정 -->
       <div class="bookmarks-list-wrapper">
-        <PostList posts={currentPosts} />
+        {
+          currentPosts.map((post) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const postData = post.data as any
+            const postTags = postData.tech || postData.tags || []
+            const tagString = Array.isArray(postTags) ? postTags.join(',') : String(postTags)
+
+            return (
+              <div class="bookmark-item-row" data-tags={tagString}>
+                <PostList posts={[post]} />
+              </div>
+            )
+          })
+        }
       </div>
 
       <div style="width: 100%; display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 2rem;">
@@ -96,7 +110,8 @@ const hasNextPage = sortedPosts.length > pageSize
 <script>
   function initBookmarksFilter() {
     const filterButtons = document.querySelectorAll('.tag-btn')
-    const items = document.querySelectorAll('.bookmarks-list-wrapper li, .bookmarks-list-wrapper article')
+    // 직접 감싸준 .bookmark-item-row 요소를 타겟으로 잡음
+    const items = document.querySelectorAll('.bookmark-item-row')
 
     if (filterButtons.length === 0 || items.length === 0) return
 
@@ -108,7 +123,7 @@ const hasNextPage = sortedPosts.length > pageSize
 
   function handleFilterClick(this: HTMLElement) {
     const filterButtons = document.querySelectorAll('.tag-btn')
-    const items = document.querySelectorAll('.bookmarks-list-wrapper li, .bookmarks-list-wrapper article')
+    const items = document.querySelectorAll('.bookmark-item-row')
 
     filterButtons.forEach((b) => b.classList.remove('active'))
     this.classList.add('active')
@@ -117,7 +132,11 @@ const hasNextPage = sortedPosts.length > pageSize
 
     items.forEach((item) => {
       const el = item as HTMLElement
-      const itemTags = el.getAttribute('data-tags')?.split(',') || []
+      const itemTags =
+        el
+          .getAttribute('data-tags')
+          ?.split(',')
+          .map((t) => t.trim()) || []
       const matches = selectedTag === 'all' || (selectedTag && itemTags.includes(selectedTag))
 
       if (matches) {
@@ -162,14 +181,14 @@ const hasNextPage = sortedPosts.length > pageSize
     line-height: 1.4;
   }
 
-  /* 가운데 정렬된 필터칩 스타일 (크기 약 80% 적용 및 목록과 가깝게 조정) */
+  /* 필터칩 스타일 (약 80% 크기, 목록과 가깝게 배치) */
   .filter-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
     justify-content: center;
     margin-top: -0.5rem;
-    margin-bottom: -0.25rem; /* 아래 리스트 쪽으로 바짝 붙임 */
+    margin-bottom: -0.25rem;
   }
 
   .tag-btn {
@@ -178,7 +197,7 @@ const hasNextPage = sortedPosts.length > pageSize
     color: var(--color-text-muted, #666);
     padding: 0.25rem 0.7rem;
     border-radius: 9999px;
-    font-size: 0.7rem; /* 글자 크기 약 80% */
+    font-size: 0.7rem; /* 크기 약 80% */
     cursor: pointer;
     transition: all 0.2s ease;
   }
@@ -190,7 +209,7 @@ const hasNextPage = sortedPosts.length > pageSize
     border-color: #eceafa;
   }
 
-  .bookmarks-list-wrapper .hidden {
+  .bookmark-item-row.hidden {
     display: none !important;
   }
 

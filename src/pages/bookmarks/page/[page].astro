@@ -29,7 +29,7 @@ interface Props {
 
 const { page } = Astro.props
 
-// 전체 북마크에서 태그 추출 (1페이지와 동일하게 필터칩 제공)
+// 전체 북마크에서 태그 안전하게 수집
 const allPosts = await getCollection('bookmarks')
 const allTagsSet = new Set<string>()
 allPosts.forEach((item) => {
@@ -78,8 +78,22 @@ const tags = Array.from(allTagsSet)
         )
       }
 
+      <!-- 각 북마크 데이터의 태그를 data-tags 속성으로 주입 -->
       <div class="bookmarks-list-wrapper">
-        <PostList posts={page.data} />
+        {
+          page.data.map((post) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const postData = post.data as any
+            const postTags = postData.tech || postData.tags || []
+            const tagString = Array.isArray(postTags) ? postTags.join(',') : String(postTags)
+
+            return (
+              <div class="bookmark-item-row" data-tags={tagString}>
+                <PostList posts={[post]} />
+              </div>
+            )
+          })
+        }
       </div>
 
       <div style="width: 100%; display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 2rem;">
@@ -124,7 +138,7 @@ const tags = Array.from(allTagsSet)
 <script>
   function initBookmarksFilter() {
     const filterButtons = document.querySelectorAll('.tag-btn')
-    const items = document.querySelectorAll('.bookmarks-list-wrapper li, .bookmarks-list-wrapper article')
+    const items = document.querySelectorAll('.bookmark-item-row')
 
     if (filterButtons.length === 0 || items.length === 0) return
 
@@ -136,7 +150,7 @@ const tags = Array.from(allTagsSet)
 
   function handleFilterClick(this: HTMLElement) {
     const filterButtons = document.querySelectorAll('.tag-btn')
-    const items = document.querySelectorAll('.bookmarks-list-wrapper li, .bookmarks-list-wrapper article')
+    const items = document.querySelectorAll('.bookmark-item-row')
 
     filterButtons.forEach((b) => b.classList.remove('active'))
     this.classList.add('active')
@@ -145,7 +159,11 @@ const tags = Array.from(allTagsSet)
 
     items.forEach((item) => {
       const el = item as HTMLElement
-      const itemTags = el.getAttribute('data-tags')?.split(',') || []
+      const itemTags =
+        el
+          .getAttribute('data-tags')
+          ?.split(',')
+          .map((t) => t.trim()) || []
       const matches = selectedTag === 'all' || (selectedTag && itemTags.includes(selectedTag))
 
       if (matches) {
@@ -190,22 +208,23 @@ const tags = Array.from(allTagsSet)
     line-height: 1.4;
   }
 
+  /* 필터칩 스타일 (약 80% 크기, 리스트와 밀착) */
   .filter-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.4rem;
     justify-content: center;
     margin-top: -0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: -0.25rem;
   }
 
   .tag-btn {
     background: var(--color-surface, rgba(125, 125, 125, 0.08));
     border: 1px solid var(--color-border, #eaeaea);
     color: var(--color-text-muted, #666);
-    padding: 0.2rem 0.6rem;
+    padding: 0.25rem 0.7rem;
     border-radius: 9999px;
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     cursor: pointer;
     transition: all 0.2s ease;
   }
@@ -217,7 +236,7 @@ const tags = Array.from(allTagsSet)
     border-color: #eceafa;
   }
 
-  .bookmarks-list-wrapper .hidden {
+  .bookmark-item-row.hidden {
     display: none !important;
   }
 
