@@ -162,23 +162,23 @@ const hasNextPage = sortedPosts.length > pageSize
     line-height: 1.4;
   }
 
-  /* 가운데 정렬된 필터칩 스타일 (크기 약 70% 축소 적용) */
+  /* 가운데 정렬된 필터칩 스타일 (크기 약 80% 적용 및 목록과 가깝게 조정) */
   .filter-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 0.4rem;
     justify-content: center;
     margin-top: -0.5rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: -0.25rem; /* 아래 리스트 쪽으로 바짝 붙임 */
   }
 
   .tag-btn {
     background: var(--color-surface, rgba(125, 125, 125, 0.08));
     border: 1px solid var(--color-border, #eaeaea);
     color: var(--color-text-muted, #666);
-    padding: 0.2rem 0.6rem;
+    padding: 0.25rem 0.7rem;
     border-radius: 9999px;
-    font-size: 0.6rem; /* 글자 크기 축소 (약 70%) */
+    font-size: 0.7rem; /* 글자 크기 약 80% */
     cursor: pointer;
     transition: all 0.2s ease;
   }
