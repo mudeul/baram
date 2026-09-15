@@ -233,3 +233,15 @@ details summary::-webkit-details-marker,
 details summary::marker {
   display: none !important;
 }
+
+/* 라이트 모드일 때 상단 타이틀 색상 */
+html.light header a,
+html.light .site-title {
+  color: #82b4e3 !important; /* 원하는 라이트 모드 색상 헥스 코드로 변경 (예: 파란색) */
+}
+
+/* 다크 모드일 때 상단 타이틀 색상 */
+html.dark header a,
+html.dark .site-title {
+  color: #82b4e3 !important; /* 원하는 다크 모드 색상 헥스 코드로 변경 (예: 밝은 하늘색) */
+}

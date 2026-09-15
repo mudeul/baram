@@ -3,11 +3,11 @@ import type { ThemeConfig } from './types'
 export const themeConfig: ThemeConfig = {
   // SITE INFO ///////////////////////////////////////////////////////////////////////////////////////////
   site: {
-    website: 'https://chiri.the3ash.com/', // Site domain
-    title: 'CHIRI', // Site title
-    author: '3ASH', // Author name
-    description: 'Minimal blog built by Astro', // Site description
-    language: 'en-US' // Default language
+    website: 'https://https://mudeul.page/', // Site domain
+    title: '높이 부는 바람', // Site title
+    author: '무들', // Author name
+    description: '이 바람이 좋아 나를 날려도 좋아 어디로든 갈 수 있다면', // Site description
+    language: 'ko-KR' // Default language
   },
 
   // GENERAL SETTINGS ////////////////////////////////////////////////////////////////////////////////////
