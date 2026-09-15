@@ -1,5 +1,9 @@
+// src/content.config.ts 맨 위를 아래와 같이 수정
 import { glob } from 'astro/loaders'
-import { defineCollection, z } from 'astro:content'
+import { defineCollection } from 'astro:content'
+import { z } from 'zod'
+
+// ... (나머지 스키마 및 컬렉션 정의는 그대로 유지)
 
 const postSchema = z.object({
   title: z.string().optional().default('제목 없음'),

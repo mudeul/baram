@@ -1,13 +1,14 @@
 ---
 import type { GetStaticPaths } from 'astro'
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import Header from '@/components/common/Header.astro'
-import Footer from '@/components/common/Footer.astro'
-import Container from '@/components/ui/Container.astro'
-import PostGrid from '@/components/blog/PostGrid.astro'
-import Pagination from '@/components/blog/Pagination.astro'
-import { getPublishedPosts, splitFeatured, type Post } from '@/lib/posts'
-import siteConfig from '@/site.config'
+// 경로 에러를 방지하기 위해 프로젝트 구조에 맞게 상대 경로로 수정하는 것이 가장 안전합니다
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Header from '../../../components/common/Header.astro'
+import Footer from '../../../components/common/Footer.astro'
+import Container from '../../../components/ui/Container.astro'
+import PostGrid from '../../../components/blog/PostGrid.astro'
+import Pagination from '../../../components/blog/Pagination.astro'
+import { getPublishedPosts, splitFeatured, type Post } from '../../../lib/posts'
+import siteConfig from '../../../site.config'
 
 export const getStaticPaths = (async () => {
   const allPosts = await getPublishedPosts()
@@ -44,8 +45,9 @@ const { posts, currentPage, totalPages } = Astro.props
 ---
 
 <BaseLayout
+  type="blog"
   title={`Blog — Page ${currentPage}`}
-  description="Insights, tutorials, and updates from the Astro Haze blog"
+  description="Insights, tutorials, and updates from the blog"
 >
   <Header />
 
