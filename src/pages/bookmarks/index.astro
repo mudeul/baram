@@ -1,62 +1,67 @@
 ---
-import IndexLayout from '../../layouts/IndexLayout.astro'
-import PostList from '../../components/widgets/PostList.astro'
-import { themeConfig } from '../../config'
 import { getCollection } from 'astro:content'
+import { themeConfig } from '../../themeConfig'
+import IndexLayout from '../../layouts/IndexLayout.astro'
+import PostList from '../../components/PostList.astro'
 
-const posts = await getCollection('bookmarks')
-const sortedPosts = posts
-  .sort((a, b) => {
-    const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
-    const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
-    return dateB - dateA
-  })
-  .map((post) => ({
-    ...post,
-    id: `bookmarks/${post.id}`
-  }))
+const bookmarks = await getCollection('bookmarks')
 
-const allTagsSet = new Set<string>()
-sortedPosts.forEach((item) => {
-  const postData = item.data as any
-  const techList = postData.tech || postData.tags
-
-  if (techList) {
-    if (Array.isArray(techList)) {
-      techList.forEach((t: unknown) => {
-        if (typeof t === 'string' && t.trim()) allTagsSet.add(t.trim())
-      })
-    } else if (typeof techList === 'string' && techList.trim()) {
-      techList.split(',').forEach((t) => {
-        if (t.trim()) allTagsSet.add(t.trim())
-      })
-    }
-  }
+// 최신순 정렬
+bookmarks.sort((a, b) => {
+  const timeA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
+  const timeB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
+  return timeB - timeA
 })
-const tags = Array.from(allTagsSet)
 
-const pageSize = 10
-const currentPosts = sortedPosts.slice(0, pageSize)
-const totalPages = Math.ceil(sortedPosts.length / pageSize)
-const hasNextPage = sortedPosts.length > pageSize
+// 모든 고유 태그 추출
+const tagSet = new Set<string>()
+for (let i = 0; i < bookmarks.length; i++) {
+  const data = bookmarks[i].data as any
+  const itemTags = data.tech || data.tags
+  if (Array.isArray(itemTags)) {
+    for (let j = 0; j < itemTags.length; j++) {
+      if (itemTags[j]) tagSet.add(String(itemTags[j]))
+    }
+  } else if (typeof itemTags === 'string' && itemTags) {
+    tagSet.add(itemTags)
+  }
+}
+const allTags = Array.from(tagSet)
 ---
 
 <IndexLayout title={`Bookmarks - ${themeConfig.site.title}`} description="♪ 다만 내 것이 되지 않았어">
-  <main class="bookmarks-container">
-    <div class="bookmarks-wrapper">
-      <div class="header-area">
-        <h1 class="text-base font-bold">Bookmarks</h1>
-        <p class="text-gray-500 dark:text-gray-400 text-xs desc-text">♪ 다만 내 것이 되지 않았어</p>
+  <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 1rem;">
+    <div style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%;">
+      <!-- 헤더 -->
+      <div style="margin-bottom: 0.5rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Bookmarks
+        </h1>
+        <p style="font-size: 0.75rem !important; line-height: 1.4;" class="text-gray-500 dark:text-gray-400">
+          ♪ 다만 내 것이 되지 않았어
+        </p>
       </div>
 
+      <!-- 태그 필터 버튼들 -->
       {
-        tags.length > 0 && (
-          <div class="filter-tags" aria-label="Filter by tag">
-            <button class="tag-btn active" data-tag="all">
+        allTags.length > 0 && (
+          <div
+            style="display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: -0.5rem; margin-bottom: -0.25rem;"
+            aria-label="Filter by tag"
+          >
+            <button
+              class="tag-btn active"
+              data-tag="all"
+              style="background: #eceafa; border: 1px solid #eceafa; color: #555555; padding: 0.25rem 0.7rem; border-radius: 9999px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s ease;"
+            >
               All
             </button>
-            {tags.map((tag) => (
-              <button class="tag-btn" data-tag={tag}>
+            {allTags.map((tag) => (
+              <button
+                class="tag-btn"
+                data-tag={tag}
+                style="background: rgba(125, 125, 125, 0.08); border: 1px solid #eaeaea; color: #666666; padding: 0.25rem 0.7rem; border-radius: 9999px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s ease;"
+              >
                 {tag}
               </button>
             ))}
@@ -64,9 +69,10 @@ const hasNextPage = sortedPosts.length > pageSize
         )
       }
 
-      <div class="bookmarks-list-wrapper">
+      <!-- 북마크 리스트 -->
+      <div class="bookmarks-list-wrapper" style="display: flex; flex-direction: column; gap: 1rem;">
         {
-          currentPosts.map((post) => {
+          bookmarks.map((post) => {
             const postData = post.data as any
             const postTags = postData.tech || postData.tags || []
             const tagString = Array.isArray(postTags) ? postTags.join(',') : String(postTags)
@@ -79,144 +85,54 @@ const hasNextPage = sortedPosts.length > pageSize
           })
         }
       </div>
-
-      <div style="width: 100%; display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 2rem;">
-        <div style="display: flex; align-items: center; gap: 2rem; font-size: 0.875rem;">
-          <span style="color: #d1d5db; cursor: not-allowed;">← 이전</span>
-          <span style="color: #4b5563; font-weight: 500;">1 / {totalPages || 1}</span>
-          {
-            hasNextPage ? (
-              <a
-                href="/bookmarks/page/2"
-                style="font-weight: 500; transition: opacity 0.2s;"
-                class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
-              >
-                다음 →
-              </a>
-            ) : (
-              <span style="color: #d1d5db; cursor: not-allowed;">다음 →</span>
-            )
-          }
-        </div>
-      </div>
     </div>
   </main>
-</IndexLayout>
 
-<script is:inline>
-  function initBookmarksFilter() {
-    var filterButtons = document.querySelectorAll('.tag-btn')
-    var items = document.querySelectorAll('.bookmark-item-row')
+  <!-- 클라이언트 필터링 스크립트 -->
+  <script is:inline>
+    function initBookmarksFilter() {
+      var buttons = document.querySelectorAll('.tag-btn')
+      var rows = document.querySelectorAll('.bookmark-item-row')
 
-    if (filterButtons.length === 0 || items.length === 0) return
+      if (buttons.length === 0 || rows.length === 0) return
 
-    filterButtons.forEach(function (btn) {
-      btn.removeEventListener('click', handleFilterClick)
-      btn.addEventListener('click', handleFilterClick)
-    })
-  }
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function () {
+          // 버튼 활성화 스타일 토글
+          for (var j = 0; j < buttons.length; j++) {
+            buttons[j].classList.remove('active')
+            buttons[j].style.background = 'rgba(125, 125, 125, 0.08)'
+            buttons[j].style.color = '#666666'
+            buttons[j].style.borderColor = '#eaeaea'
+          }
 
-  function handleFilterClick(event) {
-    var filterButtons = document.querySelectorAll('.tag-btn')
-    var items = document.querySelectorAll('.bookmark-item-row')
+          this.classList.add('active')
+          this.style.background = '#eceafa'
+          this.style.color = '#555555'
+          this.style.borderColor = '#eceafa'
 
-    filterButtons.forEach(function (b) {
-      b.classList.remove('active')
-    })
+          var targetTag = this.getAttribute('data-tag')
 
-    var targetBtn = event.currentTarget
-    if (!targetBtn) return
-    targetBtn.classList.add('active')
+          // 항목 보이기/숨기기
+          for (var k = 0; k < rows.length; k++) {
+            var tagsAttr = rows[k].getAttribute('data-tags') || ''
+            var tagsList = tagsAttr.split(',')
 
-    var selectedTag = targetBtn.getAttribute('data-tag')
-
-    items.forEach(function (item) {
-      var rawTags = item.getAttribute('data-tags')
-      var itemTags = rawTags
-        ? rawTags.split(',').map(function (t) {
-            return t.trim()
-          })
-        : []
-      var matches = selectedTag === 'all' || (selectedTag && itemTags.indexOf(selectedTag) !== -1)
-
-      if (matches) {
-        item.classList.remove('hidden')
-      } else {
-        item.classList.add('hidden')
+            if (targetTag === 'all' || tagsList.indexOf(targetTag) !== -1) {
+              rows[k].style.display = ''
+            } else {
+              rows[k].style.display = 'none'
+            }
+          }
+        })
       }
-    })
-  }
+    }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initBookmarksFilter)
-  } else {
-    initBookmarksFilter()
-  }
-  document.addEventListener('astro:page-load', initBookmarksFilter)
-</script>
-
-<style>
-  .bookmarks-container {
-    width: 100%;
-    max-width: 42rem;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-  }
-
-  .bookmarks-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-  }
-
-  .header-area {
-    margin-bottom: 0.5rem;
-  }
-
-  main h1 {
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 0.25rem !important;
-  }
-
-  .desc-text {
-    font-size: 0.75rem !important;
-    line-height: 1.4;
-  }
-
-  .filter-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    justify-content: center;
-    margin-top: -0.5rem;
-    margin-bottom: -0.25rem;
-  }
-
-  .tag-btn {
-    background: var(--color-surface, rgba(125, 125, 125, 0.08));
-    border: 1px solid var(--color-border, #eaeaea);
-    color: var(--color-text-muted, #666);
-    padding: 0.25rem 0.7rem;
-    border-radius: 9999px;
-    font-size: 0.7rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .tag-btn.active,
-  .tag-btn:hover {
-    background: #eceafa;
-    color: #555555;
-    border-color: #eceafa;
-  }
-
-  .bookmark-item-row.hidden {
-    display: none !important;
-  }
-
-  .no-visited:visited {
-    color: currentColor !important;
-  }
-</style>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBookmarksFilter)
+    } else {
+      initBookmarksFilter()
+    }
+    document.addEventListener('astro:page-load', initBookmarksFilter)
+  </script>
+</IndexLayout>
