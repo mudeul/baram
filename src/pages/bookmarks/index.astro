@@ -80,8 +80,8 @@ const formattedBookmarks = bookmarks.map((post) => {
         )
       }
 
-      <!-- 북마크 리스트 -->
-      <div class="bookmarks-container">
+      <!-- 북마크 리스트 (글씨 크기 90%, 간격 80% 적용) -->
+      <div class="bookmarks-container custom-compact-list">
         {
           formattedBookmarks.map(({ post, tagString }) => (
             <div class="bookmark-item-row" data-tags={tagString}>
@@ -94,16 +94,26 @@ const formattedBookmarks = bookmarks.map((post) => {
   </main>
 
   <style>
-    /* 주범인 placeholder를 화면에서 완전히 없애고 높이 차지 못하게 함 */
+    /* 주범인 placeholder 완벽 제거 및 간격 80% 축소 */
+    .custom-compact-list {
+      font-size: 90% !important;
+    }
+    .bookmark-item-row {
+      margin: 0 !important;
+      padding: 0.08rem 0 !important;
+      line-height: 1.2 !important;
+    }
     .bookmark-item-row :global(.placeholder) {
       display: none !important;
       height: 0 !important;
       margin: 0 !important;
       padding: 0 !important;
     }
-    .bookmark-item-row {
-      margin: 0 !important;
-      padding: 0 !important;
+    .bookmark-item-row :global(ul),
+    .bookmark-item-row :global(li),
+    .bookmark-item-row :global(div) {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
     }
   </style>
 
