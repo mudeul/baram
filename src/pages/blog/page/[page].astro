@@ -40,9 +40,9 @@ const { posts, currentPage, totalPages } = Astro.props
 ---
 
 <BaseLayout
-  type="blog"
-  title={`Blog — Page ${currentPage}`}
-  description="Insights, tutorials, and updates from the blog"
+  type="page"
+  title={`Blog (Page ${currentPage}) - ${siteConfig.site.title}`}
+  description={siteConfig.site.description}
 >
   <Header />
 
