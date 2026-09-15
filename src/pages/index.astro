@@ -1,29 +1,40 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import About from '@/components/widgets/About.astro'
 import { themeConfig } from '@/config'
 import { getSortedFilteredPosts } from '@/utils/draft'
+import { getEntry, render } from 'astro:content'
 
-// posts 컬렉션 데이터 가져오기 (커버 이미지와 날짜 포함)
+// 1. src/content/about 폴더의 마크다운 가져오기 (파일명이 index.md인 경우)
+const aboutEntry = await getEntry('about', 'index')
+const { Content } = aboutEntry ? await render(aboutEntry) : { Content: null }
+
+// 2. posts 컬렉션 데이터 가져오기
 const posts = await getSortedFilteredPosts()
 
 const formattedPosts = posts.map((post) => {
   const data = post.data as any
   return {
     title: data.title || post.id,
-    url: `/posts/${post.id}`, // post.slug 제거하고 post.id 사용
-    cover: data.cover || null, // 옵시디언 노트의 cover 속성 꺼내오기
+    url: `/posts/${post.id}`,
+    cover: data.cover || null,
     dateStr: data.pubDate ? new Date(data.pubDate).toISOString().split('T')[0].replaceAll('-', '.') : ''
   }
 })
 ---
 
 <IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
-  <About />
+  <div class="wind-ally-container">
+    <!-- about 마크다운 내용 (글씨 크기 확 줄임) -->
+    {
+      Content && (
+        <div class="about-markdown-content">
+          <Content />
+        </div>
+      )
+    }
 
-  <main class="wind-ally-container">
     <div class="wind-ally-wrapper">
-      <!-- 갤러리 그리드 리스트 -->
+      <!-- 갤러리 그리드 리스트 (가로 3개 정방형) -->
       <div class="gallery-grid">
         {
           formattedPosts.length > 0 ? (
@@ -41,22 +52,36 @@ const formattedPosts = posts.map((post) => {
               </a>
             ))
           ) : (
-            <p class="text-center text-gray-400 py-12 text-xs">
+            <p class="text-center text-gray-400 py-12 text-xs" style="grid-column: span 3;">
               작성된 노트가 없습니다. src/content/posts 폴더에 마크다운 파일을 추가해보세요!
             </p>
           )
         }
       </div>
     </div>
-  </main>
+  </div>
 </IndexLayout>
 
 <style>
+  /* 대문 전체 컨테이너 및 폰트 크기 대폭 축소 */
   .wind-ally-container {
     width: 100%;
     max-width: 42rem;
     margin: 0 auto;
     padding: 1rem 1rem 2rem 1rem;
+    font-size: 80%; /* 전체 글씨 크기를 아담하게 축소 */
+  }
+
+  /* about.md 내용 영역 스타일 */
+  .about-markdown-content {
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  /* about 내부의 태그들도 폰트 크기를 상속받거나 작게 유지 */
+  .about-markdown-content :global(p),
+  .about-markdown-content :global(div) {
+    font-size: inherit;
   }
 
   .wind-ally-wrapper {
@@ -66,11 +91,18 @@ const formattedPosts = posts.map((post) => {
     width: 100%;
   }
 
-  /* 그리드 레이아웃 */
+  /* 가로로 3개씩 고정 배치하는 그리드 레이아웃 */
   .gallery-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  /* 모바일 화면에서는 가로 2개로 조정 */
+  @media (max-width: 640px) {
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   .gallery-card {
@@ -79,7 +111,7 @@ const formattedPosts = posts.map((post) => {
     text-decoration: none;
     background: var(--bg-card, #fff);
     border: 1px solid rgba(150, 150, 150, 0.2);
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     overflow: hidden;
     transition:
       transform 0.2s ease,
@@ -93,9 +125,10 @@ const formattedPosts = posts.map((post) => {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   }
 
+  /* 정방형(1:1 비율) 이미지 영역 */
   .gallery-image-wrap {
     width: 100%;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
     overflow: hidden;
     background: rgba(125, 125, 125, 0.05);
   }
@@ -112,15 +145,15 @@ const formattedPosts = posts.map((post) => {
   }
 
   .gallery-content {
-    padding: 0.75rem;
+    padding: 0.5rem 0.6rem;
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.15rem;
   }
 
   .gallery-title {
-    font-size: 90%;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 500;
     color: inherit;
     margin: 0;
     white-space: nowrap;
@@ -129,7 +162,7 @@ const formattedPosts = posts.map((post) => {
   }
 
   .gallery-date {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     color: #999;
   }
 </style>
