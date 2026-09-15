@@ -66,6 +66,11 @@ jobs:
           path: dist/
           retention-days: 7
 
+      # 👇 이 부분을 추가해 주어야 실제 사이트가 업데이트됩니다!
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/deploy-pages@v4
+
   auto-merge:
     name: Auto Merge
     runs-on: ubuntu-latest
