@@ -1,7 +1,5 @@
-// src/content.config.ts 맨 위를 아래와 같이 수정
 import { glob } from 'astro/loaders'
-import { defineCollection } from 'astro:content'
-import { z } from 'zod'
+import { defineCollection, z } from 'astro:content'
 
 // ... (나머지 스키마 및 컬렉션 정의는 그대로 유지)
 

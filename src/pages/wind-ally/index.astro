@@ -3,10 +3,10 @@ import IndexLayout from '../../layouts/IndexLayout.astro'
 import { themeConfig } from '../../config'
 import { getCollection } from 'astro:content'
 
-// 👉 allProjects 변수를 미리 선언해 줍니다
-let allProjects = []
-
+// 👉 초기값(= [])을 빼고 타입과 함께 선언만 해줍니다
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+let allProjects: any[]
+
 try {
   const collection = await getCollection('wind-ally')
   allProjects = collection.sort((a, b) => {
