@@ -21,7 +21,33 @@ const sortedPosts = posts
 ---
 
 <IndexLayout title={`Blog - ${themeConfig.site.title}`} description={themeConfig.site.description}>
-  <main>
-    <PostList posts={sortedPosts} />
+  <main class="wind-ally-container">
+    <div class="wind-ally-wrapper">
+      <h1 class="text-base font-bold mb-2">Blog</h1>
+      <PostList posts={sortedPosts} />
+    </div>
   </main>
 </IndexLayout>
+
+<style>
+  .wind-ally-container {
+    width: 100%;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .wind-ally-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  /* Bookmarks 페이지와 제목 크기/굵기 동일하게 맞춤 */
+  main h1 {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+  }
+</style>
