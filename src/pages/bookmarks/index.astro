@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content'
-import { themeConfig } from '../../../themeConfig'
-import IndexLayout from '../../../layouts/IndexLayout.astro'
-import PostList from '../../../components/PostList.astro'
+import { themeConfig } from '@/config'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import PostList from '@/components/widgets/PostList.astro'
 
 const bookmarks = await getCollection('bookmarks')
 
@@ -98,7 +98,6 @@ const allTags = Array.from(tagSet)
 
       for (var i = 0; i < buttons.length; i++) {
         buttons[i].addEventListener('click', function () {
-          // 버튼 활성화 스타일 토글
           for (var j = 0; j < buttons.length; j++) {
             buttons[j].classList.remove('active')
             buttons[j].style.background = 'rgba(125, 125, 125, 0.08)'
@@ -113,7 +112,6 @@ const allTags = Array.from(tagSet)
 
           var targetTag = this.getAttribute('data-tag')
 
-          // 항목 보이기/숨기기
           for (var k = 0; k < rows.length; k++) {
             var tagsAttr = rows[k].getAttribute('data-tags') || ''
             var tagsList = tagsAttr.split(',')
