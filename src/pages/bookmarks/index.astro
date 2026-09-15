@@ -42,7 +42,7 @@ const formattedBookmarks = bookmarks.map((post) => {
 
 <IndexLayout title={`Bookmarks - ${themeConfig.site.title}`} description="♪ 다만 내 것이 되지 않았어">
   <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 1rem;">
-    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+    <div style="display: flex; flex-direction: column; gap: 0.25rem; width: 100%;">
       <!-- 헤더 -->
       <div style="margin-bottom: 0.25rem;">
         <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
@@ -80,7 +80,7 @@ const formattedBookmarks = bookmarks.map((post) => {
         )
       }
 
-      <!-- 북마크 리스트 (글씨 크기 90%, 간격 80% 적용) -->
+      <!-- 북마크 리스트 (글씨 크기 90%, 제목 사이 간격 압축) -->
       <div class="bookmarks-container custom-compact-list">
         {
           formattedBookmarks.map(({ post, tagString }) => (
@@ -94,26 +94,32 @@ const formattedBookmarks = bookmarks.map((post) => {
   </main>
 
   <style>
-    /* 주범인 placeholder 완벽 제거 및 간격 80% 축소 */
     .custom-compact-list {
       font-size: 90% !important;
     }
+
+    /* 각 행 사이의 간격을 극단적으로 줄임 */
     .bookmark-item-row {
-      margin: 0 !important;
-      padding: 0.08rem 0 !important;
-      line-height: 1.2 !important;
+      margin-top: -0.4rem !important;
+      margin-bottom: -0.4rem !important;
+      padding: 0 !important;
     }
+
+    /* PostList 내부 컴포넌트가 만드는 공백과 placeholder 원천 차단 */
     .bookmark-item-row :global(.placeholder) {
       display: none !important;
       height: 0 !important;
       margin: 0 !important;
       padding: 0 !important;
     }
+
     .bookmark-item-row :global(ul),
     .bookmark-item-row :global(li),
     .bookmark-item-row :global(div) {
       margin-top: 0 !important;
       margin-bottom: 0 !important;
+      padding-top: 0.1rem !important;
+      padding-bottom: 0.1rem !important;
     }
   </style>
 
