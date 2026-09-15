@@ -41,20 +41,22 @@ const conchItems = await Promise.all(
         {
           conchItems.length > 0 ? (
             conchItems.map((item) => (
-              <details class="group p-4 sm:p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition">
-                <summary class="conch-summary font-semibold text-gray-900 dark:text-gray-100 select-none">
+              <details class="group px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition">
+                <summary class="conch-summary font-medium text-gray-900 dark:text-gray-100 select-none">
                   <span class="flex items-center gap-2">{item.question}</span>
                   <span class="arrow-wrap flex items-center">
-                    <span class="text-gray-400 transition-transform duration-200 group-open:rotate-90 shrink-0">›</span>
+                    <span class="text-gray-400 transition-transform duration-200 group-open:rotate-90 shrink-0 text-xs">
+                      ›
+                    </span>
                   </span>
                 </summary>
-                <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                <div class="mt-3 pt-3 border-t border-gray-100 dark:border-gray-800 text-xs leading-relaxed text-gray-600 dark:text-gray-300">
                   <item.renderContent />
                 </div>
               </details>
             ))
           ) : (
-            <p class="text-center text-gray-400 py-12">
+            <p class="text-center text-gray-400 py-12 text-xs">
               작성된 노트가 없습니다. src/content/conch 폴더에 마크다운 파일을 추가해보세요!
             </p>
           )
@@ -80,9 +82,10 @@ const conchItems = await Promise.all(
   }
 
   .conch-list {
+    font-size: 90%;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.35rem;
   }
 
   /* 브라우저 기본 아코디언 삼각형 강제 제거 */
@@ -102,18 +105,15 @@ const conchItems = await Promise.all(
   }
 
   .arrow-wrap {
-    margin-right: 0.5rem;
+    margin-right: 0.25rem;
   }
 
   @media (min-width: 640px) {
     .wind-ally-wrapper {
       gap: 1.25rem;
     }
-    .conch-list {
-      gap: 1rem;
-    }
     .arrow-wrap {
-      margin-right: 1rem;
+      margin-right: 0.5rem;
     }
   }
 </style>
