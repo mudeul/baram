@@ -5,21 +5,63 @@ import ThemeToggle from '@/components/ui/ThemeToggle.astro'
 
 <header>
   <nav>
+    <!-- 왼쪽: 사이트 타이틀 -->
     <div class="nav-left">
-      <a href="/">{themeConfig.site.title}</a>
-      <a href="/blog">blog</a>
-      <a href="/bodong">bodong</a>
-      <a href="/bookmarks">bookmarks</a>
-      <a href="/conch">conch</a>
-      <a href="/dreams">dreams</a>
-      <a href="/scribble">scribble</a>
-      <a href="/wind-ally">wind-ally</a>
+      <a href="/" class="site-title">{themeConfig.site.title}</a>
     </div>
+
+    <!-- 오른쪽: 테마 토글 및 드롭다운 메뉴 -->
     <div class="nav-right">
       {themeConfig.general.themeToggle && <ThemeToggle />}
+
+      <div class="menu-container">
+        <button id="menu-btn" aria-label="Menu" class="menu-btn">
+          <!-- 햄버거 메뉴 아이콘 -->
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- 펼쳐지는 메뉴 목록 -->
+        <div id="dropdown-menu" class="dropdown-menu">
+          <a href="/blog">blog</a>
+          <a href="/bodong">bodong</a>
+          <a href="/bookmarks">bookmarks</a>
+          <a href="/conch">conch</a>
+          <a href="/dreams">dreams</a>
+          <a href="/scribble">scribble</a>
+          <a href="/wind-ally">wind-ally</a>
+        </div>
+      </div>
     </div>
   </nav>
 </header>
+
+<script>
+  const menuBtn = document.getElementById('menu-btn')
+  const dropdownMenu = document.getElementById('dropdown-menu')
+
+  menuBtn?.addEventListener('click', (e) => {
+    e.stopPropagation()
+    dropdownMenu?.classList.toggle('show')
+  })
+
+  // 화면 다른 곳을 누르면 메뉴가 닫히도록 처리
+  window.addEventListener('click', () => {
+    dropdownMenu?.classList.remove('show')
+  })
+</script>
 
 <style>
   header {
@@ -30,14 +72,12 @@ import ThemeToggle from '@/components/ui/ThemeToggle.astro'
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
   }
-  .nav-left {
+  .nav-right {
     display: flex;
-    gap: 1.2rem; /* 메뉴가 많으므로 간격은 살짝 좁게 조절했습니다 */
     align-items: center;
-    flex-wrap: wrap;
+    gap: 1rem;
+    position: relative;
   }
   header a {
     font-weight: var(--font-weight-bold);
@@ -48,5 +88,43 @@ import ThemeToggle from '@/components/ui/ThemeToggle.astro'
   }
   header a:hover {
     opacity: 0.7;
+  }
+
+  /* 메뉴 버튼 스타일 */
+  .menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+  }
+  .menu-btn:hover {
+    background: var(--code-bg);
+  }
+
+  /* 드롭다운 메뉴 박스 스타일 */
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    flex-direction: column;
+    gap: 0.6rem;
+    z-index: 100;
+    min-width: 130px;
+  }
+
+  /* 토글 클래스가 붙었을 때 보이도록 설정 */
+  .dropdown-menu.show {
+    display: flex;
   }
 </style>
