@@ -159,6 +159,12 @@ const formattedBookmarks = bookmarks.map((post) => {
       color: var(--color-primary, #6366f1);
       text-decoration: underline;
     }
+    /* PostList 내부의 날짜 및 행 요소를 완벽한 수직 가운데 정렬로 강제 고정 */
+    .bookmark-item-row :global(.post-item),
+    .bookmark-item-row :global(a),
+    .bookmark-item-row :global(div) {
+      align-items: center !important;
+    }
   </style>
 
   <!-- 클라이언트 필터링 스크립트 -->
