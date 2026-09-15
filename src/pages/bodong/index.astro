@@ -1,0 +1,27 @@
+---
+import IndexLayout from '../../layouts/IndexLayout.astro'
+import PostList from '../../components/widgets/PostList.astro'
+import { themeConfig } from '../../config'
+import { getCollection } from 'astro:content'
+
+// bodong 컬렉션의 글들을 불러옵니다
+const posts = await getCollection('bodong')
+
+// 날짜 최신순 정렬 및 URL에 카테고리(bodong/) 접두사 추가
+const sortedPosts = posts
+  .sort((a, b) => {
+    const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
+    const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
+    return dateB - dateA
+  })
+  .map((post) => ({
+    ...post,
+    id: `bodong/${post.id}`
+  }))
+---
+
+<IndexLayout title={`Bodong - ${themeConfig.site.title}`} description={themeConfig.site.description}>
+  <main>
+    <PostList posts={sortedPosts} />
+  </main>
+</IndexLayout>
