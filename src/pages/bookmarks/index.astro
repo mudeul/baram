@@ -24,8 +24,9 @@ const hasNextPage = sortedPosts.length > pageSize
 
 <IndexLayout title={`Bookmarks - ${themeConfig.site.title}`} description={themeConfig.site.description}>
   <main>
-    <div class="mb-6">
-      <h1 class="text-xl font-bold mb-2">Bookmarks</h1>
+    <div class="mb-4">
+      <!-- 👈 text-xl에서 text-base로 줄여서 크기를 확 낮췄습니다 -->
+      <h1 class="text-base font-bold mb-2">Bookmarks</h1>
     </div>
 
     <PostList posts={currentPosts} />
