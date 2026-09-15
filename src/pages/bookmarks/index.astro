@@ -165,6 +165,16 @@ const formattedBookmarks = bookmarks.map((post) => {
     .bookmark-item-row :global(div) {
       align-items: center !important;
     }
+    /* 한 줄 레이아웃 (제목 - 구분선 - 날짜) */
+    .bookmark-link {
+      display: flex;
+      align-items: center; /* 이 부분이 중앙 정렬을 잡아줍니다 */
+      gap: 0.5rem;
+      text-decoration: none;
+      color: inherit;
+      padding: 0.15rem 0;
+      line-height: 1.2;
+    }
   </style>
 
   <!-- 클라이언트 필터링 스크립트 -->
