@@ -29,7 +29,7 @@
   --border: rgba(176, 160, 176, 0.2);
   --selection: rgba(205, 157, 212, 0.2);
   --code-bg: rgba(176, 160, 176, 0.08);
-  --mark: #b4addf;
+  --mark: #eceafa;
 
   /* 추가로 지정해주신 글의 제목색 변수 */
   --text-title: #b4addf;
@@ -41,10 +41,10 @@
   --astro-code-token-comment: rgba(176, 160, 176, 0.5);
   --astro-code-token-keyword: #b4addf;
   --astro-code-token-parameter: #b0a0b0;
-  --astro-code-token-function: #b4addf;
-  --astro-code-token-string-expression: #b4addf;
+  --astro-code-token-function: #eceafa;
+  --astro-code-token-string-expression: #eceafa;
   --astro-code-token-punctuation: #b0a0b0;
-  --astro-code-token-link: #b4addf;
+  --astro-code-token-link: #eceafa;
 }
 
 /* Light Mode (Explicit) */
@@ -56,7 +56,7 @@ html.light {
   --border: rgba(176, 160, 176, 0.2);
   --selection: rgba(205, 157, 212, 0.2);
   --code-bg: rgba(176, 160, 176, 0.08);
-  --mark: #b4addf;
+  --mark: #eceafa;
   --text-title: #b4addf;
 
   /* Syntax Theme  */
@@ -67,10 +67,10 @@ html.light {
   --astro-code-token-comment: rgba(176, 160, 176, 0.5);
   --astro-code-token-keyword: #b4addf;
   --astro-code-token-parameter: #b0a0b0;
-  --astro-code-token-function: #b4addf;
-  --astro-code-token-string-expression: #b4addf;
+  --astro-code-token-function: #eceafa;
+  --astro-code-token-string-expression: #eceafa;
   --astro-code-token-punctuation: #b0a0b0;
-  --astro-code-token-link: #b4addf;
+  --astro-code-token-link: #eceafa;
 }
 
 /* Dark Mode (Explicit) */
@@ -82,7 +82,7 @@ html.dark {
   --border: rgba(255, 255, 255, 0.1);
   --selection: rgba(255, 255, 255, 0.08);
   --code-bg: rgba(255, 255, 255, 0.04);
-  --mark: #b4addf;
+  --mark: #eceafa;
 
   /* Syntax Theme  */
   --astro-code-foreground: rgba(255, 255, 255, 0.9);
