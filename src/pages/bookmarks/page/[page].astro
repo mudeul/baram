@@ -1,9 +1,9 @@
 ---
 import { getCollection } from 'astro:content'
 import type { InferGetStaticPropsType } from 'astro'
-import { themeConfig } from '~/themeConfig'
-import IndexLayout from '~/layouts/IndexLayout.astro'
-import PostList from '~/components/PostList.astro'
+import { themeConfig } from '../../../themeConfig'
+import IndexLayout from '../../../layouts/IndexLayout.astro'
+import PostList from '../../../components/PostList.astro'
 
 export async function getStaticPaths() {
   const bookmarks = await getCollection('bookmarks')
