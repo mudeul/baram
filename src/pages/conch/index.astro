@@ -25,7 +25,7 @@ const conchItems = await Promise.all(
 <IndexLayout title={`Conch - ${themeConfig.site.title}`} description="여보세요~">
   <main class="wind-ally-container">
     <div class="wind-ally-wrapper">
-      <div style="margin-bottom: 0.25rem;">
+      <div style="margin-bottom: 1rem;">
         <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
           Conch
         </h1>
@@ -86,6 +86,44 @@ const conchItems = await Promise.all(
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+  }
+
+  /* 브라우저 기본 아코디언 삼각형 강제 제거 */
+  details > summary {
+    list-style: none;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    cursor: pointer;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  details > summary::marker {
+    display: none;
+  }
+
+  .arrow-wrap {
+    margin-right: 0.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .wind-ally-wrapper {
+      gap: 1.25rem;
+    }
+    .arrow-wrap {
+      margin-right: 0.5rem;
+    }
+  }
+  .conch-list details {
+    transition: all 0.2s ease;
+  }
+
+  .conch-list details:hover {
+    opacity: 0.85; /* 마우스를 올렸을 때 살짝 투명해지는 효과 */
+    /* 혹은 배경색을 바꾸고 싶다면 아래처럼 지정 가능 */
+    background: var(--code-bg, rgba(125, 125, 125, 0.05));
   }
 
   /* 브라우저 기본 아코디언 삼각형 강제 제거 */

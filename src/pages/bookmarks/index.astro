@@ -33,10 +33,8 @@ const formattedBookmarks = bookmarks.map((post) => {
   const postTags = postData.tech || postData.tags || []
   const tagString = Array.isArray(postTags) ? postTags.join(',') : String(postTags)
 
-  // 내부 상세 페이지 경로 (Astro v5는 id 사용)
   const bookmarkUrl = `/bookmarks/${post.id}`
 
-  // 날짜 포맷 (YYYY.MM.DD)
   let dateStr = ''
   if (postData.pubDate) {
     const d = new Date(postData.pubDate)
@@ -83,7 +81,7 @@ const formattedBookmarks = bookmarks.map((post) => {
             <button
               class="tag-btn active"
               data-tag="all"
-              style="background: #eceafa; border: 1px solid #eceafa; color: #555555; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.65rem; cursor: pointer; transition: all 0.2s ease;"
+              style="background: var(--mark); border: 1px solid var(--mark); color: #555555; padding: 0.2rem 0.6rem; border-radius: 9999px; font-size: 0.65rem; cursor: pointer; transition: all 0.2s ease;"
             >
               All
             </button>
@@ -100,7 +98,7 @@ const formattedBookmarks = bookmarks.map((post) => {
         )
       }
 
-      <!-- 직접 렌더링하는 콤팩트 북마크 리스트 -->
+      <!-- 북마크 리스트 -->
       <div class="bookmarks-container">
         {
           formattedBookmarks.map(({ title, url, dateStr, tagString }, index) => (
@@ -128,7 +126,6 @@ const formattedBookmarks = bookmarks.map((post) => {
   </main>
 
   <style>
-    /* 전체 리스트 글씨 크기 90% 축소 */
     .bookmarks-container {
       font-size: 90%;
       display: flex;
@@ -140,7 +137,6 @@ const formattedBookmarks = bookmarks.map((post) => {
       width: 100%;
     }
 
-    /* 한 줄 레이아웃 (제목 - 점선 - 날짜) */
     .bookmark-link {
       display: flex;
       align-items: baseline;
@@ -158,7 +154,6 @@ const formattedBookmarks = bookmarks.map((post) => {
       max-width: 65%;
     }
 
-    /* 은은한 점선 디자인 */
     .bookmark-line {
       flex: 1;
       border-bottom: 1px dashed rgba(150, 150, 150, 0.3);
@@ -183,13 +178,18 @@ const formattedBookmarks = bookmarks.map((post) => {
     }
 
     #load-more-btn:hover {
-      background: #eceafa;
+      background: var(--mark);
       color: #555555;
-      border-color: #eceafa;
+      border-color: var(--mark);
+    }
+
+    .tag-btn.active {
+      background: var(--mark) !important;
+      border-color: var(--mark) !important;
+      color: #555555 !important;
     }
   </style>
 
-  <!-- 클라이언트 필터링 및 페이징 스크립트 -->
   <script is:inline>
     var pageSize = 20
     var currentVisibleCount = pageSize
@@ -246,9 +246,9 @@ const formattedBookmarks = bookmarks.map((post) => {
           }
 
           this.classList.add('active')
-          this.style.background = '#eceafa'
+          this.style.background = 'var(--mark)'
           this.style.color = '#555555'
-          this.style.borderColor = '#eceafa'
+          this.style.borderColor = 'var(--mark)'
 
           activeTag = this.getAttribute('data-tag') || 'all'
           currentVisibleCount = pageSize

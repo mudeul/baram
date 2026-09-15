@@ -84,4 +84,14 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
   .post-container main {
     flex: 1;
   }
+
+  /* 제목 영역은 기존 크기 유지 (건드리지 않음) */
+
+  /* 본문(article.content) 내부의 문단 및 텍스트만 90%로 축소 */
+  .prose article.content,
+  .prose article.content p,
+  .prose article.content li,
+  .prose article.content span {
+    font-size: 90% !important;
+  }
 </style>

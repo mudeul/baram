@@ -70,13 +70,17 @@ import ThemeToggle from '@/components/ui/ThemeToggle.astro'
 
 <style>
   header {
-    margin: 0;
+    margin: 0 auto;
     width: 100%;
+    max-width: 42rem; /* 본문과 동일한 최대 폭 설정 */
+    box-sizing: border-box;
   }
   nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 1.5rem 1rem 1rem 1rem; /* 본문과 동일한 좌우 패딩(1rem) 적용 */
+    box-sizing: border-box;
   }
   .nav-right {
     display: flex;
@@ -90,7 +94,7 @@ import ThemeToggle from '@/components/ui/ThemeToggle.astro'
     font-weight: var(--font-weight-bold);
     color: #82c2ea; /* 요청하신 포인트 색상 적용 */
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: 1rem;
     display: inline-block;
   }
   .site-title:hover {
