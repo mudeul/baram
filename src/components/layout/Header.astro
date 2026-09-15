@@ -1,3 +1,72 @@
+---
+import { themeConfig } from '@/config'
+import ThemeToggle from '@/components/ui/ThemeToggle.astro'
+---
+
+<header>
+  <nav>
+    <!-- 왼쪽: 사이트 타이틀 -->
+    <div class="nav-left">
+      <a href="/" class="site-title">{themeConfig.site.title}</a>
+    </div>
+
+    <!-- 오른쪽: 테마 토글 및 드롭다운 메뉴 -->
+    <div class="nav-right">
+      {themeConfig.general.themeToggle && <ThemeToggle />}
+
+      <div class="menu-container">
+        <button id="menu-btn" aria-label="Menu" class="menu-btn">
+          <!-- 햄버거 메뉴 아이콘 -->
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- 펼쳐지는 메뉴 목록 -->
+        <div id="dropdown-menu" class="dropdown-menu">
+          <a href="/blog">blog</a>
+          <a href="/bodong">bodong</a>
+          <a href="/bookmarks">bookmarks</a>
+          <a href="/conch">conch</a>
+          <a href="/dreams">dreams</a>
+          <a href="/scribble">scribble</a>
+          <a href="/wind-ally">wind-ally</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Astro 페이지 전환(View Transitions) 시에도 메뉴가 정상 작동하도록 설정
+  document.addEventListener('astro:page-load', () => {
+    const menuBtn = document.getElementById('menu-btn')
+    const dropdownMenu = document.getElementById('dropdown-menu')
+
+    if (menuBtn && dropdownMenu) {
+      menuBtn.onclick = (e) => {
+        e.stopPropagation()
+        dropdownMenu.classList.toggle('show')
+      }
+
+      window.onclick = () => {
+        dropdownMenu.classList.remove('show')
+      }
+    }
+  })
+</script>
+
 <style>
   header {
     margin: 0;
@@ -15,10 +84,10 @@
     position: relative;
   }
 
-  /* 👈 오직 사이트 타이틀(CHIRI)만 전용으로 색상 지정 */
+  /* 사이트 타이틀 (CHIRI) 전용 스타일 */
   .site-title {
     font-weight: var(--font-weight-bold);
-    color: #2563eb; /* 원하는 포인트 색상 헥스 코드로 변경하세요 (예: 파란색) */
+    color: #cd9dd4; /* 요청하신 포인트 색상 적용 */
     text-decoration: none;
     font-size: 0.95rem;
     display: inline-block;
