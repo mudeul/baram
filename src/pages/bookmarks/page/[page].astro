@@ -1,5 +1,5 @@
 ---
-import type { GetStaticPaths, Page } from 'astro'
+import type { GetStaticPaths, InferGetStaticPropsType } from 'astro'
 import IndexLayout from '@/layouts/IndexLayout.astro'
 import PostList from '@/components/widgets/PostList.astro'
 import { themeConfig } from '@/config'
@@ -9,7 +9,7 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
   const posts = await getCollection('bookmarks')
   const sortedPosts = posts
     .sort((a, b) => {
-      const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
+      const dateA = a.data.pubDate ? new Date((dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0)) : 0 // 기존 정렬 로직 유지
       const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
       return dateB - dateA
     })
@@ -21,11 +21,8 @@ export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
   return paginate(sortedPosts, { pageSize: 10 })
 }
 
-type BookmarkEntry = CollectionEntry<'bookmarks'> & { id: string }
-
-interface Props {
-  page: Page<BookmarkEntry>
-}
+// 👈 수동 interface 대신 아래와 같이 자동 타입 추론을 사용합니다.
+type Props = InferGetStaticPropsType<typeof getStaticPaths>
 
 const { page } = Astro.props
 
