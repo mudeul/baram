@@ -28,58 +28,199 @@ interface Props {
 }
 
 const { page } = Astro.props
+
+// 전체 북마크에서 태그 추출 (1페이지와 동일하게 필터칩 제공)
+const allPosts = await getCollection('bookmarks')
+const allTagsSet = new Set<string>()
+allPosts.forEach((item) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const postData = item.data as any
+  const techList = postData.tech || postData.tags
+
+  if (techList) {
+    if (Array.isArray(techList)) {
+      techList.forEach((t: unknown) => {
+        if (typeof t === 'string' && t.trim()) allTagsSet.add(t.trim())
+      })
+    } else if (typeof techList === 'string' && techList.trim()) {
+      techList.split(',').forEach((t) => {
+        if (t.trim()) allTagsSet.add(t.trim())
+      })
+    }
+  }
+})
+const tags = Array.from(allTagsSet)
 ---
 
 <IndexLayout
   title={`Bookmarks (Page ${page.currentPage}) - ${themeConfig.site.title}`}
-  description={themeConfig.site.description}
+  description="♪ 다만 내 것이 되지 않았어"
 >
-  <main>
-    <div class="mb-6">
-      <h1 class="text-xl font-bold mb-2">Bookmarks</h1>
-    </div>
+  <main class="bookmarks-container">
+    <div class="bookmarks-wrapper">
+      <div class="header-area">
+        <h1 class="text-base font-bold">Bookmarks</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-xs desc-text">♪ 다만 내 것이 되지 않았어</p>
+      </div>
 
-    <PostList posts={page.data} />
+      {
+        tags.length > 0 && (
+          <div class="filter-tags" aria-label="Filter by tag">
+            <button class="tag-btn active" data-tag="all">
+              All
+            </button>
+            {tags.map((tag) => (
+              <button class="tag-btn" data-tag={tag}>
+                {tag}
+              </button>
+            ))}
+          </div>
+        )
+      }
 
-    <div style="width: 100%; display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 2rem;">
-      <div style="display: flex; align-items: center; gap: 2rem; font-size: 0.875rem;">
-        {
-          page.url.prev ? (
-            <a
-              href={page.url.prev}
-              style="font-weight: 500; transition: opacity 0.2s;"
-              class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
-            >
-              ← 이전
-            </a>
-          ) : (
-            <span style="color: #d1d5db; cursor: not-allowed;">← 이전</span>
-          )
-        }
+      <div class="bookmarks-list-wrapper">
+        <PostList posts={page.data} />
+      </div>
 
-        <span style="color: #4b5563; font-weight: 500;">
-          {page.currentPage} / {page.lastPage}
-        </span>
+      <div style="width: 100%; display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 2rem; font-size: 0.875rem;">
+          {
+            page.url.prev ? (
+              <a
+                href={page.url.prev}
+                style="font-weight: 500; transition: opacity 0.2s;"
+                class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
+              >
+                ← 이전
+              </a>
+            ) : (
+              <span style="color: #d1d5db; cursor: not-allowed;">← 이전</span>
+            )
+          }
 
-        {
-          page.url.next ? (
-            <a
-              href={page.url.next}
-              style="font-weight: 500; transition: opacity 0.2s;"
-              class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
-            >
-              다음 →
-            </a>
-          ) : (
-            <span style="color: #d1d5db; cursor: not-allowed;">다음 →</span>
-          )
-        }
+          <span style="color: #4b5563; font-weight: 500;">
+            {page.currentPage} / {page.lastPage}
+          </span>
+
+          {
+            page.url.next ? (
+              <a
+                href={page.url.next}
+                style="font-weight: 500; transition: opacity 0.2s;"
+                class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
+              >
+                다음 →
+              </a>
+            ) : (
+              <span style="color: #d1d5db; cursor: not-allowed;">다음 →</span>
+            )
+          }
+        </div>
       </div>
     </div>
   </main>
 </IndexLayout>
 
+<script>
+  function initBookmarksFilter() {
+    const filterButtons = document.querySelectorAll('.tag-btn')
+    const items = document.querySelectorAll('.bookmarks-list-wrapper li, .bookmarks-list-wrapper article')
+
+    if (filterButtons.length === 0 || items.length === 0) return
+
+    filterButtons.forEach((btn) => {
+      btn.removeEventListener('click', handleFilterClick)
+      btn.addEventListener('click', handleFilterClick)
+    })
+  }
+
+  function handleFilterClick(this: HTMLElement) {
+    const filterButtons = document.querySelectorAll('.tag-btn')
+    const items = document.querySelectorAll('.bookmarks-list-wrapper li, .bookmarks-list-wrapper article')
+
+    filterButtons.forEach((b) => b.classList.remove('active'))
+    this.classList.add('active')
+
+    const selectedTag = this.getAttribute('data-tag')
+
+    items.forEach((item) => {
+      const el = item as HTMLElement
+      const itemTags = el.getAttribute('data-tags')?.split(',') || []
+      const matches = selectedTag === 'all' || (selectedTag && itemTags.includes(selectedTag))
+
+      if (matches) {
+        el.classList.remove('hidden')
+      } else {
+        el.classList.add('hidden')
+      }
+    })
+  }
+
+  document.addEventListener('DOMContentLoaded', initBookmarksFilter)
+  document.addEventListener('astro:page-load', initBookmarksFilter)
+</script>
+
 <style>
+  .bookmarks-container {
+    width: 100%;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .bookmarks-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .header-area {
+    margin-bottom: 0.5rem;
+  }
+
+  main h1 {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .desc-text {
+    font-size: 0.75rem !important;
+    line-height: 1.4;
+  }
+
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    justify-content: center;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag-btn {
+    background: var(--color-surface, rgba(125, 125, 125, 0.08));
+    border: 1px solid var(--color-border, #eaeaea);
+    color: var(--color-text-muted, #666);
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tag-btn.active,
+  .tag-btn:hover {
+    background: #eceafa;
+    color: #555555;
+    border-color: #eceafa;
+  }
+
+  .bookmarks-list-wrapper .hidden {
+    display: none !important;
+  }
+
   .no-visited:visited {
     color: currentColor !important;
   }
