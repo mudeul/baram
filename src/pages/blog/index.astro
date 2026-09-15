@@ -1,219 +1,27 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import Header from '@/components/common/Header.astro';
-import Footer from '@/components/common/Footer.astro';
-import Container from '@/components/ui/Container.astro';
-import GlassPanel from '@/components/common/GlassPanel.astro';
-import { getCollection } from 'astro:content';
-import { withBase } from '@/lib/url';
+import IndexLayout from '../../layouts/IndexLayout.astro'
+import PostList from '../../components/widgets/PostList.astro'
+import { themeConfig } from '../../config'
+import { getCollection } from 'astro:content'
 
-// 블로그 포스트 가져오기 및 정렬 (pinned -> pubDate 최신순)
-const posts = (await getCollection('blog')).sort((a, b) => {
-  const aPinned = a.data.pinned ? 1 : 0;
-  const bPinned = b.data.pinned ? 1 : 0;
-  if (aPinned !== bPinned) return bPinned - aPinned; // pinned가 true인 것을 위로
+const posts = await getCollection('blog')
 
-  return b.data.pubDate.valueOf() - a.data.pubDate.valueOf(); // 그 외에는 최신 날짜순
-});
-
-const pagePosts = posts.slice(0, 10);
-
-function formatDate(date: Date) {
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
-}
+// 날짜 최신순 정렬 및 URL에 카테고리(blog/) 접두사 추가
+const sortedPosts = posts
+  .sort((a, b) => {
+    const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
+    const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
+    return dateB - dateA
+  })
+  .map((post) => ({
+    ...post,
+    // PostList에서 사용하는 id 또는 slug 경로를 /blog/slug 형태로 변경
+    id: `blog/${post.id}`
+  }))
 ---
 
-<BaseLayout title="Blog" description="♪ 무서운 얘기를 해 줄까">
-  <Header />
-
-  <main id="main" class="main-content">
-    <section class="page-header">
-      <Container>
-        <h1 class="page-title">Blog</h1>
-        <p class="page-description">♪ 무서운 얘기를 해 줄까</p>
-      </Container>
-    </section>
-
-    <section class="section">
-      <Container>
-        <!-- 리스트 전체를 하나의 GlassPanel 카드로 감쌈 -->
-        <GlassPanel
-          variant="translucent"
-          padding="xl"
-          className="list-container-panel"
-        >
-          <ul class="blog-list">
-            {
-              pagePosts.map((post) => (
-                <li class="blog-list-item">
-                  <a
-                    href={withBase(`/blog/${post.id}/`)}
-                    class="blog-list-link"
-                  >
-                    <span class="post-title-wrapper">
-                      {/* 🌟 SVG 핀 아이콘 */}
-                      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-                      {(post.data as any).pinned && (
-                        <svg
-                          class="pinned-icon"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          width="14"
-                          height="14"
-                          fill="currentColor"
-                          aria-label="Pinned"
-                        >
-                          <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
-                        </svg>
-                      )}{' '}
-                      <span class="post-title">{post.data.title}</span>
-                    </span>
-                    <div class="post-meta">
-                      {post.data.pubDate && (
-                        <time
-                          datetime={post.data.pubDate.toISOString()}
-                          class="post-date"
-                        >
-                          {formatDate(post.data.pubDate)}
-                        </time>
-                      )}
-                    </div>
-                  </a>
-                </li>
-              ))
-            }
-          </ul>
-        </GlassPanel>
-      </Container>
-    </section>
+<IndexLayout title={`Blog - ${themeConfig.site.title}`} description={themeConfig.site.description}>
+  <main>
+    <PostList posts={sortedPosts} />
   </main>
-
-  <Footer />
-</BaseLayout>
-
-<style>
-  .main-content {
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 0;
-  }
-
-  .page-header {
-    text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xs) 0;
-    margin-bottom: 0;
-  }
-
-  .page-title {
-    font-size: var(--text-4xl);
-    font-weight: 800;
-    margin-bottom: var(--space-sm);
-    background: linear-gradient(
-      135deg,
-      var(--color-text),
-      var(--color-accent-dark)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .page-description {
-    color: var(--color-text-muted);
-    font-size: var(--text-base);
-  }
-
-  .section {
-    padding: var(--space-md) 0 var(--space-3xl) 0;
-  }
-
-  :global(.section .container),
-  :global(.page-header .container) {
-    max-width: 38rem;
-    width: 100%;
-    margin-inline: auto;
-    padding-inline: var(--space-md);
-  }
-
-  .blog-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-    width: 100%;
-  }
-
-  .blog-list-item {
-    border-bottom: 1px solid var(--glass-border);
-    padding-bottom: var(--space-md);
-  }
-
-  .blog-list-item:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
-  .blog-list-link {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: var(--space-md);
-    text-decoration: none;
-    color: var(--color-text);
-  }
-
-  .post-title {
-    font-size: calc(var(--text-lg) * 0.85);
-    font-weight: 500;
-    flex: 1;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    color: #3f0766;
-  }
-
-  .blog-list-link:hover .post-title {
-    filter: brightness(1.2);
-  }
-
-  .post-meta {
-    display: flex;
-    gap: var(--space-sm);
-    align-items: center;
-    flex-shrink: 0;
-    font-size: calc(var(--text-sm) * 0.9);
-    color: #513664;
-  }
-
-  .post-date {
-    font-weight: 500;
-    color: #513664;
-  }
-
-  @media (max-width: 768px) {
-    .page-title {
-      font-size: var(--text-3xl);
-    }
-  }
-  .post-title-wrapper {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    flex: 1;
-    min-width: 0;
-  }
-
-  .pinned-icon {
-    /* 🌟 밝은 분홍 계열 포인트 컬러 (테마 액센트 컬러 활용) */
-    color: var(--color-accent, #e066ff);
-    flex-shrink: 0;
-    transform: rotate(45deg); /* 핀을 살짝 비스듬하게 꽂힌 모양으로 연출 */
-  }
-</style>
+</IndexLayout>

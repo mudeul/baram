@@ -1,0 +1,122 @@
+---
+import IndexLayout from '../../layouts/IndexLayout.astro'
+import { themeConfig } from '../../config'
+import { getCollection, render } from 'astro:content'
+
+export async function getStaticPaths() {
+  const projects = await getCollection('wind-ally')
+  return projects.map((item) => ({
+    params: { slug: item.id },
+    props: { item },
+  }))
+}
+
+const { item } = Astro.props
+const { Content } = await render(item)
+
+const title = item.data.title ? `${item.data.title} - Wind-Ally` : `Wind-Ally - ${themeConfig.site.title}`
+const description = item.data.description || '찰나의 목격자 상세 페이지'
+---
+
+<IndexLayout title={title} description={description}>
+  <main class="wind-ally-detail-container">
+    <article class="wind-ally-article">
+      <header class="article-header">
+        <h1 class="article-title">{item.data.title || 'Untitled'}</h1>
+        {item.data.pubDate && (
+          <time class="article-date" datetime={new Date(item.data.pubDate).toISOString()}>
+            {new Date(item.data.pubDate).toLocaleDateString('ko-KR', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </time>
+        )}
+      </header>
+
+      <div class="article-content">
+        <Content />
+      </div>
+
+      <div class="back-link-wrapper">
+        <a href="/wind-ally/" class="back-link">← 목록으로 돌아가기</a>
+      </div>
+    </article>
+  </main>
+</IndexLayout>
+
+<style>
+  .wind-ally-detail-container {
+    width: 100%;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .wind-ally-article {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .article-header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .article-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--color-text, #111);
+  }
+
+  .article-date {
+    font-size: 0.85rem;
+    color: var(--color-text-muted, #666);
+  }
+
+  .article-content {
+    line-height: 1.7;
+    color: var(--color-text, #222);
+    word-break: keep-all;
+  }
+
+  .back-link-wrapper {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border, #eee);
+  }
+
+  .back-link {
+    font-size: 0.9rem;
+    color: var(--color-accent, #e066ff);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .back-link:hover {
+    opacity: 0.8;
+  }
+</style>
+
+<!-- 전역 스타일로 본문 내 이미지 크기 강제 제어 -->
+<style is:global>
+  .article-content img {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 1.5rem auto !important;
+    border-radius: 4px;
+    object-fit: contain;
+  }
+
+  /* 이미지 아래에 뜨는 alt 텍스트나 캡션 숨기기 */
+  .article-content figcaption,
+  .article-content .image-caption,
+  .article-content alt {
+    display: none !important;
+  }
+</style>

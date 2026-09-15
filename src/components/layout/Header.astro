@@ -1,0 +1,52 @@
+---
+import { themeConfig } from '@/config'
+import ThemeToggle from '@/components/ui/ThemeToggle.astro'
+---
+
+<header>
+  <nav>
+    <div class="nav-left">
+      <a href="/">{themeConfig.site.title}</a>
+      <a href="/blog">blog</a>
+      <a href="/bodong">BODONG</a>
+      <a href="/bookmarks">bookmarks</a>
+      <a href="/conch">conch</a>
+      <a href="/dreams">dreams</a>
+      <a href="/scribble">scribble</a>
+      <a href="/wind-ally">wind-ally</a>
+    </div>
+    <div class="nav-right">
+      {themeConfig.general.themeToggle && <ThemeToggle />}
+    </div>
+  </nav>
+</header>
+
+<style>
+  header {
+    margin: 0;
+    width: 100%;
+  }
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .nav-left {
+    display: flex;
+    gap: 1.2rem; /* 메뉴가 많으므로 간격은 살짝 좁게 조절했습니다 */
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  header a {
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: inline-block;
+  }
+  header a:hover {
+    opacity: 0.7;
+  }
+</style>

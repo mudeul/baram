@@ -1,277 +1,233 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import Header from '@/components/common/Header.astro';
-import Footer from '@/components/common/Footer.astro';
-import Container from '@/components/ui/Container.astro';
-import Picture from '@/components/ui/Picture.astro';
-import { withBase } from '@/lib/url';
+import IndexLayout from '../../layouts/IndexLayout.astro'
+import { themeConfig } from '../../config'
+import { getCollection } from 'astro:content'
 
-// 🌟 꺽쇠 사용을 아예 없애고 ESLint 주석으로 우회
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let allProjects: any[] = [];
+let allProjects: any[] = []
 try {
-  const collection = await getCollection('wind-ally');
+  const collection = await getCollection('wind-ally')
   allProjects = collection.sort((a, b) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const aData = a.data as any;
+    const aData = a.data as any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const bData = b.data as any;
-    const aPinned = aData.pinned || aData.pin ? 1 : 0;
-    const bPinned = bData.pinned || bData.pin ? 1 : 0;
-    if (aPinned !== bPinned) return bPinned - aPinned;
+    const bData = b.data as any
+    const aPinned = aData.pinned || aData.pin ? 1 : 0
+    const bPinned = bData.pinned || bData.pin ? 1 : 0
+    if (aPinned !== bPinned) return bPinned - aPinned
 
-    const aFeatured = aData.featured ? 1 : 0;
-    const bFeatured = bData.featured ? 1 : 0;
-    if (aFeatured !== bFeatured) return bFeatured - aFeatured;
-
-    return 0;
-  });
+    const aDate = aData.pubDate ? new Date(aData.pubDate).getTime() : 0
+    const bDate = bData.pubDate ? new Date(bData.pubDate).getTime() : 0
+    return bDate - aDate
+  })
 } catch {
-  allProjects = [];
+  allProjects = []
 }
 
-// 모든 프로젝트에서 tech(기술 스택) 목록 추출 및 중복 제거
-const allTagsSet = new Set<string>();
-allProjects.forEach((project) => {
+// tech나 tags가 문자열이든 배열이든 모두 안전하게 수집
+const allTagsSet = new Set<string>()
+allProjects.forEach((item) => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const projectData = project.data as any;
-  if (projectData.tech && Array.isArray(projectData.tech)) {
-    projectData.tech.forEach((techItem: unknown) => {
-      if (typeof techItem === 'string') {
-        allTagsSet.add(techItem);
-      }
-    });
+  const projectData = item.data as any
+  const techList = projectData.tech || projectData.tags
+
+  if (techList) {
+    if (Array.isArray(techList)) {
+      techList.forEach((t: unknown) => {
+        if (typeof t === 'string' && t.trim()) allTagsSet.add(t.trim())
+      })
+    } else if (typeof techList === 'string' && techList.trim()) {
+      techList.split(',').forEach((t) => {
+        if (t.trim()) allTagsSet.add(t.trim())
+      })
+    }
   }
-});
-const tags = Array.from(allTagsSet);
+})
+const tags = Array.from(allTagsSet)
 ---
 
-<BaseLayout title="Wind-ally" description="찰나의 목격자">
-  <Header />
-
-  <main id="main" tabindex="-1" class="main-content">
-    <section class="page-header">
-      <Container>
-        <h1 class="page-title">Wind-Ally</h1>
-        <p class="page-description">찰나의 목격자</p>
-      </Container>
-    </section>
-
-    <section class="section">
-      <Container>
-        <div class="portfolio-wrapper">
-          {/* 기술 스택 카테고리 필터 버튼 영역 */}
-          {
-            tags.length > 0 && (
-              <div class="filter-tags" aria-label="Filter by tech stack">
-                <button class="tag-btn active" data-tag="all">
-                  All
-                </button>
-                {tags.map((tag) => (
-                  <button class="tag-btn" data-tag={tag}>
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            )
-          }
-
-          {/* 인스타그램 스타일 3열 사진 그리드 */}
-          <div class="portfolio-grid">
-            {
-              allProjects.map((project) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const projectData = project.data as any;
-                const projectTechs = projectData.tech || [];
-                const dataTagsAttr = projectTechs.join(',');
-                const isPinned = Boolean(projectData.pinned || projectData.pin);
-                const projectId = project.id;
-                const projectTitle = projectData.title || 'Project Image';
-                const projectCover = projectData.cover;
-
-                return (
-                  <a
-                    href={withBase(`/wind-ally/${projectId}/`)}
-                    class="portfolio-item"
-                    data-tags={dataTagsAttr}
-                  >
-                    {/* 🌟 왼쪽 상단에 위치하고 반투명한 흰색 배경이 적용된 핀 아이콘 */}
-                    {isPinned && (
-                      <span class="pinned-badge" title="Pinned">
-                        <svg
-                          class="pinned-icon"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          width="14"
-                          height="14"
-                          fill="currentColor"
-                          aria-label="Pinned"
-                        >
-                          <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
-                        </svg>
-                      </span>
-                    )}
-
-                    {projectCover ? (
-                      <Picture
-                        src={projectCover}
-                        alt={projectTitle}
-                        widths={[400, 800]}
-                        sizes="(min-width: 1024px) 33vw, 100vw"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div class="portfolio-placeholder">
-                        <span>No Image</span>
-                      </div>
-                    )}
-                  </a>
-                );
-              })
-            }
+<IndexLayout title={`Wind-Ally - ${themeConfig.site.title}`} description="찰나의 목격자">
+  <main class="wind-ally-container">
+    <div class="wind-ally-wrapper">
+      {
+        tags.length > 0 && (
+          <div class="filter-tags" aria-label="Filter by tech stack">
+            <button class="tag-btn active" data-tag="all">
+              All
+            </button>
+            {tags.map((tag) => (
+              <button class="tag-btn" data-tag={tag}>
+                {tag}
+              </button>
+            ))}
           </div>
-        </div>
-      </Container>
-    </section>
-  </main>
+        )
+      }
 
-  <Footer />
-</BaseLayout>
+      <div class="wind-ally-grid">
+        {
+          allProjects.map((item) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const projectData = item.data as any
+            const coverImage = projectData.cover || projectData.image
+            const isPinned = Boolean(projectData.pinned || projectData.pin)
+            
+            const rawTechs = projectData.tech || projectData.tags
+            let itemTags: string[] = []
+            if (Array.isArray(rawTechs)) {
+              itemTags = rawTechs.map((t) => String(t).trim()).filter(Boolean)
+            } else if (typeof rawTechs === 'string') {
+              itemTags = rawTechs.split(',').map((t) => t.trim()).filter(Boolean)
+            }
+            const dataTagsAttr = itemTags.join(',')
+
+            return (
+              <a
+                href={`/wind-ally/${item.id}/`}
+                class="wind-ally-item"
+                data-tags={dataTagsAttr}
+              >
+                {isPinned && (
+                  <span class="pinned-badge" title="Pinned">
+                    <svg
+                      class="pinned-icon"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      width="14"
+                      height="14"
+                      fill="currentColor"
+                      aria-label="Pinned"
+                    >
+                      <path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2l-2-2z" />
+                    </svg>
+                  </span>
+                )}
+
+                {coverImage ? (
+                  <img
+                    src={coverImage}
+                    alt={projectData.title || 'Wind-Ally image'}
+                    loading="lazy"
+                    class="wind-ally-img"
+                  />
+                ) : (
+                  <div class="wind-ally-placeholder">
+                    <span>{projectData.title || 'No Image'}</span>
+                  </div>
+                )}
+              </a>
+            )
+          })
+        }
+      </div>
+    </div>
+  </main>
+</IndexLayout>
 
 <script>
   function initWindAllyFilter() {
-    const filterButtons = document.querySelectorAll('.tag-btn');
-    const items = document.querySelectorAll('.portfolio-item');
+    const filterButtons = document.querySelectorAll('.tag-btn')
+    const items = document.querySelectorAll('.wind-ally-item')
 
-    if (filterButtons.length === 0 || items.length === 0) return;
+    if (filterButtons.length === 0 || items.length === 0) return
 
     filterButtons.forEach((btn) => {
-      btn.removeEventListener('click', handleFilterClick);
-      btn.addEventListener('click', handleFilterClick);
-    });
+      btn.removeEventListener('click', handleFilterClick)
+      btn.addEventListener('click', handleFilterClick)
+    })
   }
 
   function handleFilterClick(this: HTMLElement) {
-    const filterButtons = document.querySelectorAll('.tag-btn');
-    const items = document.querySelectorAll('.portfolio-item');
+    const filterButtons = document.querySelectorAll('.tag-btn')
+    const items = document.querySelectorAll('.wind-ally-item')
 
-    filterButtons.forEach((b) => b.classList.remove('active'));
-    this.classList.add('active');
+    filterButtons.forEach((b) => b.classList.remove('active'))
+    this.classList.add('active')
 
-    const selectedTag = this.getAttribute('data-tag');
+    const selectedTag = this.getAttribute('data-tag')
 
     items.forEach((item) => {
-      const el = item as HTMLElement;
-      const itemTags = el.getAttribute('data-tags')?.split(',') || [];
+      const el = item as HTMLElement
+      const itemTags = el.getAttribute('data-tags')?.split(',') || []
       const matches =
         selectedTag === 'all' ||
-        (selectedTag && itemTags.includes(selectedTag));
+        (selectedTag && itemTags.includes(selectedTag))
 
       if (matches) {
-        el.classList.remove('hidden');
+        el.classList.remove('hidden')
       } else {
-        el.classList.add('hidden');
+        el.classList.add('hidden')
       }
-    });
+    })
   }
 
-  document.addEventListener('DOMContentLoaded', initWindAllyFilter);
-  document.addEventListener('astro:page-load', initWindAllyFilter);
+  document.addEventListener('DOMContentLoaded', initWindAllyFilter)
+  document.addEventListener('astro:page-load', initWindAllyFilter)
 </script>
 
 <style>
-  .main-content {
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 0;
-  }
-
-  /* 블로그와 동일한 헤더 여백 및 타이틀 스타일 */
-  .page-header {
-    text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xs) 0;
-    margin-bottom: 0;
-  }
-
-  .page-title {
-    font-size: var(--text-4xl);
-    font-weight: 800;
-    margin-bottom: var(--space-sm);
-    background: linear-gradient(
-      135deg,
-      var(--color-text),
-      var(--color-accent-dark)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .page-description {
-    color: var(--color-text-muted);
-    font-size: var(--text-base);
-  }
-
-  .section {
-    padding: var(--space-md) 0 var(--space-3xl) 0;
-  }
-
-  :global(.section .container),
-  :global(.page-header .container) {
-    max-width: 38rem;
+  .wind-ally-container {
     width: 100%;
-    margin-inline: auto;
-    padding-inline: var(--space-md);
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
   }
 
-  .portfolio-wrapper {
+  .wind-ally-wrapper {
     display: flex;
     flex-direction: column;
-    gap: var(--space-xl);
+    gap: 1.5rem;
     width: 100%;
   }
 
-  /* 필터 버튼 영역 정렬 */
   .filter-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-xs);
+    gap: 0.5rem;
     justify-content: center;
-    margin-bottom: var(--space-sm);
+    margin-bottom: 0.5rem;
   }
 
   .tag-btn {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    padding: var(--space-xs) var(--space-md);
+    background: var(--color-surface, rgba(125, 125, 125, 0.08));
+    border: 1px solid var(--color-border, #eaeaea);
+    color: var(--color-text-muted, #666);
+    padding: 0.35rem 0.85rem;
     border-radius: 9999px;
-    font-size: var(--text-sm);
+    font-size: 0.85rem;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.2s ease;
   }
 
   .tag-btn.active,
   .tag-btn:hover {
-    background: var(--color-accent);
+    background: var(--color-accent, #e066ff);
     color: white;
-    border-color: var(--color-accent);
+    border-color: var(--color-accent, #e066ff);
   }
 
-  .portfolio-grid {
+  .wind-ally-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
+    gap: 3px;
   }
 
-  .portfolio-item {
+  .wind-ally-item {
     position: relative;
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    background-color: var(--color-surface);
+    border-radius: 2px;
+    background-color: var(--color-surface, rgba(125, 125, 125, 0.1));
     display: block;
-    border-radius: 6px;
+    transition: opacity 0.2s ease;
+  }
+
+  .wind-ally-item:hover {
+    opacity: 0.85;
+  }
+
+  .wind-ally-item.hidden {
+    display: none !important;
   }
 
   .pinned-badge {
@@ -294,55 +250,29 @@ const tags = Array.from(allTagsSet);
     transform: rotate(45deg);
   }
 
-  .portfolio-item.hidden {
-    display: none !important;
+  .wind-ally-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
 
-  .portfolio-item :global(figure),
-  .portfolio-item :global(.picture-wrapper),
-  .portfolio-item :global(picture) {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    display: block !important;
-  }
-
-  .portfolio-item :global(figcaption) {
-    display: none !important;
-  }
-
-  .portfolio-item :global(img) {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    display: block !important;
-    transition:
-      transform 0.2s ease,
-      filter 0.2s ease;
-  }
-
-  .portfolio-item:hover :global(img) {
-    transform: scale(1.02);
-    filter: brightness(0.95);
-  }
-
-  .portfolio-placeholder {
+  .wind-ally-placeholder {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
+    font-size: 0.85rem;
+    color: var(--color-text-muted, #666);
+    text-align: center;
+    padding: 4px;
+    word-break: keep-all;
   }
 
-  @media (max-width: 768px) {
-    .page-title {
-      font-size: var(--text-3xl);
-    }
-    .portfolio-grid {
-      gap: 3px;
+  @media (max-width: 640px) {
+    .wind-ally-grid {
+      gap: 2px;
     }
   }
 </style>

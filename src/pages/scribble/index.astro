@@ -1,160 +1,98 @@
 ---
-import { getCollection } from 'astro:content';
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import Header from '@/components/common/Header.astro';
-import Footer from '@/components/common/Footer.astro';
-import { withBase } from '@/lib/url';
+import IndexLayout from '../../layouts/IndexLayout.astro'
+import { themeConfig } from '../../config'
+import { getCollection } from 'astro:content'
 
-// scribble 컬렉션 가져오기 및 최신순 정렬
-const scribbles = (
-  await getCollection('scribble', ({ data }) => !data.draft)
-).sort(
-  (a, b) =>
-    new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf(),
-);
+const scribbles = await getCollection('scribble')
+
+// 날짜 최신순 정렬
+scribbles.sort((a, b) => {
+  const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
+  const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
+  return dateB - dateA
+})
 ---
 
-<BaseLayout title="Scribble — 높이 부는 바람" description="끄적끄적">
-  <Header />
-
-  <main id="main" tabindex="-1" class="main-content">
-    <section class="page-header">
-      <div class="container">
-        <h1 class="page-title">Scribble</h1>
-        <p class="page-description">끄적끄적</p>
-      </div>
-    </section>
-
-    <div class="container">
-      <div class="portfolio-wrapper">
-        {/* 인스타그램 스타일 3열 사진 그리드 (오직 사진만 꽉 차게) */}
-        <div class="portfolio-grid">
-          {
-            scribbles.map((item) => (
-              <a
-                href={withBase(`/scribble/${item.id}/`)}
-                class="portfolio-item"
-              >
-                {item.data.cover ? (
-                  <img
-                    src={item.data.cover}
-                    alt={
-                      item.data.coverAlt || item.data.title || 'Scribble image'
-                    }
-                    loading="lazy"
-                    class="portfolio-img"
-                  />
-                ) : (
-                  <div class="portfolio-placeholder">
-                    <span>{item.data.title || 'No Image'}</span>
-                  </div>
-                )}
-              </a>
-            ))
-          }
-        </div>
-      </div>
+<IndexLayout title={`Scribble - ${themeConfig.site.title}`} description="끄적끄적">
+  <main class="scribble-container">
+    <div class="scribble-grid">
+      {
+        scribbles.map((item) => {
+          // scribble 파일은 cover 필드를 사용하므로 이를 우선적으로 가져옵니다
+          const coverImage = item.data.cover || item.data.image;
+          return (
+            <a href={`/scribble/${item.id}/`} class="scribble-item">
+              {coverImage ? (
+                <img
+                  src={coverImage}
+                  alt={item.data.title || 'Scribble image'}
+                  loading="lazy"
+                  class="scribble-img"
+                />
+              ) : (
+                <div class="scribble-placeholder">
+                  <span>{item.data.title || 'No Image'}</span>
+                </div>
+              )}
+            </a>
+          );
+        })
+      }
     </div>
   </main>
-
-  <Footer />
-</BaseLayout>
+</IndexLayout>
 
 <style>
-  .main-content {
-    min-height: 100vh;
-    min-height: 100dvh;
-    padding: 0;
-  }
-
-  .page-header {
-    text-align: center;
-    padding: var(--space-3xl) 0 var(--space-xs) 0;
-    margin-bottom: 0;
-  }
-
-  .container {
-    max-width: 39rem;
+  .scribble-container {
     width: 100%;
-    margin-inline: auto;
-    padding-inline: var(--space-md);
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
   }
 
-  .page-title {
-    font-size: var(--text-4xl);
-    font-weight: 800;
-    margin-bottom: var(--space-sm);
-    background: linear-gradient(
-      135deg,
-      var(--color-text),
-      var(--color-accent-dark)
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  .page-description {
-    color: var(--color-text-muted);
-    font-size: var(--text-base);
-  }
-
-  .portfolio-wrapper {
-    width: 100%;
-    margin-inline: auto;
-    padding-top: var(--space-md);
-    padding-bottom: var(--space-3xl);
-  }
-
-  .portfolio-grid {
+  .scribble-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-xs);
+    gap: 3px; /* 기존 8px에서 3px로 축소 */
   }
 
-  .portfolio-item {
+  .scribble-item {
     position: relative;
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    border-radius: 0.25rem;
-    background-color: var(--color-surface);
+    border-radius: 2px; /* 모서리 둥글기도 살짝 줄이면 더 깔끔합니다 */
+    background-color: var(--color-surface, rgba(125, 125, 125, 0.1));
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+
+  .scribble-item:hover {
+    opacity: 0.85;
+  }
+
+  .scribble-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
   }
 
-  .portfolio-img {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    display: block !important;
-    transition:
-      transform 0.2s ease,
-      filter 0.2s ease;
-  }
-
-  .portfolio-item:hover .portfolio-img {
-    transform: scale(1.02);
-    filter: brightness(0.95);
-  }
-
-  .portfolio-placeholder {
+  .scribble-placeholder {
     width: 100%;
     height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
+    font-size: 0.85rem;
+    color: var(--color-text-muted, #666);
     text-align: center;
-    padding: var(--space-xs);
+    padding: 4px;
+    word-break: keep-all;
   }
 
-  @media (max-width: 768px) {
-    .page-title {
-      font-size: var(--text-3xl);
-    }
-    .portfolio-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
+  @media (max-width: 640px) {
+    .scribble-grid {
+      gap: 2px; /* 모바일에서도 더 촘촘하게 */
     }
   }
 </style>
