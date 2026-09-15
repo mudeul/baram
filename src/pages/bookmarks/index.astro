@@ -16,6 +16,27 @@ const sortedPosts = posts
     id: `bookmarks/${post.id}`
   }))
 
+// 북마크에서 태그 추출 (tech나 tags가 문자열이든 배열이든 모두 안전하게 수집)
+const allTagsSet = new Set<string>()
+sortedPosts.forEach((item) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const postData = item.data as any
+  const techList = postData.tech || postData.tags
+
+  if (techList) {
+    if (Array.isArray(techList)) {
+      techList.forEach((t: unknown) => {
+        if (typeof t === 'string' && t.trim()) allTagsSet.add(t.trim())
+      })
+    } else if (typeof techList === 'string' && techList.trim()) {
+      techList.split(',').forEach((t) => {
+        if (t.trim()) allTagsSet.add(t.trim())
+      })
+    }
+  }
+})
+const tags = Array.from(allTagsSet)
+
 const pageSize = 10
 const currentPosts = sortedPosts.slice(0, pageSize)
 const totalPages = Math.ceil(sortedPosts.length / pageSize)
@@ -30,7 +51,24 @@ const hasNextPage = sortedPosts.length > pageSize
         <p class="text-gray-500 dark:text-gray-400 text-xs desc-text">♪ 다만 내 것이 되지 않았어</p>
       </div>
 
-      <PostList posts={currentPosts} />
+      {
+        tags.length > 0 && (
+          <div class="filter-tags" aria-label="Filter by tag">
+            <button class="tag-btn active" data-tag="all">
+              All
+            </button>
+            {tags.map((tag) => (
+              <button class="tag-btn" data-tag={tag}>
+                {tag}
+              </button>
+            ))}
+          </div>
+        )
+      }
+
+      <div class="bookmarks-list-wrapper">
+        <PostList posts={currentPosts} />
+      </div>
 
       <div style="width: 100%; display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 2rem;">
         <div style="display: flex; align-items: center; gap: 2rem; font-size: 0.875rem;">
@@ -55,6 +93,46 @@ const hasNextPage = sortedPosts.length > pageSize
   </main>
 </IndexLayout>
 
+<script>
+  function initBookmarksFilter() {
+    const filterButtons = document.querySelectorAll('.tag-btn')
+    // PostList 내부의 아이템들을 선택 (일반적으로 li나 article 형태)
+    const items = document.querySelectorAll('.bookmarks-list-wrapper li, .bookmarks-list-wrapper article')
+
+    if (filterButtons.length === 0 || items.length === 0) return
+
+    filterButtons.forEach((btn) => {
+      btn.removeEventListener('click', handleFilterClick)
+      btn.addEventListener('click', handleFilterClick)
+    })
+  }
+
+  function handleFilterClick(this: HTMLElement) {
+    const filterButtons = document.querySelectorAll('.tag-btn')
+    const items = document.querySelectorAll('.bookmarks-list-wrapper li, .bookmarks-list-wrapper article')
+
+    filterButtons.forEach((b) => b.classList.remove('active'))
+    this.classList.add('active')
+
+    const selectedTag = this.getAttribute('data-tag')
+
+    items.forEach((item) => {
+      const el = item as HTMLElement
+      const itemTags = el.getAttribute('data-tags')?.split(',') || []
+      const matches = selectedTag === 'all' || (selectedTag && itemTags.includes(selectedTag))
+
+      if (matches) {
+        el.classList.remove('hidden')
+      } else {
+        el.classList.add('hidden')
+      }
+    })
+  }
+
+  document.addEventListener('DOMContentLoaded', initBookmarksFilter)
+  document.addEventListener('astro:page-load', initBookmarksFilter)
+</script>
+
 <style>
   .bookmarks-container {
     width: 100%;
@@ -70,22 +148,51 @@ const hasNextPage = sortedPosts.length > pageSize
     width: 100%;
   }
 
-  /* 제목과 설명글 사이의 간격을 반 정도(mb-1)로 줄임 */
   .header-area {
     margin-bottom: 0.5rem;
   }
 
-  /* 제목 크기 고정 */
   main h1 {
     font-size: 1rem !important;
     font-weight: 700 !important;
     margin-bottom: 0.25rem !important;
   }
 
-  /* 설명글 크기를 일반 text-sm의 약 70% 수준인 text-xs로 축소 */
   .desc-text {
     font-size: 0.75rem !important;
     line-height: 1.4;
+  }
+
+  /* 가운데 정렬된 필터칩 스타일 */
+  .filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .tag-btn {
+    background: var(--color-surface, rgba(125, 125, 125, 0.08));
+    border: 1px solid var(--color-border, #eaeaea);
+    color: var(--color-text-muted, #666);
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .tag-btn.active,
+  .tag-btn:hover {
+    background: #eceafa;
+    color: #555555;
+    border-color: #eceafa;
+  }
+
+  .bookmarks-list-wrapper .hidden {
+    display: none !important;
   }
 
   .no-visited:visited {
