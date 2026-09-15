@@ -20,9 +20,13 @@ function formatDate(date: Date | undefined) {
 <IndexLayout title={`Dreams - ${themeConfig.site.title}`} description="'하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'">
   <main class="wind-ally-container">
     <div class="wind-ally-wrapper">
-      <div>
-        <h1 class="text-base font-bold mb-2">Dreams</h1>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">'하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'</p>
+      <div style="margin-bottom: 0.25rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Dreams
+        </h1>
+        <p style="font-size: 0.75rem !important; line-height: 1.4;" class="text-gray-500 dark:text-gray-400">
+          '하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'
+        </p>
       </div>
 
       <div class="w-full">
@@ -64,21 +68,15 @@ function formatDate(date: Date | undefined) {
   .wind-ally-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.5rem;
     width: 100%;
-  }
-
-  /* 제목 크기 및 스타일 통일 */
-  main h1 {
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 0.5rem !important;
   }
 
   /* 타임라인 컨테이너 */
   .timeline {
     position: relative;
     padding-left: 2.5rem;
+    margin-top: 1rem;
   }
 
   /* 타임라인 수직 연결선 위치 */
