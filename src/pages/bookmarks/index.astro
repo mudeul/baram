@@ -22,41 +22,70 @@ const totalPages = Math.ceil(sortedPosts.length / pageSize)
 const hasNextPage = sortedPosts.length > pageSize
 ---
 
-<IndexLayout title={`Bookmarks - ${themeConfig.site.title}`} description={themeConfig.site.description}>
-  <main>
-    <div class="mb-4">
-      <!-- 👈 text-xl에서 text-base로 줄여서 크기를 확 낮췄습니다 -->
-      <h1 class="text-base font-bold mb-2">Bookmarks</h1>
-    </div>
+<IndexLayout title={`Bookmarks - ${themeConfig.site.title}`} description="♪ 다만 내 것이 되지 않았어">
+  <main class="bookmarks-container">
+    <div class="bookmarks-wrapper">
+      <div class="header-area">
+        <h1 class="text-base font-bold">Bookmarks</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-xs desc-text">♪ 다만 내 것이 되지 않았어</p>
+      </div>
 
-    <PostList posts={currentPosts} />
+      <PostList posts={currentPosts} />
 
-    <div style="width: 100%; display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 2rem;">
-      <div style="display: flex; align-items: center; gap: 2rem; font-size: 0.875rem;">
-        <span style="color: #d1d5db; cursor: not-allowed;">← 이전</span>
-        <span style="color: #4b5563; font-weight: 500;">1 / {totalPages || 1}</span>
-        {
-          hasNextPage ? (
-            <a
-              href="/bookmarks/page/2"
-              style="font-weight: 500; transition: opacity 0.2s;"
-              class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
-            >
-              다음 →
-            </a>
-          ) : (
-            <span style="color: #d1d5db; cursor: not-allowed;">다음 →</span>
-          )
-        }
+      <div style="width: 100%; display: flex; justify-content: center; margin-top: -1rem; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: center; gap: 2rem; font-size: 0.875rem;">
+          <span style="color: #d1d5db; cursor: not-allowed;">← 이전</span>
+          <span style="color: #4b5563; font-weight: 500;">1 / {totalPages || 1}</span>
+          {
+            hasNextPage ? (
+              <a
+                href="/bookmarks/page/2"
+                style="font-weight: 500; transition: opacity 0.2s;"
+                class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
+              >
+                다음 →
+              </a>
+            ) : (
+              <span style="color: #d1d5db; cursor: not-allowed;">다음 →</span>
+            )
+          }
+        </div>
       </div>
     </div>
   </main>
 </IndexLayout>
 
 <style>
-  /* 목록 페이지의 h1 제목 크기를 강제로 줄입니다 */
+  .bookmarks-container {
+    width: 100%;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .bookmarks-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  /* 제목과 설명글 사이의 간격을 반 정도(mb-1)로 줄임 */
+  .header-area {
+    margin-bottom: 0.5rem;
+  }
+
+  /* 제목 크기 고정 */
   main h1 {
-    font-size: 1rem !important; /* 원하시는 크기에 맞춰 0.9rem 등으로 조절 가능합니다 */
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  /* 설명글 크기를 일반 text-sm의 약 70% 수준인 text-xs로 축소 */
+  .desc-text {
+    font-size: 0.75rem !important;
+    line-height: 1.4;
   }
 
   .no-visited:visited {
