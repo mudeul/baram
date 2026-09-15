@@ -71,22 +71,21 @@ const tags = Array.from(allTagsSet)
             const projectData = item.data as any
             const coverImage = projectData.cover || projectData.image
             const isPinned = Boolean(projectData.pinned || projectData.pin)
-            
+
             const rawTechs = projectData.tech || projectData.tags
             let itemTags: string[] = []
             if (Array.isArray(rawTechs)) {
               itemTags = rawTechs.map((t) => String(t).trim()).filter(Boolean)
             } else if (typeof rawTechs === 'string') {
-              itemTags = rawTechs.split(',').map((t) => t.trim()).filter(Boolean)
+              itemTags = rawTechs
+                .split(',')
+                .map((t) => t.trim())
+                .filter(Boolean)
             }
             const dataTagsAttr = itemTags.join(',')
 
             return (
-              <a
-                href={`/wind-ally/${item.id}/`}
-                class="wind-ally-item"
-                data-tags={dataTagsAttr}
-              >
+              <a href={`/wind-ally/${item.id}/`} class="wind-ally-item" data-tags={dataTagsAttr}>
                 {isPinned && (
                   <span class="pinned-badge" title="Pinned">
                     <svg
@@ -149,9 +148,7 @@ const tags = Array.from(allTagsSet)
     items.forEach((item) => {
       const el = item as HTMLElement
       const itemTags = el.getAttribute('data-tags')?.split(',') || []
-      const matches =
-        selectedTag === 'all' ||
-        (selectedTag && itemTags.includes(selectedTag))
+      const matches = selectedTag === 'all' || (selectedTag && itemTags.includes(selectedTag))
 
       if (matches) {
         el.classList.remove('hidden')

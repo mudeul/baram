@@ -1,43 +1,49 @@
 ---
-import { getCollection, render } from 'astro:content';
-import type { CollectionEntry } from 'astro:content';
-import IndexLayout from '../../layouts/IndexLayout.astro';
-import { themeConfig } from '../../config';
+import { getCollection, render } from 'astro:content'
+import type { CollectionEntry } from 'astro:content'
+import IndexLayout from '../../layouts/IndexLayout.astro'
+import { themeConfig } from '../../config'
 
 export async function getStaticPaths() {
-  const dreams = await getCollection('dreams');
+  const dreams = await getCollection('dreams')
   return dreams.map((dream) => ({
     params: { slug: dream.id },
-    props: dream,
-  }));
+    props: dream
+  }))
 }
 
-type Props = CollectionEntry<'dreams'>;
+type Props = CollectionEntry<'dreams'>
 
-const dream = Astro.props;
-const { Content } = await render(dream);
+const dream = Astro.props
+const { Content } = await render(dream)
 
-const pubDate = dream.data.pubDate ? new Date(dream.data.pubDate) : new Date();
-const year = pubDate.getFullYear();
-const month = String(pubDate.getMonth() + 1).padStart(2, '0');
-const day = String(pubDate.getDate()).padStart(2, '0');
-const formattedDate = `${year}.${month}.${day}`;
+const pubDate = dream.data.pubDate ? new Date(dream.data.pubDate) : new Date()
+const year = pubDate.getFullYear()
+const month = String(pubDate.getMonth() + 1).padStart(2, '0')
+const day = String(pubDate.getDate()).padStart(2, '0')
+const formattedDate = `${year}.${month}.${day}`
 ---
 
 <IndexLayout title={`${dream.data.title} - ${themeConfig.site.title}`} description={dream.data.description}>
   <main class="main-content">
     <article class="max-w-2xl mx-auto py-8 px-4">
-      
       <!-- 뒤로 가기 버튼: 홑화살표 적용 및 방문 링크 색상 고정 -->
       <div style="margin-bottom: 2rem;">
-        <a href="/dreams/" class="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition" style="text-decoration: none;">
+        <a
+          href="/dreams/"
+          class="text-sm text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition"
+          style="text-decoration: none;"
+        >
           ‹ 뒤로
         </a>
       </div>
 
       <!-- 제목과 날짜: 인라인 스타일로 상하 간격을 직접 제어 -->
       <div style="margin-bottom: 1.5rem;">
-        <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight" style="margin: 0; padding: 0;">
+        <h1
+          class="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-gray-100 leading-tight"
+          style="margin: 0; padding: 0;"
+        >
           {dream.data.title}
         </h1>
         <span class="text-xs font-mono text-gray-500 dark:text-gray-400" style="display: block; margin-top: -2px;">
@@ -46,12 +52,13 @@ const formattedDate = `${year}.${month}.${day}`;
       </div>
 
       <!-- 본문 카드 영역 -->
-      <div class="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm w-full">
+      <div
+        class="p-6 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm w-full"
+      >
         <div class="prose dark:prose-invert max-w-none text-sm leading-relaxed text-gray-700 dark:text-gray-300">
           <Content />
         </div>
       </div>
-
     </article>
   </main>
 </IndexLayout>

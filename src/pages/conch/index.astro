@@ -16,7 +16,7 @@ const conchItems = await Promise.all(
     const { Content } = await render(entry)
     return {
       question: entry.data.title,
-      renderContent: Content,
+      renderContent: Content
     }
   })
 )
@@ -34,19 +34,16 @@ const conchItems = await Promise.all(
         conchItems.length > 0 ? (
           conchItems.map((item) => (
             <details class="group p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition">
-  <summary class="conch-summary font-semibold text-gray-900 dark:text-gray-100 select-none">
-    <span class="flex items-center gap-2">{item.question}</span>
-    <!-- pr-4 (오른쪽 패딩) 값을 조절하여 화살표를 왼쪽으로 당겨올 수 있습니다 -->
-    <span class="arrow-wrap pr-4 flex items-center">
-      <span class="text-gray-400 transition-transform duration-200 group-open:rotate-90 shrink-0">
-        ›
-      </span>
-    </span>
-  </summary>
-  <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-    <item.renderContent />
-  </div>
-</details>
+              <summary class="conch-summary font-semibold text-gray-900 dark:text-gray-100 select-none">
+                <span class="flex items-center gap-2">{item.question}</span>
+                <span class="arrow-wrap pr-4 flex items-center">
+                  <span class="text-gray-400 transition-transform duration-200 group-open:rotate-90 shrink-0">›</span>
+                </span>
+              </summary>
+              <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                <item.renderContent />
+              </div>
+            </details>
           ))
         ) : (
           <p class="text-center text-gray-400 py-12">

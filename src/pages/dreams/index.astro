@@ -1,34 +1,27 @@
 ---
 import IndexLayout from '../../layouts/IndexLayout.astro'
 import { themeConfig } from '../../config'
-import { getCollection } from 'astro:content';
+import { getCollection } from 'astro:content'
 
 const dreams = (await getCollection('dreams')).sort(
-  (a, b) =>
-    new Date(b.data.pubDate ?? 0).valueOf() -
-    new Date(a.data.pubDate ?? 0).valueOf(),
-);
+  (a, b) => new Date(b.data.pubDate ?? 0).valueOf() - new Date(a.data.pubDate ?? 0).valueOf()
+)
 
 function formatDate(date: Date | undefined) {
-  if (!date) return '';
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}.${month}.${day}`;
+  if (!date) return ''
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}.${month}.${day}`
 }
 ---
 
-<IndexLayout
-  title={`Dreams - ${themeConfig.site.title}`}
-  description="'하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'"
->
+<IndexLayout title={`Dreams - ${themeConfig.site.title}`} description="'하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'">
   <main class="main-content">
     <div class="mb-8 text-center">
       <h1 class="text-3xl font-extrabold mb-2">Dreams</h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm">
-        '하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'
-      </p>
+      <p class="text-gray-500 dark:text-gray-400 text-sm">'하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'</p>
     </div>
 
     <div class="max-w-2xl mx-auto">
@@ -39,19 +32,12 @@ function formatDate(date: Date | undefined) {
               <div class="timeline-item">
                 <div class="timeline-dot" />
                 <article class="p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition dream-card">
-                  <!-- 인라인 스타일로 왼쪽 여백을 강제 고정하여 전역 스타일 무력화 -->
                   <div class="dream-content" style="padding-left: 1.25rem;">
-                    <span class="dream-date">
-                      {formatDate(dream.data.pubDate)}
-                    </span>
+                    <span class="dream-date">{formatDate(dream.data.pubDate)}</span>
                     <h2 class="dream-post-title">
-                      <a href={`/dreams/${dream.id}/`}>
-                        {dream.data.title}
-                      </a>
+                      <a href={`/dreams/${dream.id}/`}>{dream.data.title}</a>
                     </h2>
-                    {dream.data.description && (
-                      <p class="dream-excerpt">{dream.data.description}</p>
-                    )}
+                    {dream.data.description && <p class="dream-excerpt">{dream.data.description}</p>}
                   </div>
                 </article>
               </div>
@@ -111,7 +97,9 @@ function formatDate(date: Date | undefined) {
 
   /* 꿈 카드 호버 효과 */
   .dream-card {
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .dream-card:hover {

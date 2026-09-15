@@ -19,23 +19,18 @@ scribbles.sort((a, b) => {
       {
         scribbles.map((item) => {
           // scribble 파일은 cover 필드를 사용하므로 이를 우선적으로 가져옵니다
-          const coverImage = item.data.cover || item.data.image;
+          const coverImage = item.data.cover || item.data.image
           return (
             <a href={`/scribble/${item.id}/`} class="scribble-item">
               {coverImage ? (
-                <img
-                  src={coverImage}
-                  alt={item.data.title || 'Scribble image'}
-                  loading="lazy"
-                  class="scribble-img"
-                />
+                <img src={coverImage} alt={item.data.title || 'Scribble image'} loading="lazy" class="scribble-img" />
               ) : (
                 <div class="scribble-placeholder">
                   <span>{item.data.title || 'No Image'}</span>
                 </div>
               )}
             </a>
-          );
+          )
         })
       }
     </div>

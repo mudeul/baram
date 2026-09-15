@@ -7,7 +7,7 @@ export async function getStaticPaths() {
   const projects = await getCollection('scribble')
   return projects.map((item) => ({
     params: { id: item.id },
-    props: { item },
+    props: { item }
   }))
 }
 
@@ -23,15 +23,17 @@ const description = item.data.description || 'Scribble 상세 페이지'
     <article class="scribble-article">
       <header class="article-header">
         <h1 class="article-title">{item.data.title || 'Untitled'}</h1>
-        {item.data.pubDate && (
-          <time class="article-date" datetime={new Date(item.data.pubDate).toISOString()}>
-            {new Date(item.data.pubDate).toLocaleDateString('ko-KR', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-            })}
-          </time>
-        )}
+        {
+          item.data.pubDate && (
+            <time class="article-date" datetime={new Date(item.data.pubDate).toISOString()}>
+              {new Date(item.data.pubDate).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+          )
+        }
       </header>
 
       <!-- 커버 이미지 영역 의도적 제외 -->
