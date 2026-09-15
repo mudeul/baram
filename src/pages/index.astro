@@ -11,7 +11,7 @@ const formattedPosts = posts.map((post) => {
   const data = post.data as any
   return {
     title: data.title || post.id,
-    url: `/posts/${post.slug || post.id}`,
+    url: `/posts/${post.id}`, // post.slug 제거하고 post.id 사용
     cover: data.cover || null, // 옵시디언 노트의 cover 속성 꺼내오기
     dateStr: data.pubDate ? new Date(data.pubDate).toISOString().split('T')[0].replaceAll('-', '.') : ''
   }
