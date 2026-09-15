@@ -3,6 +3,9 @@ import IndexLayout from '../../layouts/IndexLayout.astro'
 import { themeConfig } from '../../config'
 import { getCollection } from 'astro:content'
 
+// 👉 allProjects 변수를 미리 선언해 줍니다
+let allProjects = []
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 try {
   const collection = await getCollection('wind-ally')
