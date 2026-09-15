@@ -23,6 +23,8 @@ concurrency:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
   pull-requests: write
 
 jobs:
@@ -30,52 +32,45 @@ jobs:
     name: Validate & Build
     runs-on: ubuntu-latest
 
-    # 💡 이 permissions 블록을 추가해야 합니다
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v7.0.1
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
 
-    - name: Install pnpm
-      uses: pnpm/action-setup@v6.1.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'pnpm'
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v7
-      with:
-        node-version: 'lts/*'
-        cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --prefer-offline
 
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile --prefer-offline
+      - name: Format check
+        run: pnpm format:check
 
-    - name: Format check
-      run: pnpm format:check
+      - name: Lint
+        run: pnpm lint
+        continue-on-error: true
 
-    - name: Lint
-      run: pnpm lint
-      continue-on-error: true
+      - name: Type check
+        run: tsc --noEmit
 
-    - name: Type check
-      run: tsc --noEmit
+      - name: Build
+        run: pnpm build
 
-    - name: Build
-      run: pnpm build
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: dist
-        path: dist/
-        retention-days: 7
-
-    # 👇 이 부분을 추가해 주어야 실제 사이트가 업데이트됩니다!
-    - name: Deploy to GitHub Pages
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: actions/deploy-pages@v4
+      - name: Deploy to GitHub Pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/deploy-pages@v4
 
   auto-merge:
     name: Auto Merge
@@ -97,7 +92,7 @@ jobs:
           pull-request-number: ${{ github.event.pull_request.number }}
 
       - name: Auto merge
-        uses: actions/github-script@v9
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
