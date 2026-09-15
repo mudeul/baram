@@ -97,8 +97,8 @@ const formattedBookmarks = bookmarks.map((post) => {
       <!-- 직접 렌더링하는 콤팩트 북마크 리스트 -->
       <div class="bookmarks-container">
         {
-          formattedBookmarks.map(({ title, url, dateStr, tagString }) => (
-            <div class="bookmark-item-row" data-tags={tagString}>
+          formattedBookmarks.map(({ title, url, dateStr, tagString }, index) => (
+            <div class="bookmark-item-row" data-tags={tagString} data-index={index}>
               <a href={url} target="_blank" rel="noopener noreferrer" class="bookmark-link">
                 <span class="bookmark-title">{title}</span>
                 <span class="bookmark-line" />
@@ -107,6 +107,16 @@ const formattedBookmarks = bookmarks.map((post) => {
             </div>
           ))
         }
+      </div>
+
+      <!-- 더보기 버튼 -->
+      <div id="load-more-container" style="display: flex; justify-content: center; margin-top: 1rem;">
+        <button
+          id="load-more-btn"
+          style="background: rgba(125, 125, 125, 0.08); border: 1px solid #eaeaea; color: #666666; padding: 0.4rem 1.2rem; border-radius: 9999px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;"
+        >
+          더보기
+        </button>
       </div>
     </div>
   </main>
@@ -117,7 +127,7 @@ const formattedBookmarks = bookmarks.map((post) => {
       font-size: 90%;
       display: flex;
       flex-direction: column;
-      gap: 0.35rem; /* 글제목 사이의 간격 */
+      gap: 0.35rem;
     }
 
     .bookmark-item-row {
@@ -127,11 +137,11 @@ const formattedBookmarks = bookmarks.map((post) => {
     /* 한 줄 레이아웃 (제목 - 구분선 - 날짜) */
     .bookmark-link {
       display: flex;
-      align-items: center;
+      align-items: baseline; /* 날짜와 제목의 텍스트 베이스라인을 완벽하게 일치시킴 */
       gap: 0.5rem;
       text-decoration: none;
       color: inherit;
-      padding: 0.15rem 0; /* 행 자체의 상하 여백을 아주 슬림하게 조절 */
+      padding: 0.15rem 0;
       line-height: 1.2;
     }
 
@@ -142,11 +152,14 @@ const formattedBookmarks = bookmarks.map((post) => {
       max-width: 65%;
     }
 
-    /* 점선 또는 실선 디자인 (테마 스타일에 맞춤) */
+    /* 실선 디자인 */
     .bookmark-line {
       flex: 1;
-      border-bottom: 1px dashed rgba(150, 150, 150, 0.3);
+      border-bottom: 1px solid rgba(150, 150, 150, 0.3);
       height: 0;
+      /* 선이 가운데 오도록 미세 조정 */
+      position: relative;
+      top: -3px;
     }
 
     .bookmark-date {
@@ -155,35 +168,70 @@ const formattedBookmarks = bookmarks.map((post) => {
       color: #999;
     }
 
+    /* 마우스 오버 시 강제 파란색 효과 제거 (원래 테마 상속) */
     .bookmark-link:hover .bookmark-title {
-      color: var(--color-primary, #6366f1);
-      text-decoration: underline;
-    }
-    /* PostList 내부의 날짜 및 행 요소를 완벽한 수직 가운데 정렬로 강제 고정 */
-    .bookmark-item-row :global(.post-item),
-    .bookmark-item-row :global(a),
-    .bookmark-item-row :global(div) {
-      align-items: center !important;
-    }
-    /* 한 줄 레이아웃 (제목 - 구분선 - 날짜) */
-    .bookmark-link {
-      display: flex;
-      align-items: center; /* 이 부분이 중앙 정렬을 잡아줍니다 */
-      gap: 0.5rem;
-      text-decoration: none;
       color: inherit;
-      padding: 0.15rem 0;
-      line-height: 1.2;
+      text-decoration: none;
+    }
+
+    /* 대신 테마 기본 링크 호버 효과가 있다면 자연스럽게 따르도록 설정 */
+    .bookmark-link:hover {
+      opacity: 0.8;
+    }
+
+    #load-more-btn:hover {
+      background: #eceafa;
+      color: #555555;
+      border-color: #eceafa;
     }
   </style>
 
-  <!-- 클라이언트 필터링 스크립트 -->
+  <!-- 클라이언트 필터링 및 페이징 스크립트 -->
   <script is:inline>
-    function initBookmarksFilter() {
-      var buttons = document.querySelectorAll('.tag-btn')
-      var rows = document.querySelectorAll('.bookmark-item-row')
+    var pageSize = 20
+    var currentVisibleCount = pageSize
+    var activeTag = 'all'
 
-      if (buttons.length === 0 || rows.length === 0) return
+    function updateBookmarksView() {
+      var rows = document.querySelectorAll('.bookmark-item-row')
+      var loadMoreContainer = document.getElementById('load-more-container')
+
+      var matchedCount = 0
+      var shownCount = 0
+
+      for (var k = 0; k < rows.length; k++) {
+        var tagsAttr = rows[k].getAttribute('data-tags') || ''
+        var tagsList = tagsAttr.split(',')
+
+        var matchesTag = activeTag === 'all' || tagsList.indexOf(activeTag) !== -1
+
+        if (matchesTag) {
+          matchedCount++
+          if (matchedCount <= currentVisibleCount) {
+            rows[k].style.display = ''
+            shownCount++
+          } else {
+            rows[k].style.display = 'none'
+          }
+        } else {
+          rows[k].style.display = 'none'
+        }
+      }
+
+      if (loadMoreContainer) {
+        if (shownCount < matchedCount) {
+          loadMoreContainer.style.display = 'flex'
+        } else {
+          loadMoreContainer.style.display = 'none'
+        }
+      }
+    }
+
+    function initBookmarks() {
+      var buttons = document.querySelectorAll('.tag-btn')
+      var loadMoreBtn = document.getElementById('load-more-btn')
+
+      if (buttons.length === 0) return
 
       for (var i = 0; i < buttons.length; i++) {
         buttons[i].addEventListener('click', function () {
@@ -199,27 +247,27 @@ const formattedBookmarks = bookmarks.map((post) => {
           this.style.color = '#555555'
           this.style.borderColor = '#eceafa'
 
-          var targetTag = this.getAttribute('data-tag')
-
-          for (var k = 0; k < rows.length; k++) {
-            var tagsAttr = rows[k].getAttribute('data-tags') || ''
-            var tagsList = tagsAttr.split(',')
-
-            if (targetTag === 'all' || tagsList.indexOf(targetTag) !== -1) {
-              rows[k].style.display = ''
-            } else {
-              rows[k].style.display = 'none'
-            }
-          }
+          activeTag = this.getAttribute('data-tag') || 'all'
+          currentVisibleCount = pageSize
+          updateBookmarksView()
         })
       }
+
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function () {
+          currentVisibleCount += pageSize
+          updateBookmarksView()
+        })
+      }
+
+      updateBookmarksView()
     }
 
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initBookmarksFilter)
+      document.addEventListener('DOMContentLoaded', initBookmarks)
     } else {
-      initBookmarksFilter()
+      initBookmarks()
     }
-    document.addEventListener('astro:page-load', initBookmarksFilter)
+    document.addEventListener('astro:page-load', initBookmarks)
   </script>
 </IndexLayout>
