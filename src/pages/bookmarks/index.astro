@@ -54,6 +54,11 @@ const hasNextPage = sortedPosts.length > pageSize
 </IndexLayout>
 
 <style>
+  /* 목록 페이지의 h1 제목 크기를 강제로 줄입니다 */
+  main h1 {
+    font-size: 1rem !important; /* 원하시는 크기에 맞춰 0.9rem 등으로 조절 가능합니다 */
+  }
+
   .no-visited:visited {
     color: currentColor !important;
   }
