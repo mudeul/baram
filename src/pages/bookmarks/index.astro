@@ -33,6 +33,9 @@ const formattedBookmarks = bookmarks.map((post) => {
   const postTags = postData.tech || postData.tags || []
   const tagString = Array.isArray(postTags) ? postTags.join(',') : String(postTags)
 
+  // 내부 상세 페이지 경로로 수정 (slug 또는 id 활용)
+  const bookmarkUrl = `/bookmarks/${post.slug || post.id}`
+
   // 날짜 포맷 (YYYY.MM.DD)
   let dateStr = ''
   if (postData.pubDate) {
@@ -47,7 +50,7 @@ const formattedBookmarks = bookmarks.map((post) => {
 
   return {
     title: postData.title || post.id,
-    url: postData.link || `#`,
+    url: bookmarkUrl,
     dateStr,
     tagString
   }
@@ -134,10 +137,10 @@ const formattedBookmarks = bookmarks.map((post) => {
       width: 100%;
     }
 
-    /* 한 줄 레이아웃 (제목 - 구분선 - 날짜) */
+    /* 한 줄 레이아웃 (제목 - 점선 - 날짜) */
     .bookmark-link {
       display: flex;
-      align-items: baseline; /* 날짜와 제목의 텍스트 베이스라인을 완벽하게 일치시킴 */
+      align-items: baseline;
       gap: 0.5rem;
       text-decoration: none;
       color: inherit;
@@ -152,12 +155,11 @@ const formattedBookmarks = bookmarks.map((post) => {
       max-width: 65%;
     }
 
-    /* 실선 디자인 */
+    /* 은은한 점선 디자인 */
     .bookmark-line {
       flex: 1;
-      border-bottom: 1px solid rgba(150, 150, 150, 0.3);
+      border-bottom: 1px dashed rgba(150, 150, 150, 0.3);
       height: 0;
-      /* 선이 가운데 오도록 미세 조정 */
       position: relative;
       top: -3px;
     }
@@ -168,13 +170,11 @@ const formattedBookmarks = bookmarks.map((post) => {
       color: #999;
     }
 
-    /* 마우스 오버 시 강제 파란색 효과 제거 (원래 테마 상속) */
     .bookmark-link:hover .bookmark-title {
       color: inherit;
       text-decoration: none;
     }
 
-    /* 대신 테마 기본 링크 호버 효과가 있다면 자연스럽게 따르도록 설정 */
     .bookmark-link:hover {
       opacity: 0.8;
     }

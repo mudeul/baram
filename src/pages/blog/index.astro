@@ -1,53 +1,191 @@
 ---
 import IndexLayout from '../../layouts/IndexLayout.astro'
-import PostList from '../../components/widgets/PostList.astro'
 import { themeConfig } from '../../config'
 import { getCollection } from 'astro:content'
 
 const posts = await getCollection('blog')
 
-// 날짜 최신순 정렬 및 URL에 카테고리(blog/) 접두사 추가
+// 날짜 최신순 정렬 및 URL 경로 생성
 const sortedPosts = posts
   .sort((a, b) => {
     const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
     const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
     return dateB - dateA
   })
-  .map((post) => ({
-    ...post,
-    // PostList에서 사용하는 id 또는 slug 경로를 /blog/slug 형태로 변경
-    id: `blog/${post.id}`
-  }))
+  .map((post) => {
+    const postData = post.data as any
+
+    // 날짜 포맷 (YYYY.MM.DD)
+    let dateStr = ''
+    if (postData.pubDate) {
+      const d = new Date(postData.pubDate)
+      if (!isNaN(d.getTime())) {
+        const year = d.getFullYear()
+        const month = String(d.getMonth() + 1).padStart(2, '0')
+        const day = String(d.getDate()).padStart(2, '0')
+        dateStr = `${year}.${month}.${day}`
+      }
+    }
+
+    return {
+      title: postData.title || post.id,
+      url: `/blog/${post.slug || post.id}`,
+      dateStr,
+      description: postData.description || ''
+    }
+  })
 ---
 
 <IndexLayout title={`Blog - ${themeConfig.site.title}`} description={themeConfig.site.description}>
-  <main class="wind-ally-container">
-    <div class="wind-ally-wrapper">
-      <h1 class="text-base font-bold mb-2">Blog</h1>
-      <PostList posts={sortedPosts} />
+  <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 1rem;">
+    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+      <!-- 헤더 (Bookmarks와 동일한 크기 및 구조) -->
+      <div style="margin-bottom: 0.25rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Blog
+        </h1>
+        <p style="font-size: 0.75rem !important; line-height: 1.4;" class="text-gray-500 dark:text-gray-400">
+          {themeConfig.site.description}
+        </p>
+      </div>
+
+      <!-- 콤팩트 블로그 리스트 -->
+      <div class="bookmarks-container">
+        {
+          sortedPosts.map(({ title, url, dateStr }, index) => (
+            <div class="bookmark-item-row" data-index={index}>
+              <a href={url} class="bookmark-link">
+                <span class="bookmark-title">{title}</span>
+                <span class="bookmark-line" />
+                <span class="bookmark-date">{dateStr}</span>
+              </a>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- 더보기 버튼 -->
+      <div id="load-more-container" style="display: flex; justify-content: center; margin-top: 1rem;">
+        <button
+          id="load-more-btn"
+          style="background: rgba(125, 125, 125, 0.08); border: 1px solid #eaeaea; color: #666666; padding: 0.4rem 1.2rem; border-radius: 9999px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;"
+        >
+          더보기
+        </button>
+      </div>
     </div>
   </main>
+
+  <style>
+    /* 전체 리스트 글씨 크기 90% 축소 (Bookmarks와 동일) */
+    .bookmarks-container {
+      font-size: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .bookmark-item-row {
+      width: 100%;
+    }
+
+    /* 한 줄 레이아웃 (제목 - 점선 - 날짜, 베이스라인 정렬) */
+    .bookmark-link {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: inherit;
+      padding: 0.15rem 0;
+      line-height: 1.2;
+    }
+
+    .bookmark-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 65%;
+    }
+
+    /* 은은한 점선 디자인 */
+    .bookmark-line {
+      flex: 1;
+      border-bottom: 1px dashed rgba(150, 150, 150, 0.3);
+      height: 0;
+      position: relative;
+      top: -3px;
+    }
+
+    .bookmark-date {
+      white-space: nowrap;
+      font-size: 0.85em;
+      color: #999;
+    }
+
+    .bookmark-link:hover .bookmark-title {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .bookmark-link:hover {
+      opacity: 0.8;
+    }
+
+    #load-more-btn:hover {
+      background: #eceafa;
+      color: #555555;
+      border-color: #eceafa;
+    }
+  </style>
+
+  <!-- 클라이언트 페이징 스크립트 (더보기 기능) -->
+  <script is:inline>
+    var pageSize = 20
+    var currentVisibleCount = pageSize
+
+    function updateBlogView() {
+      var rows = document.querySelectorAll('.bookmark-item-row')
+      var loadMoreContainer = document.getElementById('load-more-container')
+
+      var totalCount = rows.length
+      var shownCount = 0
+
+      for (var k = 0; k < totalCount; k++) {
+        if (k < currentVisibleCount) {
+          rows[k].style.display = ''
+          shownCount++
+        } else {
+          rows[k].style.display = 'none'
+        }
+      }
+
+      if (loadMoreContainer) {
+        if (shownCount < totalCount) {
+          loadMoreContainer.style.display = 'flex'
+        } else {
+          loadMoreContainer.style.display = 'none'
+        }
+      }
+    }
+
+    function initBlog() {
+      var loadMoreBtn = document.getElementById('load-more-btn')
+
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function () {
+          currentVisibleCount += pageSize
+          updateBlogView()
+        })
+      }
+
+      updateBlogView()
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBlog)
+    } else {
+      initBlog()
+    }
+    document.addEventListener('astro:page-load', initBlog)
+  </script>
 </IndexLayout>
-
-<style>
-  .wind-ally-container {
-    width: 100%;
-    max-width: 42rem;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-  }
-
-  .wind-ally-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-  }
-
-  /* Bookmarks 페이지와 제목 크기/굵기 동일하게 맞춤 */
-  main h1 {
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 0.5rem !important;
-  }
-</style>
