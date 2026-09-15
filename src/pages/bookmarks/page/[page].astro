@@ -1,8 +1,8 @@
 ---
 import type { GetStaticPaths, Page } from 'astro'
-import IndexLayout from '../../../layouts/IndexLayout.astro'
-import PostList from '../../../components/widgets/PostList.astro'
-import { themeConfig } from '../../../config'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+import PostList from '@/components/widgets/PostList.astro'
+import { themeConfig } from '@/config'
 import { getCollection, type CollectionEntry } from 'astro:content'
 
 export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
