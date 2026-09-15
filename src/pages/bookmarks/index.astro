@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content'
 import { themeConfig } from '@/config'
 import IndexLayout from '@/layouts/IndexLayout.astro'
-import PostList from '@/components/widgets/PostList.astro'
 
 const bookmarks = await getCollection('bookmarks')
 
@@ -28,13 +27,28 @@ for (let i = 0; i < bookmarks.length; i++) {
 }
 const allTags = Array.from(tagSet)
 
-// 각 북마크의 태그 문자열 미리 가공
+// 북마크 데이터 가공 (제목, 링크, 날짜, 태그)
 const formattedBookmarks = bookmarks.map((post) => {
   const postData = post.data as any
   const postTags = postData.tech || postData.tags || []
   const tagString = Array.isArray(postTags) ? postTags.join(',') : String(postTags)
+
+  // 날짜 포맷 (YYYY.MM.DD)
+  let dateStr = ''
+  if (postData.pubDate) {
+    const d = new Date(postData.pubDate)
+    if (!isNaN(d.getTime())) {
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      dateStr = `${year}.${month}.${day}`
+    }
+  }
+
   return {
-    post,
+    title: postData.title || post.id,
+    url: postData.link || `#`,
+    dateStr,
     tagString
   }
 })
@@ -42,7 +56,7 @@ const formattedBookmarks = bookmarks.map((post) => {
 
 <IndexLayout title={`Bookmarks - ${themeConfig.site.title}`} description="♪ 다만 내 것이 되지 않았어">
   <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 1rem;">
-    <div style="display: flex; flex-direction: column; gap: 0.25rem; width: 100%;">
+    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
       <!-- 헤더 -->
       <div style="margin-bottom: 0.25rem;">
         <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
@@ -80,12 +94,16 @@ const formattedBookmarks = bookmarks.map((post) => {
         )
       }
 
-      <!-- 북마크 리스트 (글씨 크기 90%, 제목 사이 간격 압축) -->
-      <div class="bookmarks-container custom-compact-list">
+      <!-- 직접 렌더링하는 콤팩트 북마크 리스트 -->
+      <div class="bookmarks-container">
         {
-          formattedBookmarks.map(({ post, tagString }) => (
+          formattedBookmarks.map(({ title, url, dateStr, tagString }) => (
             <div class="bookmark-item-row" data-tags={tagString}>
-              <PostList posts={[post]} />
+              <a href={url} target="_blank" rel="noopener noreferrer" class="bookmark-link">
+                <span class="bookmark-title">{title}</span>
+                <span class="bookmark-line" />
+                <span class="bookmark-date">{dateStr}</span>
+              </a>
             </div>
           ))
         }
@@ -94,32 +112,52 @@ const formattedBookmarks = bookmarks.map((post) => {
   </main>
 
   <style>
-    .custom-compact-list {
-      font-size: 90% !important;
+    /* 전체 리스트 글씨 크기 90% 축소 */
+    .bookmarks-container {
+      font-size: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem; /* 글제목 사이의 간격 */
     }
 
-    /* 각 행 사이의 간격을 극단적으로 줄임 */
     .bookmark-item-row {
-      margin-top: -0.4rem !important;
-      margin-bottom: -0.4rem !important;
-      padding: 0 !important;
+      width: 100%;
     }
 
-    /* PostList 내부 컴포넌트가 만드는 공백과 placeholder 원천 차단 */
-    .bookmark-item-row :global(.placeholder) {
-      display: none !important;
-      height: 0 !important;
-      margin: 0 !important;
-      padding: 0 !important;
+    /* 한 줄 레이아웃 (제목 - 구분선 - 날짜) */
+    .bookmark-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: inherit;
+      padding: 0.15rem 0; /* 행 자체의 상하 여백을 아주 슬림하게 조절 */
+      line-height: 1.2;
     }
 
-    .bookmark-item-row :global(ul),
-    .bookmark-item-row :global(li),
-    .bookmark-item-row :global(div) {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
-      padding-top: 0.1rem !important;
-      padding-bottom: 0.1rem !important;
+    .bookmark-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 65%;
+    }
+
+    /* 점선 또는 실선 디자인 (테마 스타일에 맞춤) */
+    .bookmark-line {
+      flex: 1;
+      border-bottom: 1px dashed rgba(150, 150, 150, 0.3);
+      height: 0;
+    }
+
+    .bookmark-date {
+      white-space: nowrap;
+      font-size: 0.85em;
+      color: #999;
+    }
+
+    .bookmark-link:hover .bookmark-title {
+      color: var(--color-primary, #6366f1);
+      text-decoration: underline;
     }
   </style>
 
