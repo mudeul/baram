@@ -16,15 +16,21 @@ scribbles.sort((a, b) => {
 <IndexLayout title={`Scribble - ${themeConfig.site.title}`} description="끄적끄적">
   <main class="scribble-container">
     <div class="scribble-wrapper">
-      <div>
-        <h1 class="text-base font-bold mb-2">Scribble</h1>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">끄적끄적</p>
+      <div style="margin-bottom: 0.25rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Scribble
+        </h1>
+        <p
+          style="font-size: 0.75rem !important; line-height: 1.4; margin: 0 !important;"
+          class="text-gray-500 dark:text-gray-400"
+        >
+          끄적끄적
+        </p>
       </div>
 
       <div class="scribble-grid">
         {
           scribbles.map((item) => {
-            // scribble 파일은 cover 필드를 사용하므로 이를 우선적으로 가져옵니다
             const coverImage = item.data.cover || item.data.image
             return (
               <a href={`/scribble/${item.id}/`} class="scribble-item">
@@ -55,21 +61,15 @@ scribbles.sort((a, b) => {
   .scribble-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.5rem;
     width: 100%;
-  }
-
-  /* 제목 크기 및 스타일 통일 */
-  main h1 {
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 0.5rem !important;
   }
 
   .scribble-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 3px;
+    margin-top: 1rem;
   }
 
   .scribble-item {

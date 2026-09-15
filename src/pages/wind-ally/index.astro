@@ -3,16 +3,12 @@ import IndexLayout from '../../layouts/IndexLayout.astro'
 import { themeConfig } from '../../config'
 import { getCollection } from 'astro:content'
 
-// 👉 초기값(= [])을 빼고 타입과 함께 선언만 해줍니다
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let allProjects: any[]
 
 try {
   const collection = await getCollection('wind-ally')
   allProjects = collection.sort((a, b) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const aData = a.data as any
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const bData = b.data as any
     const aPinned = aData.pinned || aData.pin ? 1 : 0
     const bPinned = bData.pinned || bData.pin ? 1 : 0
@@ -26,10 +22,8 @@ try {
   allProjects = []
 }
 
-// tech나 tags가 문자열이든 배열이든 모두 안전하게 수집
 const allTagsSet = new Set<string>()
 allProjects.forEach((item) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const projectData = item.data as any
   const techList = projectData.tech || projectData.tags
 
@@ -51,9 +45,16 @@ const tags = Array.from(allTagsSet)
 <IndexLayout title={`Wind-Ally - ${themeConfig.site.title}`} description="찰나의 목격자">
   <main class="wind-ally-container">
     <div class="wind-ally-wrapper">
-      <div>
-        <h1 class="text-base font-bold mb-2">Wind-Ally</h1>
-        <p class="text-gray-500 dark:text-gray-400 text-sm">찰나의 목격자</p>
+      <div style="margin-bottom: 0.25rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Wind-Ally
+        </h1>
+        <p
+          style="font-size: 0.75rem !important; line-height: 1.4; margin: 0 !important;"
+          class="text-gray-500 dark:text-gray-400"
+        >
+          찰나의 목격자
+        </p>
       </div>
 
       {
@@ -74,7 +75,6 @@ const tags = Array.from(allTagsSet)
       <div class="wind-ally-grid">
         {
           allProjects.map((item) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const projectData = item.data as any
             const coverImage = projectData.cover || projectData.image
             const isPinned = Boolean(projectData.pinned || projectData.pin)
@@ -180,15 +180,8 @@ const tags = Array.from(allTagsSet)
   .wind-ally-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 0.5rem;
     width: 100%;
-  }
-
-  /* 제목 크기 및 스타일 통일 */
-  main h1 {
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 0.5rem !important;
   }
 
   .filter-tags {
@@ -196,7 +189,7 @@ const tags = Array.from(allTagsSet)
     flex-wrap: wrap;
     gap: 0.5rem;
     justify-content: center;
-    margin-bottom: 0.5rem;
+    margin: 0.5rem 0;
   }
 
   .tag-btn {
@@ -221,6 +214,7 @@ const tags = Array.from(allTagsSet)
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 3px;
+    margin-top: 0.5rem;
   }
 
   .wind-ally-item {
@@ -246,7 +240,7 @@ const tags = Array.from(allTagsSet)
     top: 6px;
     left: 6px;
     z-index: 2;
-    background: rgba(0, 0, 0, 0.45); /* 반투명한 검은색으로 변경 */
+    background: rgba(0, 0, 0, 0.45);
     backdrop-filter: blur(4px);
     border-radius: 50%;
     width: 26px;
