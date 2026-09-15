@@ -48,12 +48,20 @@ const formattedPosts = posts.map((post) => {
 </IndexLayout>
 
 <style>
+  /* about.md가 들어가는 영역을 확실하게 통제 */
   .about-section {
     width: 100%;
     max-width: 42rem;
     margin: 0 auto;
     padding: 1.5rem 1rem 0.5rem 1rem;
-    font-size: 85%;
+    box-sizing: border-box;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  /* 테마 CSS가 무시하지 못하도록 about.md 내부 폰트 크기를 강제로 더 작게 축소 */
+  .about-section :global(div) {
+    font-size: 80% !important;
   }
 
   .wind-ally-container {
@@ -61,6 +69,7 @@ const formattedPosts = posts.map((post) => {
     max-width: 42rem;
     margin: 0 auto;
     padding: 1rem 1rem 2rem 1rem;
+    box-sizing: border-box;
   }
 
   .wind-ally-wrapper {
@@ -70,7 +79,7 @@ const formattedPosts = posts.map((post) => {
     width: 100%;
   }
 
-  /* 가로 3개 정방형 그리드, 사진 간격 절반으로 축소 (0.35rem) */
+  /* 가로 3개 정방형 그리드, 사진 간격 절반으로 축소 */
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
