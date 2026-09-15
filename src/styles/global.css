@@ -21,53 +21,56 @@
   --spacing-s: -0.08em;
   --spacing-m: -0.02em;
 
-  /* Light Mode Colors (Default) */
-  --bg: #ffffff;
-  --text-primary: rgba(0, 0, 0, 0.85);
-  --text-secondary: rgba(0, 0, 0, 0.4);
-  --text-tertiary: rgba(0, 0, 0, 0.24);
-  --border: rgba(0, 0, 0, 0.1);
-  --selection: rgba(0, 0, 0, 0.08);
-  --code-bg: rgba(0, 0, 0, 0.04);
-  --mark: #f3ffc4;
+  /* Light Mode Colors (Customized) */
+  --bg: #f9f5f5; /* 전체 배경색 */
+  --text-primary: #b0a0b0; /* 본문 글자색 */
+  --text-secondary: rgba(176, 160, 176, 0.6);
+  --text-tertiary: rgba(176, 160, 176, 0.4);
+  --border: rgba(176, 160, 176, 0.2);
+  --selection: rgba(205, 157, 212, 0.2);
+  --code-bg: rgba(176, 160, 176, 0.08);
+  --mark: #cd9dd4;
 
-  /* Syntax Theme  */
-  --astro-code-foreground: rgba(0, 0, 0, 0.85);
-  --astro-code-background: rgba(0, 0, 0, 0.03);
-  --astro-code-token-constant: rgba(0, 0, 0, 0.85);
-  --astro-code-token-string: rgba(0, 0, 0, 0.85);
-  --astro-code-token-comment: rgba(0, 0, 0, 0.35);
-  --astro-code-token-keyword: rgba(0, 0, 0, 0.55);
-  --astro-code-token-parameter: rgba(0, 0, 0, 0.85);
-  --astro-code-token-function: rgba(0, 0, 0, 0.85);
-  --astro-code-token-string-expression: rgba(0, 0, 0, 0.55);
-  --astro-code-token-punctuation: rgba(0, 0, 0, 0.55);
-  --astro-code-token-link: rgba(0, 0, 0, 0.55);
+  /* 추가로 지정해주신 글의 제목색 변수 */
+  --text-title: #cd9dd4;
+
+  --astro-code-foreground: #b0a0b0;
+  --astro-code-background: rgba(176, 160, 176, 0.04);
+  --astro-code-token-constant: #b0a0b0;
+  --astro-code-token-string: #b0a0b0;
+  --astro-code-token-comment: rgba(176, 160, 176, 0.5);
+  --astro-code-token-keyword: #cd9dd4;
+  --astro-code-token-parameter: #b0a0b0;
+  --astro-code-token-function: #cd9dd4;
+  --astro-code-token-string-expression: #cd9dd4;
+  --astro-code-token-punctuation: #b0a0b0;
+  --astro-code-token-link: #cd9dd4;
 }
 
 /* Light Mode (Explicit) */
 html.light {
-  --bg: #ffffff;
-  --text-primary: rgba(0, 0, 0, 0.85);
-  --text-secondary: rgba(0, 0, 0, 0.4);
-  --text-tertiary: rgba(0, 0, 0, 0.24);
-  --border: rgba(0, 0, 0, 0.1);
-  --selection: rgba(0, 0, 0, 0.08);
-  --code-bg: rgba(0, 0, 0, 0.04);
-  --mark: #f3ffc4;
+  --bg: #f9f5f5;
+  --text-primary: #b0a0b0;
+  --text-secondary: rgba(176, 160, 176, 0.6);
+  --text-tertiary: rgba(176, 160, 176, 0.4);
+  --border: rgba(176, 160, 176, 0.2);
+  --selection: rgba(205, 157, 212, 0.2);
+  --code-bg: rgba(176, 160, 176, 0.08);
+  --mark: #cd9dd4;
+  --text-title: #cd9dd4;
 
   /* Syntax Theme  */
-  --astro-code-foreground: rgba(0, 0, 0, 0.85);
-  --astro-code-background: rgba(0, 0, 0, 0.03);
-  --astro-code-token-constant: rgba(0, 0, 0, 0.85);
-  --astro-code-token-string: rgba(0, 0, 0, 0.85);
-  --astro-code-token-comment: rgba(0, 0, 0, 0.35);
-  --astro-code-token-keyword: rgba(0, 0, 0, 0.5);
-  --astro-code-token-parameter: rgba(0, 0, 0, 0.85);
-  --astro-code-token-function: rgba(0, 0, 0, 0.85);
-  --astro-code-token-string-expression: rgba(0, 0, 0, 0.55);
-  --astro-code-token-punctuation: rgba(0, 0, 0, 0.55);
-  --astro-code-token-link: rgba(0, 0, 0, 0.55);
+  --astro-code-foreground: #b0a0b0;
+  --astro-code-background: rgba(176, 160, 176, 0.04);
+  --astro-code-token-constant: #b0a0b0;
+  --astro-code-token-string: #b0a0b0;
+  --astro-code-token-comment: rgba(176, 160, 176, 0.5);
+  --astro-code-token-keyword: #cd9dd4;
+  --astro-code-token-parameter: #b0a0b0;
+  --astro-code-token-function: #cd9dd4;
+  --astro-code-token-string-expression: #cd9dd4;
+  --astro-code-token-punctuation: #b0a0b0;
+  --astro-code-token-link: #cd9dd4;
 }
 
 /* Dark Mode (Explicit) */
@@ -232,16 +235,4 @@ details summary {
 details summary::-webkit-details-marker,
 details summary::marker {
   display: none !important;
-}
-
-/* 라이트 모드일 때 상단 타이틀 색상 */
-html.light header a,
-html.light .site-title {
-  color: #82b4e3 !important; /* 원하는 라이트 모드 색상 헥스 코드로 변경 (예: 파란색) */
-}
-
-/* 다크 모드일 때 상단 타이틀 색상 */
-html.dark header a,
-html.dark .site-title {
-  color: #82b4e3 !important; /* 원하는 다크 모드 색상 헥스 코드로 변경 (예: 밝은 하늘색) */
 }
