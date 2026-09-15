@@ -1,14 +1,9 @@
 ---
 import IndexLayout from '@/layouts/IndexLayout.astro'
+import About from '@/components/widgets/About.astro'
 import { themeConfig } from '@/config'
 import { getSortedFilteredPosts } from '@/utils/draft'
-import { getEntry, render } from 'astro:content'
 
-// 1. src/content/about 폴더의 마크다운 가져오기 (파일명이 index.md인 경우)
-const aboutEntry = await getEntry('about', 'index')
-const { Content } = aboutEntry ? await render(aboutEntry) : { Content: null }
-
-// 2. posts 컬렉션 데이터 가져오기
 const posts = await getSortedFilteredPosts()
 
 const formattedPosts = posts.map((post) => {
@@ -16,25 +11,19 @@ const formattedPosts = posts.map((post) => {
   return {
     title: data.title || post.id,
     url: `/posts/${post.id}`,
-    cover: data.cover || null,
-    dateStr: data.pubDate ? new Date(data.pubDate).toISOString().split('T')[0].replaceAll('-', '.') : ''
+    cover: data.cover || null
   }
 })
 ---
 
 <IndexLayout title={themeConfig.site.title} description={themeConfig.site.description}>
-  <div class="wind-ally-container">
-    <!-- about 마크다운 내용 (글씨 크기 확 줄임) -->
-    {
-      Content && (
-        <div class="about-markdown-content">
-          <Content />
-        </div>
-      )
-    }
+  <div class="about-section">
+    <About />
+  </div>
 
+  <main class="wind-ally-container">
     <div class="wind-ally-wrapper">
-      <!-- 갤러리 그리드 리스트 (가로 3개 정방형) -->
+      <!-- 갤러리 그리드 리스트 (오직 정방형 사진만, 간격 축소) -->
       <div class="gallery-grid">
         {
           formattedPosts.length > 0 ? (
@@ -45,10 +34,6 @@ const formattedPosts = posts.map((post) => {
                     <img src={post.cover} alt={post.title} loading="lazy" />
                   </div>
                 )}
-                <div class="gallery-content">
-                  <h2 class="gallery-title">{post.title}</h2>
-                  {post.dateStr && <span class="gallery-date">{post.dateStr}</span>}
-                </div>
               </a>
             ))
           ) : (
@@ -59,29 +44,23 @@ const formattedPosts = posts.map((post) => {
         }
       </div>
     </div>
-  </div>
+  </main>
 </IndexLayout>
 
 <style>
-  /* 대문 전체 컨테이너 및 폰트 크기 대폭 축소 */
+  .about-section {
+    width: 100%;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 0.5rem 1rem;
+    font-size: 85%;
+  }
+
   .wind-ally-container {
     width: 100%;
     max-width: 42rem;
     margin: 0 auto;
     padding: 1rem 1rem 2rem 1rem;
-    font-size: 80%; /* 전체 글씨 크기를 아담하게 축소 */
-  }
-
-  /* about.md 내용 영역 스타일 */
-  .about-markdown-content {
-    margin-bottom: 2rem;
-    line-height: 1.5;
-  }
-
-  /* about 내부의 태그들도 폰트 크기를 상속받거나 작게 유지 */
-  .about-markdown-content :global(p),
-  .about-markdown-content :global(div) {
-    font-size: inherit;
   }
 
   .wind-ally-wrapper {
@@ -91,14 +70,13 @@ const formattedPosts = posts.map((post) => {
     width: 100%;
   }
 
-  /* 가로로 3개씩 고정 배치하는 그리드 레이아웃 */
+  /* 가로 3개 정방형 그리드, 사진 간격 절반으로 축소 (0.35rem) */
   .gallery-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
+    gap: 0.35rem;
   }
 
-  /* 모바일 화면에서는 가로 2개로 조정 */
   @media (max-width: 640px) {
     .gallery-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -106,23 +84,20 @@ const formattedPosts = posts.map((post) => {
   }
 
   .gallery-card {
-    display: flex;
-    flex-direction: column;
+    display: block;
     text-decoration: none;
-    background: var(--bg-card, #fff);
-    border: 1px solid rgba(150, 150, 150, 0.2);
-    border-radius: 0.5rem;
+    border-radius: 0.35rem;
     overflow: hidden;
+    background: var(--bg-card, #fff);
+    border: 1px solid rgba(150, 150, 150, 0.15);
     transition:
       transform 0.2s ease,
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
+      opacity 0.2s ease;
   }
 
   .gallery-card:hover {
     transform: translateY(-2px);
-    border-color: var(--text-tertiary, #999);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    opacity: 0.9;
   }
 
   /* 정방형(1:1 비율) 이미지 영역 */
@@ -142,27 +117,5 @@ const formattedPosts = posts.map((post) => {
 
   .gallery-card:hover .gallery-image-wrap img {
     transform: scale(1.03);
-  }
-
-  .gallery-content {
-    padding: 0.5rem 0.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-
-  .gallery-title {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: inherit;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .gallery-date {
-    font-size: 0.68rem;
-    color: #999;
   }
 </style>
