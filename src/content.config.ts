@@ -7,17 +7,21 @@ const postSchema = z.object({
   pubDate: z.coerce.date().optional(),
   image: z.string().optional(),
   cover: z.string().optional(),
-  tech: z.union([z.string(), z.array(z.string())]).optional(), // 이 부분을 추가해주세요!
-  tags: z.union([z.string(), z.array(z.string())]).optional(), // 태그용 필드도 함께 안전하게 추가
+  tech: z.union([z.string(), z.array(z.string())]).optional(),
+  tags: z.union([z.string(), z.array(z.string())]).optional(),
   pinned: z.boolean().optional(),
   pin: z.boolean().optional()
 })
 
-// ... (하단 컬렉션 정의들은 그대로 유지)
-
 const about = defineCollection({
   loader: glob({ base: './src/content/about', pattern: '**/*.md' }),
   schema: z.object({})
+})
+
+// 👉 posts 컬렉션 정의를 다시 추가해 줍니다!
+const posts = defineCollection({
+  loader: glob({ base: './src/content/posts', pattern: '**/*.{md,mdx}' }),
+  schema: postSchema
 })
 
 const blog = defineCollection({
@@ -57,6 +61,7 @@ const windAlly = defineCollection({
 
 export const collections = {
   about,
+  posts, // 👉 여기에 posts를 추가
   blog,
   bodong,
   bookmarks,
