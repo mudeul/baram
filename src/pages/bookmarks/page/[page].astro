@@ -1,73 +1,100 @@
 ---
-import type { GetStaticPaths, InferGetStaticPropsType } from 'astro'
-import IndexLayout from '@/layouts/IndexLayout.astro'
-import PostList from '@/components/widgets/PostList.astro'
-import { themeConfig } from '@/config'
-import { getCollection, type CollectionEntry } from 'astro:content'
+import { getCollection } from 'astro:content'
+import type { InferGetStaticPropsType } from 'astro'
+import { themeConfig } from '~/themeConfig'
+import IndexLayout from '~/layouts/IndexLayout.astro'
+import PostList from '~/components/PostList.astro'
 
-export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
-  const posts = await getCollection('bookmarks')
-  const sortedPosts = posts
-    .sort((a, b) => {
-      const dateA = a.data.pubDate ? new Date((dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0)) : 0 // 기존 정렬 로직 유지
-      const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
-      return dateB - dateA
-    })
-    .map((post) => ({
-      ...post,
-      id: `bookmarks/${post.id}`
-    }))
+export async function getStaticPaths() {
+  const bookmarks = await getCollection('bookmarks')
 
-  return paginate(sortedPosts, { pageSize: 10 })
-}
+  bookmarks.sort((a, b) => {
+    const timeA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
+    const timeB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
+    return timeB - timeA
+  })
 
-// 👈 수동 interface 대신 아래와 같이 자동 타입 추론을 사용합니다.
-type Props = InferGetStaticPropsType<typeof getStaticPaths>
-
-const { page } = Astro.props
-
-// 전체 북마크에서 태그 안전하게 수집
-const allPosts = await getCollection('bookmarks')
-const allTagsSet = new Set<string>()
-allPosts.forEach((item) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const postData = item.data as any
-  const techList = postData.tech || postData.tags
-
-  if (techList) {
-    if (Array.isArray(techList)) {
-      techList.forEach((t: unknown) => {
-        if (typeof t === 'string' && t.trim()) allTagsSet.add(t.trim())
-      })
-    } else if (typeof techList === 'string' && techList.trim()) {
-      techList.split(',').forEach((t) => {
-        if (t.trim()) allTagsSet.add(t.trim())
-      })
+  const tagSet = new Set<string>()
+  for (let i = 0; i < bookmarks.length; i++) {
+    const data = bookmarks[i].data as any
+    const itemTags = data.tech || data.tags
+    if (Array.isArray(itemTags)) {
+      for (let j = 0; j < itemTags.length; j++) {
+        if (itemTags[j]) tagSet.add(String(itemTags[j]))
+      }
+    } else if (typeof itemTags === 'string' && itemTags) {
+      tagSet.add(itemTags)
     }
   }
-})
-const tags = Array.from(allTagsSet)
+  const allTags = Array.from(tagSet)
+
+  const pageSize = 10
+  const totalPages = Math.ceil(bookmarks.length / pageSize) || 1
+  const pages = []
+
+  for (let i = 0; i < totalPages; i++) {
+    const start = i * pageSize
+    const end = start + pageSize
+    pages.push({
+      params: { page: String(i + 1) },
+      props: {
+        tags: allTags,
+        page: {
+          data: bookmarks.slice(start, end),
+          currentPage: i + 1,
+          lastPage: totalPages,
+          url: {
+            prev: i > 0 ? (i === 1 ? '/bookmarks' : '/bookmarks/page/' + i) : undefined,
+            next: i + 1 < totalPages ? '/bookmarks/page/' + (i + 2) : undefined
+          }
+        }
+      }
+    })
+  }
+  return pages
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>
+
+const props = Astro.props as Props
+const page = props.page
+const tags = props.tags
 ---
 
 <IndexLayout
   title={`Bookmarks (Page ${page.currentPage}) - ${themeConfig.site.title}`}
   description="♪ 다만 내 것이 되지 않았어"
 >
-  <main class="bookmarks-container">
-    <div class="bookmarks-wrapper">
-      <div class="header-area">
-        <h1 class="text-base font-bold">Bookmarks</h1>
-        <p class="text-gray-500 dark:text-gray-400 text-xs desc-text">♪ 다만 내 것이 되지 않았어</p>
+  <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 1rem;">
+    <div style="display: flex; flex-direction: column; gap: 1.5rem; width: 100%;">
+      <div style="margin-bottom: 0.5rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Bookmarks
+        </h1>
+        <p style="font-size: 0.75rem !important; line-height: 1.4;" class="text-gray-500 dark:text-gray-400">
+          ♪ 다만 내 것이 되지 않았어
+        </p>
       </div>
 
       {
-        tags.length > 0 && (
-          <div class="filter-tags" aria-label="Filter by tag">
-            <button class="tag-btn active" data-tag="all">
+        tags && tags.length > 0 && (
+          <div
+            style="display: flex; flex-wrap: wrap; gap: 0.4rem; justify-content: center; margin-top: -0.5rem; margin-bottom: -0.25rem;"
+            aria-label="Filter by tag"
+          >
+            <button
+              class="tag-btn active"
+              data-tag="all"
+              style="background: #eceafa; border: 1px solid #eceafa; color: #555555; padding: 0.25rem 0.7rem; border-radius: 9999px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s ease;"
+            >
               All
             </button>
             {tags.map((tag) => (
-              <button class="tag-btn" data-tag={tag}>
+              <button
+                class="tag-btn"
+                data-tag={tag}
+                style="background: rgba(125, 125, 125, 0.08); border: 1px solid #eaeaea; color: #666666; padding: 0.25rem 0.7rem; border-radius: 9999px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s ease;"
+              >
                 {tag}
               </button>
             ))}
@@ -75,11 +102,9 @@ const tags = Array.from(allTagsSet)
         )
       }
 
-      <!-- 각 북마크 데이터의 태그를 data-tags 속성으로 주입 -->
       <div class="bookmarks-list-wrapper">
         {
           page.data.map((post) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const postData = post.data as any
             const postTags = postData.tech || postData.tags || []
             const tagString = Array.isArray(postTags) ? postTags.join(',') : String(postTags)
@@ -99,7 +124,7 @@ const tags = Array.from(allTagsSet)
             page.url.prev ? (
               <a
                 href={page.url.prev}
-                style="font-weight: 500; transition: opacity 0.2s;"
+                style="font-weight: 500; transition: opacity 0.2s; color: inherit;"
                 class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
               >
                 ← 이전
@@ -117,7 +142,7 @@ const tags = Array.from(allTagsSet)
             page.url.next ? (
               <a
                 href={page.url.next}
-                style="font-weight: 500; transition: opacity 0.2s;"
+                style="font-weight: 500; transition: opacity 0.2s; color: inherit;"
                 class="no-visited hover:opacity-75 text-gray-900 dark:text-gray-100"
               >
                 다음 →
@@ -130,114 +155,47 @@ const tags = Array.from(allTagsSet)
       </div>
     </div>
   </main>
-</IndexLayout>
 
-<script>
-  function initBookmarksFilter() {
-    const filterButtons = document.querySelectorAll('.tag-btn')
-    const items = document.querySelectorAll('.bookmark-item-row')
+  <script is:inline>
+    function initBookmarksFilter() {
+      var buttons = document.querySelectorAll('.tag-btn')
+      var rows = document.querySelectorAll('.bookmark-item-row')
 
-    if (filterButtons.length === 0 || items.length === 0) return
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener('click', function () {
+          for (var j = 0; j < buttons.length; j++) {
+            buttons[j].classList.remove('active')
+            buttons[j].style.background = 'rgba(125, 125, 125, 0.08)'
+            buttons[j].style.color = '#666666'
+            buttons[j].style.borderColor = '#eaeaea'
+          }
 
-    filterButtons.forEach((btn) => {
-      btn.removeEventListener('click', handleFilterClick)
-      btn.addEventListener('click', handleFilterClick)
-    })
-  }
+          this.classList.add('active')
+          this.style.background = '#eceafa'
+          this.style.color = '#555555'
+          this.style.borderColor = '#eceafa'
 
-  function handleFilterClick(this: HTMLElement) {
-    const filterButtons = document.querySelectorAll('.tag-btn')
-    const items = document.querySelectorAll('.bookmark-item-row')
+          var targetTag = this.getAttribute('data-tag')
 
-    filterButtons.forEach((b) => b.classList.remove('active'))
-    this.classList.add('active')
+          for (var k = 0; k < rows.length; k++) {
+            var tagsAttr = rows[k].getAttribute('data-tags') || ''
+            var tagsList = tagsAttr.split(',')
 
-    const selectedTag = this.getAttribute('data-tag')
-
-    items.forEach((item) => {
-      const el = item as HTMLElement
-      const itemTags =
-        el
-          .getAttribute('data-tags')
-          ?.split(',')
-          .map((t) => t.trim()) || []
-      const matches = selectedTag === 'all' || (selectedTag && itemTags.includes(selectedTag))
-
-      if (matches) {
-        el.classList.remove('hidden')
-      } else {
-        el.classList.add('hidden')
+            if (targetTag === 'all' || tagsList.indexOf(targetTag) !== -1) {
+              rows[k].style.display = ''
+            } else {
+              rows[k].style.display = 'none'
+            }
+          }
+        })
       }
-    })
-  }
+    }
 
-  document.addEventListener('DOMContentLoaded', initBookmarksFilter)
-  document.addEventListener('astro:page-load', initBookmarksFilter)
-</script>
-
-<style>
-  .bookmarks-container {
-    width: 100%;
-    max-width: 42rem;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-  }
-
-  .bookmarks-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    width: 100%;
-  }
-
-  .header-area {
-    margin-bottom: 0.5rem;
-  }
-
-  main h1 {
-    font-size: 1rem !important;
-    font-weight: 700 !important;
-    margin-bottom: 0.25rem !important;
-  }
-
-  .desc-text {
-    font-size: 0.75rem !important;
-    line-height: 1.4;
-  }
-
-  /* 필터칩 스타일 (약 80% 크기, 리스트와 밀착) */
-  .filter-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    justify-content: center;
-    margin-top: -0.5rem;
-    margin-bottom: -0.25rem;
-  }
-
-  .tag-btn {
-    background: var(--color-surface, rgba(125, 125, 125, 0.08));
-    border: 1px solid var(--color-border, #eaeaea);
-    color: var(--color-text-muted, #666);
-    padding: 0.25rem 0.7rem;
-    border-radius: 9999px;
-    font-size: 0.7rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .tag-btn.active,
-  .tag-btn:hover {
-    background: #eceafa;
-    color: #555555;
-    border-color: #eceafa;
-  }
-
-  .bookmark-item-row.hidden {
-    display: none !important;
-  }
-
-  .no-visited:visited {
-    color: currentColor !important;
-  }
-</style>
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBookmarksFilter)
+    } else {
+      initBookmarksFilter()
+    }
+    document.addEventListener('astro:page-load', initBookmarksFilter)
+  </script>
+</IndexLayout>

@@ -16,10 +16,8 @@ const sortedPosts = posts
     id: `bookmarks/${post.id}`
   }))
 
-// 북마크에서 태그 안전하게 수집
 const allTagsSet = new Set<string>()
 sortedPosts.forEach((item) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const postData = item.data as any
   const techList = postData.tech || postData.tags
 
@@ -66,11 +64,9 @@ const hasNextPage = sortedPosts.length > pageSize
         )
       }
 
-      <!-- 각 북마크 데이터의 태그를 data-tags 속성으로 직접 주입하여 스크립트가 인식하도록 수정 -->
       <div class="bookmarks-list-wrapper">
         {
           currentPosts.map((post) => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const postData = post.data as any
             const postTags = postData.tech || postData.tags || []
             const tagString = Array.isArray(postTags) ? postTags.join(',') : String(postTags)
@@ -107,47 +103,55 @@ const hasNextPage = sortedPosts.length > pageSize
   </main>
 </IndexLayout>
 
-<script>
+<script is:inline>
   function initBookmarksFilter() {
-    const filterButtons = document.querySelectorAll('.tag-btn')
-    // 직접 감싸준 .bookmark-item-row 요소를 타겟으로 잡음
-    const items = document.querySelectorAll('.bookmark-item-row')
+    var filterButtons = document.querySelectorAll('.tag-btn')
+    var items = document.querySelectorAll('.bookmark-item-row')
 
     if (filterButtons.length === 0 || items.length === 0) return
 
-    filterButtons.forEach((btn) => {
+    filterButtons.forEach(function (btn) {
       btn.removeEventListener('click', handleFilterClick)
       btn.addEventListener('click', handleFilterClick)
     })
   }
 
-  function handleFilterClick(this: HTMLElement) {
-    const filterButtons = document.querySelectorAll('.tag-btn')
-    const items = document.querySelectorAll('.bookmark-item-row')
+  function handleFilterClick(event) {
+    var filterButtons = document.querySelectorAll('.tag-btn')
+    var items = document.querySelectorAll('.bookmark-item-row')
 
-    filterButtons.forEach((b) => b.classList.remove('active'))
-    this.classList.add('active')
+    filterButtons.forEach(function (b) {
+      b.classList.remove('active')
+    })
 
-    const selectedTag = this.getAttribute('data-tag')
+    var targetBtn = event.currentTarget
+    if (!targetBtn) return
+    targetBtn.classList.add('active')
 
-    items.forEach((item) => {
-      const el = item as HTMLElement
-      const itemTags =
-        el
-          .getAttribute('data-tags')
-          ?.split(',')
-          .map((t) => t.trim()) || []
-      const matches = selectedTag === 'all' || (selectedTag && itemTags.includes(selectedTag))
+    var selectedTag = targetBtn.getAttribute('data-tag')
+
+    items.forEach(function (item) {
+      var rawTags = item.getAttribute('data-tags')
+      var itemTags = rawTags
+        ? rawTags.split(',').map(function (t) {
+            return t.trim()
+          })
+        : []
+      var matches = selectedTag === 'all' || (selectedTag && itemTags.indexOf(selectedTag) !== -1)
 
       if (matches) {
-        el.classList.remove('hidden')
+        item.classList.remove('hidden')
       } else {
-        el.classList.add('hidden')
+        item.classList.add('hidden')
       }
     })
   }
 
-  document.addEventListener('DOMContentLoaded', initBookmarksFilter)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBookmarksFilter)
+  } else {
+    initBookmarksFilter()
+  }
   document.addEventListener('astro:page-load', initBookmarksFilter)
 </script>
 
@@ -181,7 +185,6 @@ const hasNextPage = sortedPosts.length > pageSize
     line-height: 1.4;
   }
 
-  /* 필터칩 스타일 (약 80% 크기, 목록과 가깝게 배치) */
   .filter-tags {
     display: flex;
     flex-wrap: wrap;
@@ -197,7 +200,7 @@ const hasNextPage = sortedPosts.length > pageSize
     color: var(--color-text-muted, #666);
     padding: 0.25rem 0.7rem;
     border-radius: 9999px;
-    font-size: 0.7rem; /* 크기 약 80% */
+    font-size: 0.7rem;
     cursor: pointer;
     transition: all 0.2s ease;
   }
