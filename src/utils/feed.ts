@@ -119,7 +119,8 @@ async function generateFeedInstance(context: APIContext) {
 
   const posts = await getCollection('posts', ({ id }: CollectionEntry<'posts'>) => !id.startsWith('_'))
   const sortedPosts = posts.sort(
-    (a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+    (a: CollectionEntry<'posts'>, b: CollectionEntry<'posts'>) =>
+      (b.data.pubDate?.valueOf() ?? 0) - (a.data.pubDate?.valueOf() ?? 0)
   )
 
   for (const post of sortedPosts) {
@@ -141,14 +142,16 @@ async function generateFeedInstance(context: APIContext) {
     const plainText = sanitizeHtml(cleanHtml, { allowedTags: [], allowedAttributes: {} }).replace(/\s+/g, ' ').trim()
     const description = plainText.length > 200 ? plainText.slice(0, 200) + '...' : plainText
 
+    const postDate = post.data.pubDate ?? new Date()
+
     feed.addItem({
       title: post.data.title,
       id: postUrl,
       link: postUrl,
       description: description,
       content: cleanHtml,
-      date: post.data.pubDate,
-      published: post.data.pubDate
+      date: postDate,
+      published: postDate
     })
   }
 

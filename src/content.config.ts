@@ -10,7 +10,8 @@ const postSchema = z.object({
   tech: z.union([z.string(), z.array(z.string())]).optional(),
   tags: z.union([z.string(), z.array(z.string())]).optional(),
   pinned: z.boolean().optional(),
-  pin: z.boolean().optional()
+  pin: z.boolean().optional(),
+  draft: z.boolean().optional()
 })
 
 const about = defineCollection({
