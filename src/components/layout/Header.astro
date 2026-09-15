@@ -35,6 +35,7 @@ import ThemeToggle from '@/components/ui/ThemeToggle.astro'
 
         <!-- 펼쳐지는 메뉴 목록 -->
         <div id="dropdown-menu" class="dropdown-menu">
+          <a href="/">home</a>
           <a href="/blog">blog</a>
           <a href="/bodong">bodong</a>
           <a href="/bookmarks">bookmarks</a>
@@ -144,5 +145,22 @@ import ThemeToggle from '@/components/ui/ThemeToggle.astro'
   /* 토글 클래스가 붙었을 때 보이도록 설정 */
   .dropdown-menu.show {
     display: flex;
+  }
+  /* 나머지 일반 메뉴 링크들 */
+  .dropdown-menu a {
+    font-weight: normal; /* 평소 두께로 설정 (필요시 조절) */
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: inline-block;
+  }
+
+  /* 👉 홈(Home) 링크만 굵게 처리 */
+  .dropdown-menu a[href='/'] {
+    font-weight: var(--font-weight-bold); /* 또는 bold */
+  }
+
+  .dropdown-menu a:hover {
+    opacity: 0.7;
   }
 </style>
