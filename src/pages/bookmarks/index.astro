@@ -61,7 +61,7 @@ const formattedBookmarks = bookmarks.map((post) => {
   <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 1rem;">
     <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
       <!-- 헤더 -->
-      <div style="margin-bottom: 0.25rem;">
+      <div style="margin-bottom: 1.5rem;">
         <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
           Bookmarks
         </h1>
@@ -105,7 +105,7 @@ const formattedBookmarks = bookmarks.map((post) => {
         {
           formattedBookmarks.map(({ title, url, dateStr, tagString }, index) => (
             <div class="bookmark-item-row" data-tags={tagString} data-index={index}>
-              <a href={url} target="_blank" rel="noopener noreferrer" class="bookmark-link">
+              <a href={url} class="bookmark-link">
                 <span class="bookmark-title">{title}</span>
                 <span class="bookmark-line" />
                 <span class="bookmark-date">{dateStr}</span>
