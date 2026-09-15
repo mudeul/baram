@@ -30,46 +30,52 @@ jobs:
     name: Validate & Build
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7.0.1
+    # 💡 이 permissions 블록을 추가해야 합니다
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6.1.0
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v7.0.1
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 'lts/*'
-          cache: 'pnpm'
+    - name: Install pnpm
+      uses: pnpm/action-setup@v6.1.0
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile --prefer-offline
+    - name: Setup Node.js
+      uses: actions/setup-node@v7
+      with:
+        node-version: 'lts/*'
+        cache: 'pnpm'
 
-      - name: Format check
-        run: pnpm format:check
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Lint
-        run: pnpm lint
-        continue-on-error: true
+    - name: Format check
+      run: pnpm format:check
 
-      - name: Type check
-        run: tsc --noEmit
+    - name: Lint
+      run: pnpm lint
+      continue-on-error: true
 
-      - name: Build
-        run: pnpm build
+    - name: Type check
+      run: tsc --noEmit
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: dist
-          path: dist/
-          retention-days: 7
+    - name: Build
+      run: pnpm build
 
-      # 👇 이 부분을 추가해 주어야 실제 사이트가 업데이트됩니다!
-      - name: Deploy to GitHub Pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/deploy-pages@v4
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v7
+      with:
+        name: dist
+        path: dist/
+        retention-days: 7
+
+    # 👇 이 부분을 추가해 주어야 실제 사이트가 업데이트됩니다!
+    - name: Deploy to GitHub Pages
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: actions/deploy-pages@v4
 
   auto-merge:
     name: Auto Merge
