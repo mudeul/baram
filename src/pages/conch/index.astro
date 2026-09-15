@@ -23,39 +23,62 @@ const conchItems = await Promise.all(
 ---
 
 <IndexLayout title={`Conch - ${themeConfig.site.title}`} description="여보세요~">
-  <main>
-    <div class="mb-8 text-center">
-      <h1 class="text-3xl font-extrabold mb-2">Conch</h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm">여보세요~</p>
-    </div>
+  <main class="wind-ally-container">
+    <div class="wind-ally-wrapper">
+      <div>
+        <h1 class="text-base font-bold mb-2">Conch</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">여보세요~</p>
+      </div>
 
-    <div class="max-w-2xl mx-auto space-y-4">
-      {
-        conchItems.length > 0 ? (
-          conchItems.map((item) => (
-            <details class="group p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition">
-              <summary class="conch-summary font-semibold text-gray-900 dark:text-gray-100 select-none">
-                <span class="flex items-center gap-2">{item.question}</span>
-                <span class="arrow-wrap pr-4 flex items-center">
-                  <span class="text-gray-400 transition-transform duration-200 group-open:rotate-90 shrink-0">›</span>
-                </span>
-              </summary>
-              <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
-                <item.renderContent />
-              </div>
-            </details>
-          ))
-        ) : (
-          <p class="text-center text-gray-400 py-12">
-            작성된 노트가 없습니다. src/content/conch 폴더에 마크다운 파일을 추가해보세요!
-          </p>
-        )
-      }
+      <div class="space-y-4 w-full">
+        {
+          conchItems.length > 0 ? (
+            conchItems.map((item) => (
+              <details class="group p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition">
+                <summary class="conch-summary font-semibold text-gray-900 dark:text-gray-100 select-none">
+                  <span class="flex items-center gap-2">{item.question}</span>
+                  <span class="arrow-wrap pr-4 flex items-center">
+                    <span class="text-gray-400 transition-transform duration-200 group-open:rotate-90 shrink-0">›</span>
+                  </span>
+                </summary>
+                <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                  <item.renderContent />
+                </div>
+              </details>
+            ))
+          ) : (
+            <p class="text-center text-gray-400 py-12">
+              작성된 노트가 없습니다. src/content/conch 폴더에 마크다운 파일을 추가해보세요!
+            </p>
+          )
+        }
+      </div>
     </div>
   </main>
 </IndexLayout>
 
 <style>
+  .wind-ally-container {
+    width: 100%;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .wind-ally-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  /* 제목 크기 및 스타일 통일 */
+  main h1 {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
   /* 브라우저 기본 아코디언 삼각형 강제 제거 */
   details > summary {
     list-style: none;
@@ -72,8 +95,7 @@ const conchItems = await Promise.all(
     display: none;
   }
 
-  /* margin-right를 주어야 오른쪽 끝에서 왼쪽으로 당겨옵니다 */
   .arrow-wrap {
-    margin-right: 15rem; /* 이 값을 키우거나 줄여서 위치를 조절하세요 */
+    margin-right: 15rem;
   }
 </style>

@@ -18,42 +18,61 @@ function formatDate(date: Date | undefined) {
 ---
 
 <IndexLayout title={`Dreams - ${themeConfig.site.title}`} description="'하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'">
-  <main class="main-content">
-    <div class="mb-8 text-center">
-      <h1 class="text-3xl font-extrabold mb-2">Dreams</h1>
-      <p class="text-gray-500 dark:text-gray-400 text-sm">'하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'</p>
-    </div>
+  <main class="wind-ally-container">
+    <div class="wind-ally-wrapper">
+      <div>
+        <h1 class="text-base font-bold mb-2">Dreams</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">'하늘에는 온통 먹물처럼 꿈꾼 흔적 뿐이다.'</p>
+      </div>
 
-    <div class="max-w-2xl mx-auto">
-      {
-        dreams.length > 0 ? (
-          <div class="timeline">
-            {dreams.map((dream) => (
-              <div class="timeline-item">
-                <div class="timeline-dot" />
-                <article class="p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition dream-card">
-                  <div class="dream-content" style="padding-left: 1.25rem;">
-                    <span class="dream-date">{formatDate(dream.data.pubDate)}</span>
-                    <h2 class="dream-post-title">
-                      <a href={`/dreams/${dream.id}/`}>{dream.data.title}</a>
-                    </h2>
-                    {dream.data.description && <p class="dream-excerpt">{dream.data.description}</p>}
-                  </div>
-                </article>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p class="text-center text-gray-400 py-12">아직 기록된 꿈이 없습니다.</p>
-        )
-      }
+      <div class="w-full">
+        {
+          dreams.length > 0 ? (
+            <div class="timeline">
+              {dreams.map((dream) => (
+                <div class="timeline-item">
+                  <div class="timeline-dot" />
+                  <article class="p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm transition dream-card">
+                    <div class="dream-content" style="padding-left: 1.25rem;">
+                      <span class="dream-date">{formatDate(dream.data.pubDate)}</span>
+                      <h2 class="dream-post-title">
+                        <a href={`/dreams/${dream.id}/`}>{dream.data.title}</a>
+                      </h2>
+                      {dream.data.description && <p class="dream-excerpt">{dream.data.description}</p>}
+                    </div>
+                  </article>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p class="text-center text-gray-400 py-12">아직 기록된 꿈이 없습니다.</p>
+          )
+        }
+      </div>
     </div>
   </main>
 </IndexLayout>
 
 <style>
-  .main-content {
+  .wind-ally-container {
     width: 100%;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .wind-ally-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  /* 제목 크기 및 스타일 통일 */
+  main h1 {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
   }
 
   /* 타임라인 컨테이너 */

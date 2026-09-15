@@ -51,6 +51,11 @@ const tags = Array.from(allTagsSet)
 <IndexLayout title={`Wind-Ally - ${themeConfig.site.title}`} description="찰나의 목격자">
   <main class="wind-ally-container">
     <div class="wind-ally-wrapper">
+      <div>
+        <h1 class="text-base font-bold mb-2">Wind-Ally</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">찰나의 목격자</p>
+      </div>
+
       {
         tags.length > 0 && (
           <div class="filter-tags" aria-label="Filter by tech stack">
@@ -179,6 +184,13 @@ const tags = Array.from(allTagsSet)
     width: 100%;
   }
 
+  /* 제목 크기 및 스타일 통일 */
+  main h1 {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
   .filter-tags {
     display: flex;
     flex-wrap: wrap;
@@ -200,8 +212,8 @@ const tags = Array.from(allTagsSet)
 
   .tag-btn.active,
   .tag-btn:hover {
-    background: #eceafa; /* 👈 필터칩 강조색 변경 */
-    color: #555555; /* 배경이 밝아져서 텍스트 가독성을 위해 어두운 톤으로 조정 */
+    background: #eceafa;
+    color: #555555;
     border-color: #eceafa;
   }
 
@@ -245,7 +257,7 @@ const tags = Array.from(allTagsSet)
   }
 
   .pinned-icon {
-    color: #eceafa; /* 👈 핀 아이콘 색상 변경 (눈에 잘 띄게 하려면 아래 참고) */
+    color: #eceafa;
     transform: rotate(45deg);
   }
 

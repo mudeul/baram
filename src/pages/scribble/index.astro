@@ -15,24 +15,31 @@ scribbles.sort((a, b) => {
 
 <IndexLayout title={`Scribble - ${themeConfig.site.title}`} description="끄적끄적">
   <main class="scribble-container">
-    <div class="scribble-grid">
-      {
-        scribbles.map((item) => {
-          // scribble 파일은 cover 필드를 사용하므로 이를 우선적으로 가져옵니다
-          const coverImage = item.data.cover || item.data.image
-          return (
-            <a href={`/scribble/${item.id}/`} class="scribble-item">
-              {coverImage ? (
-                <img src={coverImage} alt={item.data.title || 'Scribble image'} loading="lazy" class="scribble-img" />
-              ) : (
-                <div class="scribble-placeholder">
-                  <span>{item.data.title || 'No Image'}</span>
-                </div>
-              )}
-            </a>
-          )
-        })
-      }
+    <div class="scribble-wrapper">
+      <div>
+        <h1 class="text-base font-bold mb-2">Scribble</h1>
+        <p class="text-gray-500 dark:text-gray-400 text-sm">끄적끄적</p>
+      </div>
+
+      <div class="scribble-grid">
+        {
+          scribbles.map((item) => {
+            // scribble 파일은 cover 필드를 사용하므로 이를 우선적으로 가져옵니다
+            const coverImage = item.data.cover || item.data.image
+            return (
+              <a href={`/scribble/${item.id}/`} class="scribble-item">
+                {coverImage ? (
+                  <img src={coverImage} alt={item.data.title || 'Scribble image'} loading="lazy" class="scribble-img" />
+                ) : (
+                  <div class="scribble-placeholder">
+                    <span>{item.data.title || 'No Image'}</span>
+                  </div>
+                )}
+              </a>
+            )
+          })
+        }
+      </div>
     </div>
   </main>
 </IndexLayout>
@@ -45,17 +52,31 @@ scribbles.sort((a, b) => {
     padding: 2rem 1rem;
   }
 
+  .scribble-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  /* 제목 크기 및 스타일 통일 */
+  main h1 {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
   .scribble-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 3px; /* 기존 8px에서 3px로 축소 */
+    gap: 3px;
   }
 
   .scribble-item {
     position: relative;
     aspect-ratio: 1 / 1;
     overflow: hidden;
-    border-radius: 2px; /* 모서리 둥글기도 살짝 줄이면 더 깔끔합니다 */
+    border-radius: 2px;
     background-color: var(--color-surface, rgba(125, 125, 125, 0.1));
     display: block;
     transition: opacity 0.2s ease;
@@ -87,7 +108,7 @@ scribbles.sort((a, b) => {
 
   @media (max-width: 640px) {
     .scribble-grid {
-      gap: 2px; /* 모바일에서도 더 촘촘하게 */
+      gap: 2px;
     }
   }
 </style>
