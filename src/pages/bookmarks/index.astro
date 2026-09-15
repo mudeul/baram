@@ -42,7 +42,7 @@ const formattedBookmarks = bookmarks.map((post) => {
 
 <IndexLayout title={`Bookmarks - ${themeConfig.site.title}`} description="♪ 다만 내 것이 되지 않았어">
   <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 1rem;">
-    <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+    <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
       <!-- 헤더 -->
       <div style="margin-bottom: 0.25rem;">
         <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
@@ -94,16 +94,16 @@ const formattedBookmarks = bookmarks.map((post) => {
   </main>
 
   <style>
-    /* PostList 컴포넌트 내부의 과도한 상하 여백을 강제로 압축 */
+    /* 주범인 placeholder를 화면에서 완전히 없애고 높이 차지 못하게 함 */
+    .bookmark-item-row :global(.placeholder) {
+      display: none !important;
+      height: 0 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
     .bookmark-item-row {
       margin: 0 !important;
-      padding: 0.15rem 0 !important;
-    }
-    .bookmark-item-row :global(ul),
-    .bookmark-item-row :global(li),
-    .bookmark-item-row :global(div) {
-      margin-top: 0 !important;
-      margin-bottom: 0 !important;
+      padding: 0 !important;
     }
   </style>
 
