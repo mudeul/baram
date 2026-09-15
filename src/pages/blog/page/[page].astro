@@ -1,26 +1,21 @@
 ---
 import type { GetStaticPaths } from 'astro'
-// 경로 에러를 방지하기 위해 프로젝트 구조에 맞게 상대 경로로 수정하는 것이 가장 안전합니다
-import BaseLayout from '../../../layouts/BaseLayout.astro'
-import Header from '../../../components/common/Header.astro'
-import Footer from '../../../components/common/Footer.astro'
-import Container from '../../../components/ui/Container.astro'
-import PostGrid from '../../../components/blog/PostGrid.astro'
-import Pagination from '../../../components/blog/Pagination.astro'
-import { getPublishedPosts, splitFeatured, type Post } from '../../../lib/posts'
-import siteConfig from '../../../site.config'
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Header from '@/components/common/Header.astro'
+import Footer from '@/components/common/Footer.astro'
+import Container from '@/components/ui/Container.astro'
+import PostGrid from '@/components/blog/PostGrid.astro'
+import Pagination from '@/components/blog/Pagination.astro'
+import { getPublishedPosts, splitFeatured, type Post } from '@/lib/posts'
+import siteConfig from '@/site.config'
 
 export const getStaticPaths = (async () => {
   const allPosts = await getPublishedPosts()
   const perPage = siteConfig.blog.postsPerPage
 
-  // Must match the same split as blog/index.astro (page 1) — otherwise a
-  // featured post that falls outside page 1's window would still be
-  // paginated here, duplicating it against the Featured section on /blog.
   const { rest } = splitFeatured(allPosts)
   const totalPages = Math.max(1, Math.ceil(rest.length / perPage))
 
-  // Page 1 lives at /blog (index.astro); generate 2..totalPages here.
   const paths = []
   for (let page = 2; page <= totalPages; page++) {
     paths.push({
