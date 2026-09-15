@@ -1,13 +1,13 @@
 ---
 import type { GetStaticPaths } from 'astro'
-import BaseLayout from '@/layouts/BaseLayout.astro'
-import Header from '@/components/common/Header.astro'
-import Footer from '@/components/common/Footer.astro'
-import Container from '@/components/ui/Container.astro'
-import PostGrid from '@/components/blog/PostGrid.astro'
-import Pagination from '@/components/blog/Pagination.astro'
-import { getPublishedPosts, splitFeatured, type Post } from '@/lib/posts'
-import siteConfig from '@/site.config'
+import BaseLayout from '../../../layouts/BaseLayout.astro'
+import Header from '../../../components/common/Header.astro'
+import Footer from '../../../components/common/Footer.astro'
+import Container from '../../../components/ui/Container.astro'
+import PostGrid from '../../../components/blog/PostGrid.astro'
+import Pagination from '../../../components/blog/Pagination.astro'
+import { getPublishedPosts, splitFeatured, type Post } from '../../../lib/posts'
+import siteConfig from '../../../site.config'
 
 export const getStaticPaths = (async () => {
   const allPosts = await getPublishedPosts()
