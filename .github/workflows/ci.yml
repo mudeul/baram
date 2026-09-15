@@ -70,7 +70,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   auto-merge:
     name: Auto Merge
