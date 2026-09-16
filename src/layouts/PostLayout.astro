@@ -19,7 +19,19 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 
 import { themeConfig } from '@/config'
 
-const { title, pubDate, readingTime, toc = [], contentFeatures = {} } = Astro.props as PostLayoutProps
+/* 👉 backHref를 받을 수 있도록 Props 인터페이스 확장 */
+interface Props extends PostLayoutProps {
+  backHref?: string
+}
+
+const {
+  title,
+  pubDate,
+  readingTime,
+  toc = [],
+  contentFeatures = {},
+  backHref = '/' // 전달받지 않으면 기본값으로 메인('/') 지정
+} = Astro.props as Props
 
 const postSlug = Astro.url.pathname.split('/').filter(Boolean).pop() || ''
 const ogImage = `/open-graph/${postSlug}.png`
@@ -41,7 +53,8 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     <main>
       <div class="prose">
         <GradientMask />
-        <BackButton />
+        <!-- 👉 전달받은 backHref를 BackButton에 전달 -->
+        <BackButton href={backHref} />
         {shouldRenderToc && <TableOfContents toc={toc} />}
         <div class="title">
           <h1>{title}</h1>
@@ -74,7 +87,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
   </div>
 </BaseLayout>
 
-<style>
+<style is:global>
   .post-container {
     display: flex;
     flex-direction: column;
@@ -85,13 +98,30 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     flex: 1;
   }
 
-  /* 제목 영역은 기존 크기 유지 (건드리지 않음) */
-
-  /* 본문(article.content) 내부의 문단 및 텍스트만 90%로 축소 */
   .prose article.content,
   .prose article.content p,
   .prose article.content li,
   .prose article.content span {
     font-size: 90% !important;
+  }
+
+  /* 👉 이미지 하단에 뜨는 'image' 글자 및 캡션 숨기기 */
+  .content img {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+    margin: 1.5rem auto !important;
+    border-radius: 4px;
+    object-fit: contain;
+  }
+
+  .content figcaption,
+  .content .image-caption,
+  .content alt,
+  .content p > em,
+  .content span:has(> img) + em,
+  .content em {
+    display: none !important;
   }
 </style>

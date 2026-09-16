@@ -2,6 +2,7 @@
 import IndexLayout from '../../layouts/IndexLayout.astro'
 import { themeConfig } from '../../config'
 import { getCollection, render } from 'astro:content'
+import BackButton from '@/components/ui/BackButton.astro'
 
 export async function getStaticPaths() {
   const projects = await getCollection('wind-ally')
@@ -20,6 +21,9 @@ const description = item.data.description || '찰나의 목격자 상세 페이�
 
 <IndexLayout title={title} description={description}>
   <main class="wind-ally-detail-container">
+    <!-- 👉 표준 플로팅 BackButton 적용 (Wind-Ally 목록으로 연결) -->
+    <BackButton href="/wind-ally/" />
+
     <article class="wind-ally-article">
       <header class="article-header">
         <h1 class="article-title">{item.data.title || 'Untitled'}</h1>
@@ -36,12 +40,9 @@ const description = item.data.description || '찰나의 목격자 상세 페이�
         }
       </header>
 
-      <div class="article-content">
+      <!-- prose 클래스를 추가하여 다른 상세 페이지들과 통일감 부여 -->
+      <div class="article-content prose">
         <Content />
-      </div>
-
-      <div class="back-link-wrapper">
-        <a href="/wind-ally/" class="back-link">← 목록으로 돌아가기</a>
       </div>
     </article>
   </main>
@@ -53,6 +54,7 @@ const description = item.data.description || '찰나의 목격자 상세 페이�
     max-width: 42rem;
     margin: 0 auto;
     padding: 2rem 1rem;
+    position: relative;
   }
 
   .wind-ally-article {
@@ -83,23 +85,6 @@ const description = item.data.description || '찰나의 목격자 상세 페이�
     line-height: 1.7;
     color: var(--color-text, #222);
     word-break: keep-all;
-  }
-
-  .back-link-wrapper {
-    margin-top: 2rem;
-    padding-top: 1rem;
-    border-top: 1px solid var(--color-border, #eee);
-  }
-
-  .back-link {
-    font-size: 0.9rem;
-    color: var(--color-accent, #e066ff);
-    text-decoration: none;
-    transition: opacity 0.2s ease;
-  }
-
-  .back-link:hover {
-    opacity: 0.8;
   }
 </style>
 
