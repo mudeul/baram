@@ -29,12 +29,14 @@ const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
   </div>
 </PostLayout>
 
-<style is:global>
-  /* Scribble과 완전히 동일한 본문 양쪽정렬 및 스타일 적용 */
-  .blog-content-wrapper,
-  .blog-content-wrapper p,
-  .blog-content-wrapper li,
-  .blog-content-wrapper span {
-    text-align: justify !important;
+<style>
+  /* 블로그 상세페이지 본문만 지정한 크기(1rem)로 설정 */
+  .blog-content-wrapper p:not([style*='font-size']),
+  .blog-content-wrapper li:not([style*='font-size']) {
+    font-size: 1rem; /* 원하시는 크기로 조절 가능 (예: 1rem, 1.05rem 등) */
+    text-align: justify;
+    line-height: 1.75;
+    word-break: keep-all;
+    color: var(--text-primary);
   }
 </style>

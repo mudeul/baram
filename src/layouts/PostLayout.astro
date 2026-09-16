@@ -99,11 +99,14 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     flex: 1;
   }
 
-  .prose article.content,
-  .prose article.content p,
-  .prose article.content li,
-  .prose article.content span {
-    font-size: 90% !important;
+  /* 👉 기본 본문 크기를 1rem으로 키우되, 마크다운 내 인라인 스타일은 존중 */
+  .prose article.content p:not([style*='font-size']),
+  .prose article.content li:not([style*='font-size']),
+  .prose article.content span:not([style*='font-size']) {
+    font-size: 0.85rem !important; /* 필요하면 1.05rem 등으로 조절 가능 */
+    text-align: justify !important;
+    line-height: 1.45 !important;
+    word-break: keep-all !important;
   }
 
   /* 👉 이미지 하단에 뜨는 'image' 글자 및 캡션 숨기기 */
