@@ -260,3 +260,20 @@ details summary::marker {
   line-height: 1.55 !important;
   margin: 1.75em 0 !important;
 }
+
+/* 기본값(데스크톱 등 넓은 화면)은 기존 스타일 유지 */
+
+/* 모바일 화면 (예: 768px 미만)에서만 본문 글자 크기 확대 */
+@media (max-width: 768px) {
+  .prose p,
+  .prose li,
+  .content p,
+  .content li,
+  .wind-ally-content-wrapper p,
+  .wind-ally-content-wrapper li,
+  .scribble-content-wrapper p,
+  .scribble-content-wrapper li {
+    font-size: 0.9rem !important; /* 기존 1rem(16px)이라면 약 18px 크기로 확대 */
+    line-height: 1.8 !important;   /* 모바일 가독성을 위해 줄 간격도 함께 조정하면 좋습니다 */
+  }
+}
