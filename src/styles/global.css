@@ -249,8 +249,14 @@ details summary::marker {
 
 /* 변수 신경 쓸 필요 없이, 여기에 원하는 px나 rem을 직접 적으세요 */
 .blog-content-wrapper p,
-.blog-content-wrapper li {
-  font-size: 0.85rem !important; /* 👈 이 숫자를 키우거나 줄이면 본문이 즉시 바뀝니다! (예: 17px, 18px 등) */
-  line-height: 1.5 !important;
+.blog-content-wrapper li,
+.prose p,
+.prose li,
+.content p,
+.content li,
+.page-content p,
+.page-content li {
+  font-size: 0.85rem !important; /* 원하시는 크기 (예: 0.95rem, 1rem 등) */
+  line-height: 1.55 !important;
   margin: 1.75em 0 !important;
 }
