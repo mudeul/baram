@@ -19,10 +19,10 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 
 import { themeConfig } from '@/config'
 
-/* 👉 backHref를 받을 수 있도록 Props 인터페이스 확장 */
-interface Props extends PostLayoutProps {
+/* 👉 PostLayoutProps에서 pubDate를 제외하고, 선택형 pubDate와 backHref를 다시 정의합니다 */
+interface Props extends Omit<PostLayoutProps, 'pubDate'> {
   backHref?: string
-  pubDate?: Date
+  pubDate?: Date | undefined
 }
 
 const {
