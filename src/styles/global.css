@@ -231,6 +231,7 @@ details summary {
   width: 100% !important;
   list-style: none !important;
   cursor: pointer;
+  font-size: 0.9rem !important;
 }
 
 details summary::-webkit-details-marker,

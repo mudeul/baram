@@ -7,4 +7,5 @@ tech: '2026'
 pinned: true
 ---
 
+::spotify{url="https://open.spotify.com/track/4yGbLjBwaf0Ec1U9ilgOLl?si=93a8136c2cf34631"}
 ![image](https://img.mudeul.page/f17f7f240294ccfd157f2bb88fe39389.jpg)
