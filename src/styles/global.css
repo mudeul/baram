@@ -250,7 +250,7 @@ details summary::marker {
 .prose li:not([style*='font-size']),
 .article-content p:not([style*='font-size']),
 .article-content li:not([style*='font-size']) {
-  font-size: 0.8125rem; /* 원하시는 기본 통일 크기 */
+  font-size: 0.9rem; /* 원하시는 기본 통일 크기 */
   color: var(--text-primary);
   text-align: justify;
   line-height: 1.45;
