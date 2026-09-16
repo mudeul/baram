@@ -253,6 +253,6 @@ details summary::marker {
   font-size: 0.8125rem; /* 원하시는 기본 통일 크기 */
   color: var(--text-primary);
   text-align: justify;
-  line-height: 1.75;
+  line-height: 1.45;
   word-break: keep-all;
 }
