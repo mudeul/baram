@@ -31,5 +31,5 @@ PASSE.. | 블로그Daniel Kiecol 8. 인상주의: 시어도어 클레멘트 스�
 
 ---
 
-![image](https://img.mudeul.page/0ed6a73fedf4623080c8ac7dbae5640f.JPG)
+![image](https://img.mudeul.page/3f47847edff394974a47f580293abb08.jpg)
 유리 올레샤 <사랑> / https://x.com/dreamlabor/status/2076872002108031103?s=46
