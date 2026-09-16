@@ -6,4 +6,4 @@ tags:
   - 음악
 ---
 
-::spotify{url="4u307txePIagFC4K67AdBA?si=838b08b12e2e4016"}
+::spotify{url="https://open.spotify.com/track/7B9UUSv47wZT6UxaOUEEEF?si=9818b6aa1d224d9c"}
