@@ -4,6 +4,24 @@ const today = new Date()
 ---
 
 <footer>
+  <!-- 👉 저작권 윗쪽 중앙에 배치할 소셜 링크 영역 -->
+  <div class="footer-social">
+    <!-- 유튜브 링크 -->
+    <a href="https://www.youtube.com/@유튜브아이디" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"></path>
+        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="currentColor"></polygon>
+      </svg>
+    </a>
+
+    <!-- 블루스카이 링크 -->
+    <a href="https://bsky.app/profile/mudeul.bsky.social" target="_blank" rel="noopener noreferrer" aria-label="Bluesky">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 568 507" fill="currentColor">
+        <path d="M123.4 33.3C211.5 99.7 259 173.2 284 206.5c25-33.3 72.5-106.8 160.6-173.2C508.2-13.7 568 26.6 568 97.4c0 38.6-21.7 117.8-51.4 153.3-31.5 38-72.2 49.3-108.6 52.3-43.1 3.5-84.6-12.7-124-42.9 39.4 30.2 80.9 46.4 124 42.9 36.4-3 77.1-14.3 108.6-52.3 29.7-35.5 51.4-114.7 51.4-153.3 0-70.8-59.8-111.1-123.4-64.1-88.1 66.4-135.6 139.9-160.6 173.2-25-33.3-72.5-106.8-160.6-173.2C59.8-13.7 0 26.6 0 97.4c0 38.6 21.7 117.8 51.4 153.3 31.5 38 72.2 49.3 108.6 52.3 43.1 3.5 84.6-12.7 124 42.9-39.4 30.2-80.9 46.4-124 42.9-36.4-3-77.1-14.3-108.6-52.3C21.7 215.2 0 136 0 97.4c0-70.8 59.8-111.1 123.4-64.1z"/>
+      </svg>
+    </a>
+  </div>
+
   <div class="footer-content">
     <div class="copyright">
       <span class="date">
@@ -19,14 +37,40 @@ const today = new Date()
     </div>
   </div>
 </footer>
+
 <style>
-  footer {
+  <footer>
     font-size: var(--font-size-s);
     font-weight: var(--font-weight-light);
     line-height: 1.75;
     color: var(--text-secondary);
     opacity: 0.75;
     margin-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 전체 내부 요소 중앙 정렬 기준 */
+    gap: 0.75rem; /* 소셜 아이콘과 하단 저작권 줄 사이 간격 */
+  }
+
+  /* 👉 소셜 아이콘 영역 스타일 (중앙 정렬 및 조금 더 진한 색상) */
+  .footer-social {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .footer-social a {
+    color: var(--text-primary); /* 저작권 텍스트보다 더 진한 기본 본문 색상 사용 */
+    opacity: 0.85; /* 살짝 힘을 주어 선명하게 표시 */
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .footer-social a:hover {
+    opacity: 1;
+    transform: translateY(-1px);
   }
 
   .footer-content {
