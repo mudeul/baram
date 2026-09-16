@@ -273,7 +273,7 @@ details summary::marker {
   .wind-ally-content-wrapper li,
   .scribble-content-wrapper p,
   .scribble-content-wrapper li {
-    font-size: 0.9rem !important; /* 기존 1rem(16px)이라면 약 18px 크기로 확대 */
+    font-size: 0.95rem !important; /* 기존 1rem(16px)이라면 약 18px 크기로 확대 */
     line-height: 1.6 !important; /* 모바일 가독성을 위해 줄 간격도 함께 조정하면 좋습니다 */
   }
 }
