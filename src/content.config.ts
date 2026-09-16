@@ -62,6 +62,11 @@ const windAlly = defineCollection({
   schema: postSchema
 })
 
+const avocado = defineCollection({
+  loader: glob({ base: './src/content/avocado', pattern: '**/*.{md,mdx}' }),
+  schema: postSchema
+})
+
 export const collections = {
   about,
   posts, // 👉 여기에 posts를 추가
@@ -71,5 +76,6 @@ export const collections = {
   conch,
   dreams,
   scribble,
-  'wind-ally': windAlly
+  'wind-ally': windAlly,
+  avocado
 }
