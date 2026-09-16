@@ -19,7 +19,11 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 
 import { themeConfig } from '@/config'
 
-interface Props extends PostLayoutProps {}
+/* 👉 backHref를 추가하고, pubDate를 선택형(| undefined)으로 허용하도록 수정 */
+interface Props extends Omit<PostLayoutProps, 'pubDate'> {
+  backHref?: string
+  pubDate?: Date | undefined
+}
 
 const { title, pubDate, readingTime, toc = [], contentFeatures = {} } = Astro.props as Props
 
