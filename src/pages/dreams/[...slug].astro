@@ -1,14 +1,16 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content'
-import PostLayout from '../../layouts/PostLayout.astro'
+import PostLayout from '@/layouts/PostLayout.astro'
 import { render } from 'astro:content'
 
 export async function getStaticPaths() {
   const dreams = await getCollection('dreams')
-  return dreams.map((dream) => ({
-    params: { slug: dream.id },
-    props: dream
-  }))
+  return dreams
+    .filter((dream) => !dream.id.startsWith('_'))
+    .map((dream) => ({
+      params: { slug: dream.id },
+      props: dream
+    }))
 }
 
 type Props = CollectionEntry<'dreams'>
@@ -16,12 +18,12 @@ type Props = CollectionEntry<'dreams'>
 const dream = Astro.props
 const { Content, remarkPluginFrontmatter } = await render(dream)
 
-const readingTime = remarkPluginFrontmatter?.readingTime
-const toc = remarkPluginFrontmatter?.toc || []
-const contentFeatures = remarkPluginFrontmatter?.contentFeatures || {}
+const readingTime = remarkPluginFrontmatter.readingTime
+const toc = remarkPluginFrontmatter.toc || []
+const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
 ---
 
-<PostLayout {...dream.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures} backHref="/dreams/">
+<PostLayout {...dream.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures}>
   <div class="dream-content-wrapper">
     <Content />
   </div>

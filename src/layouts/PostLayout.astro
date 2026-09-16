@@ -19,26 +19,15 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 
 import { themeConfig } from '@/config'
 
-/* 👉 PostLayoutProps에서 pubDate를 제외하고, 선택형 pubDate와 backHref를 다시 정의합니다 */
-interface Props extends Omit<PostLayoutProps, 'pubDate'> {
-  backHref?: string
-  pubDate?: Date | undefined
-}
+interface Props extends PostLayoutProps {}
 
-const {
-  title,
-  pubDate,
-  readingTime,
-  toc = [],
-  contentFeatures = {},
-  backHref = '/' // 전달받지 않으면 기본값으로 메인('/') 지정
-} = Astro.props as Props
+const { title, pubDate, readingTime, toc = [], contentFeatures = {} } = Astro.props as Props
 
 const postSlug = Astro.url.pathname.split('/').filter(Boolean).pop() || ''
 const ogImage = `/open-graph/${postSlug}.png`
 const shouldRenderToc = themeConfig.post.toc && toc.length > 0
 const shouldRenderCopyCode = themeConfig.post.copyCode && contentFeatures.hasCodeBlock
-const shouldRenderImageOptimizer = contentFeatures.hasContentImage
+const shouldRenderImageOptimizer = themeConfig.post.imageViewer && contentFeatures.hasContentImage
 const shouldRenderImageViewer = themeConfig.post.imageViewer && contentFeatures.hasContentImage
 const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLinkCard
 ---
@@ -54,8 +43,7 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     <main>
       <div class="prose">
         <GradientMask />
-        <!-- 👉 전달받은 backHref를 BackButton에 전달 -->
-        <BackButton href={backHref} />
+        <BackButton />
         {shouldRenderToc && <TableOfContents toc={toc} />}
         <div class="title">
           <h1>{title}</h1>
@@ -99,7 +87,6 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
     flex: 1;
   }
 
-  /* 👉 이미지 하단에 뜨는 'image' 글자 및 캡션 숨기기 */
   .content img {
     max-width: 100% !important;
     width: 100% !important;

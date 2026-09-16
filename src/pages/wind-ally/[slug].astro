@@ -1,120 +1,39 @@
 ---
-import IndexLayout from '../../layouts/IndexLayout.astro'
-import { themeConfig } from '../../config'
-import { getCollection, render } from 'astro:content'
-import BackButton from '@/components/ui/BackButton.astro'
+import { type CollectionEntry, getCollection } from 'astro:content'
+import PostLayout from '@/layouts/PostLayout.astro'
+import { render } from 'astro:content'
 
 export async function getStaticPaths() {
   const projects = await getCollection('wind-ally')
   return projects.map((item) => ({
     params: { slug: item.id },
-    props: { item }
+    props: item
   }))
 }
 
-const { item } = Astro.props
-const { Content } = await render(item)
+type Props = CollectionEntry<'wind-ally'>
 
-const title = item.data.title ? `${item.data.title} - Wind-Ally` : `Wind-Ally - ${themeConfig.site.title}`
-const description = item.data.description || '찰나의 목격자 상세 페이지'
+const item = Astro.props
+const { Content, remarkPluginFrontmatter } = await render(item)
 
-const pubDate = item.data.pubDate ? new Date(item.data.pubDate) : new Date()
-const year = pubDate.getFullYear()
-const month = String(pubDate.getMonth() + 1).padStart(2, '0')
-const day = String(pubDate.getDate()).padStart(2, '0')
-const formattedDate = `${year}.${month}.${day}`
+const readingTime = remarkPluginFrontmatter?.readingTime
+const toc = remarkPluginFrontmatter?.toc || []
+const contentFeatures = remarkPluginFrontmatter?.contentFeatures || {}
 ---
 
-<IndexLayout title={title} description={description}>
-  <main class="wind-ally-detail-container">
-    <!-- 표준 플로팅 BackButton 적용 -->
-    <BackButton href="/wind-ally/" />
-
-    <article class="wind-ally-article">
-      <header class="article-header">
-        <!-- dreams와 동일한 테마 변수 및 강제 속성 적용 -->
-        <h1
-          class="article-title text-2xl md:text-3xl font-extrabold leading-tight"
-          style="color: var(--text-title) !important; margin: 0 !important; padding: 0 !important;"
-        >
-          {item.data.title || 'Untitled'}
-        </h1>
-        {
-          item.data.pubDate && (
-            <time
-              class="article-date text-xs font-mono"
-              style="color: var(--text-secondary) !important; display: block !important; margin-top: -2px !important;"
-              datetime={new Date(item.data.pubDate).toISOString()}
-            >
-              {formattedDate}
-            </time>
-          )
-        }
-      </header>
-
-      <!-- prose 클래스를 추가하여 다른 상세 페이지들과 통일감 부여 -->
-      <div class="article-content prose">
-        <Content />
-      </div>
-    </article>
-  </main>
-</IndexLayout>
+<PostLayout {...item.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures} backHref="/wind-ally/">
+  <div class="wind-ally-content-wrapper">
+    <Content />
+  </div>
+</PostLayout>
 
 <style>
-  .wind-ally-detail-container {
-    width: 100%;
-    max-width: 42rem;
-    margin: 0 auto;
-    padding: 2rem 1rem;
-    position: relative;
-  }
-
-  .wind-ally-article {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .article-header {
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem; /* 제목과 날짜를 가깝게 붙임 */
-  }
-
-  .article-title {
-    margin-bottom: 0px !important;
-    padding-bottom: 0px !important;
-  }
-
-  .article-date {
-    display: block;
-    margin-top: -2px !important;
-  }
-
-  .article-content {
-    line-height: 1.7;
-    color: var(--text-primary);
+  .wind-ally-content-wrapper p:not([style*='font-size']),
+  .wind-ally-content-wrapper li:not([style*='font-size']) {
+    font-size: 1rem;
+    text-align: justify;
+    line-height: 1.75;
     word-break: keep-all;
-  }
-</style>
-
-<!-- 전역 스타일로 본문 내 이미지 크기 강제 제어 -->
-<style is:global>
-  .article-content img {
-    max-width: 100% !important;
-    width: 100% !important;
-    height: auto !important;
-    display: block !important;
-    margin: 1.5rem auto !important;
-    border-radius: 4px;
-    object-object-fit: contain;
-  }
-
-  /* 이미지 아래에 뜨는 alt 텍스트나 캡션 숨기기 */
-  .article-content figcaption,
-  .article-content .image-caption,
-  .article-content alt {
-    display: none !important;
+    color: var(--text-primary);
   }
 </style>

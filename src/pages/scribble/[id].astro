@@ -1,115 +1,39 @@
 ---
-import IndexLayout from '../../layouts/IndexLayout.astro'
-import { themeConfig } from '../../config'
-import { getCollection, render } from 'astro:content'
-import BackButton from '@/components/ui/BackButton.astro'
+import { type CollectionEntry, getCollection } from 'astro:content'
+import PostLayout from '@/layouts/PostLayout.astro'
+import { render } from 'astro:content'
 
 export async function getStaticPaths() {
-  const projects = await getCollection('scribble')
-  return projects.map((item) => ({
+  const scribble = await getCollection('scribble')
+  return scribble.map((item) => ({
     params: { id: item.id },
-    props: { item }
+    props: item
   }))
 }
 
-const { item } = Astro.props
-const { Content } = await render(item)
+type Props = CollectionEntry<'scribble'>
 
-const title = item.data.title ? `${item.data.title} - Scribble` : `Scribble - ${themeConfig.site.title}`
-const description = item.data.description || 'Scribble 상세 페이지'
+const item = Astro.props
+const { Content, remarkPluginFrontmatter } = await render(item)
+
+const readingTime = remarkPluginFrontmatter?.readingTime
+const toc = remarkPluginFrontmatter?.toc || []
+const contentFeatures = remarkPluginFrontmatter?.contentFeatures || {}
 ---
 
-<IndexLayout title={title} description={description}>
-  <main class="scribble-detail-container">
-    <BackButton href="/scribble/" />
+<PostLayout {...item.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures} backHref="/scribble/">
+  <div class="scribble-content-wrapper">
+    <Content />
+  </div>
+</PostLayout>
 
-    <article class="scribble-article">
-      <header class="article-header">
-        <h1 class="article-title">{item.data.title || 'Untitled'}</h1>
-        {
-          item.data.pubDate && (
-            <time class="article-date" datetime={new Date(item.data.pubDate).toISOString()}>
-              {new Date(item.data.pubDate).toLocaleDateString('ko-KR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </time>
-          )
-        }
-      </header>
-
-      <!-- 커버 이미지 영역 의도적 제외 -->
-
-      <div class="article-content prose">
-        <Content />
-      </div>
-    </article>
-  </main>
-
-  <style>
-    .scribble-detail-container {
-      width: 100%;
-      max-width: 42rem;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-      position: relative;
-    }
-
-    .scribble-article {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .article-header {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .article-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--text-title, var(--text-primary));
-    }
-
-    .article-date {
-      font-size: 0.8125rem;
-      color: var(--text-secondary);
-    }
-
-    .article-content {
-      line-height: 1.75;
-      word-break: keep-all;
-    }
-  </style>
-
-  <style is:global>
-    /* 테마의 실제 컬러 변수(--text-primary)와 양쪽정렬 강제 적용 */
-    .article-content,
-    .article-content p,
-    .article-content li,
-    .article-content span {
-      color: var(--text-primary) !important;
-      text-align: justify !important;
-    }
-
-    .article-content img {
-      max-width: 100% !important;
-      width: 100% !important;
-      height: auto !important;
-      display: block !important;
-      margin: 1.5rem auto !important;
-      border-radius: 4px;
-      object-fit: contain;
-    }
-
-    .article-content figcaption,
-    .article-content .image-caption,
-    .article-content alt {
-      display: none !important;
-    }
-  </style>
-</IndexLayout>
+<style>
+  .scribble-content-wrapper p:not([style*='font-size']),
+  .scribble-content-wrapper li:not([style*='font-size']) {
+    font-size: 1rem;
+    text-align: justify;
+    line-height: 1.75;
+    word-break: keep-all;
+    color: var(--text-primary);
+  }
+</style>
