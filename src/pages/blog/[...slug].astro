@@ -24,5 +24,17 @@ const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
 ---
 
 <PostLayout {...post.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures} backHref="/blog/">
-  <Content />
+  <div class="blog-content-wrapper">
+    <Content />
+  </div>
 </PostLayout>
+
+<style is:global>
+  /* Scribble과 완전히 동일한 본문 양쪽정렬 및 스타일 적용 */
+  .blog-content-wrapper,
+  .blog-content-wrapper p,
+  .blog-content-wrapper li,
+  .blog-content-wrapper span {
+    text-align: justify !important;
+  }
+</style>

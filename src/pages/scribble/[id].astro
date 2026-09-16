@@ -2,7 +2,7 @@
 import IndexLayout from '../../layouts/IndexLayout.astro'
 import { themeConfig } from '../../config'
 import { getCollection, render } from 'astro:content'
-import BackButton from '@/components/ui/BackButton.astro' // 👉 블로그에서 쓰던 백버튼 컴포넌트 불러오기
+import BackButton from '@/components/ui/BackButton.astro'
 
 export async function getStaticPaths() {
   const projects = await getCollection('scribble')
@@ -21,32 +21,29 @@ const description = item.data.description || 'Scribble 상세 페이지'
 
 <IndexLayout title={title} description={description}>
   <main class="scribble-detail-container">
-    <!-- 👉 요기에 href="/scribble/" 를 추가해 주세요! -->
     <BackButton href="/scribble/" />
 
     <article class="scribble-article">
-      <article class="scribble-article">
-        <header class="article-header">
-          <h1 class="article-title">{item.data.title || 'Untitled'}</h1>
-          {
-            item.data.pubDate && (
-              <time class="article-date" datetime={new Date(item.data.pubDate).toISOString()}>
-                {new Date(item.data.pubDate).toLocaleDateString('ko-KR', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </time>
-            )
-          }
-        </header>
+      <header class="article-header">
+        <h1 class="article-title">{item.data.title || 'Untitled'}</h1>
+        {
+          item.data.pubDate && (
+            <time class="article-date" datetime={new Date(item.data.pubDate).toISOString()}>
+              {new Date(item.data.pubDate).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </time>
+          )
+        }
+      </header>
 
-        <!-- 커버 이미지 영역 의도적 제외 -->
+      <!-- 커버 이미지 영역 의도적 제외 -->
 
-        <div class="article-content prose">
-          <Content />
-        </div>
-      </article>
+      <div class="article-content prose">
+        <Content />
+      </div>
     </article>
   </main>
 
@@ -75,22 +72,30 @@ const description = item.data.description || 'Scribble 상세 페이지'
     .article-title {
       font-size: 1.75rem;
       font-weight: 700;
-      color: var(--color-text, #111);
+      color: var(--text-title, var(--text-primary));
     }
 
     .article-date {
-      font-size: 0.85rem;
-      color: var(--color-text-muted, #666);
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
     }
 
     .article-content {
-      line-height: 1.7;
-      color: var(--color-text, #222);
+      line-height: 1.75;
       word-break: keep-all;
     }
   </style>
 
   <style is:global>
+    /* 테마의 실제 컬러 변수(--text-primary)와 양쪽정렬 강제 적용 */
+    .article-content,
+    .article-content p,
+    .article-content li,
+    .article-content span {
+      color: var(--text-primary) !important;
+      text-align: justify !important;
+    }
+
     .article-content img {
       max-width: 100% !important;
       width: 100% !important;
@@ -106,5 +111,5 @@ const description = item.data.description || 'Scribble 상세 페이지'
     .article-content alt {
       display: none !important;
     }
-  </style></IndexLayout
->
+  </style>
+</IndexLayout>

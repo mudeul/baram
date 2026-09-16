@@ -245,3 +245,19 @@ details summary::marker {
   fill: var(--mark) !important;
   stroke: var(--mark) !important;
 }
+
+/* --- 모든 상세페이지(블로그, Scribble 등)의 본문 글씨 크기 및 정렬 전역 통일 --- */
+.prose,
+.prose p,
+.prose li,
+.prose span,
+.article-content,
+.article-content p,
+.article-content li,
+.article-content span {
+  font-size: var(--font-size-m) !important; /* 혹은 원하시는 크기 (예: 0.8375rem 또는 12px 등) */
+  color: var(--text-primary) !important;
+  text-align: justify !important;
+  line-height: 1.75;
+  word-break: keep-all;
+}
