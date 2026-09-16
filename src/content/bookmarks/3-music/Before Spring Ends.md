@@ -1,9 +1,12 @@
 ---
-title: 'Before Spring Ends'
-author: 'Wang OK, 李天责'
+title: Before Spring Ends
+author: Wang OK, 李天责
 pubDate: 2026-01-01
-tags: ['음악']
+tags:
+  - 음악
 ---
+
+::spotify{url="https://open.spotify.com/track/0OgOvU69S4QuJYTMlIurn0?si=7aecccb30eff4d88"}
 
 숏폼에서 듣고 노래가 좋아서 플리에 추가했는데 이후에 가사를 입힌 영상을 봤는데 가사도 너무 좋았다...
 
