@@ -70,7 +70,7 @@ const { post_slug } = Astro.props
         fill="none"
         viewBox="0 0 256 256"
         stroke="currentColor"
-        stroke-width="24"
+        stroke-width="23"
       >
         <path
           stroke-linecap="round"
@@ -110,6 +110,12 @@ const { post_slug } = Astro.props
           style="width: 50%; padding: 0.75rem 1rem; background-color: var(--code-bg); border: 1px solid var(--border); border-radius: 0.375rem; font-size: 0.875rem; color: var(--text-primary); outline: none; font-family: inherit;"
           required
         />
+      </div>
+
+      {/* 허니팟 필드 (사람 눈에는 안 보이지만 봇은 여기에 값을 채우게 됨) */}
+      <div style="display: none; position: absolute; left: -9999px;" aria-hidden="true">
+        <label for="website-field">Website</label>
+        <input id="website-field" type="text" tabindex="-1" autocomplete="off" />
       </div>
 
       {/* 본문 입력 및 하단 버튼 영역을 감싸는 박스 */}
@@ -197,6 +203,7 @@ const { post_slug } = Astro.props
   const secretBtn = document.getElementById('secret-btn')
   const secretIcon = document.getElementById('secret-icon')
   const secretStatusText = document.getElementById('secret-status-text')
+  const websiteField = document.getElementById('website-field')
 
   const likeBtn = document.getElementById('like-btn')
   const likeIcon = document.getElementById('like-icon')
@@ -394,6 +401,13 @@ const { post_slug } = Astro.props
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault()
+
+      // 허니팟 체크: 봇이 숨겨진 필드에 값을 채워 넣었는지 확인
+      if (websiteField && websiteField.value.trim() !== '') {
+        // 봇으로 판별되면 등록을 막고 조용히 리턴
+        return
+      }
+
       const nickname = document.getElementById('nickname').value.trim()
       const password = document.getElementById('password').value.trim()
       const content = document.getElementById('content').value.trim()
@@ -415,6 +429,7 @@ const { post_slug } = Astro.props
       } else {
         form.reset()
         isSecret = false
+        if (websiteField) websiteField.value = '' // 허니팟 초기화
         if (secretBtn) secretBtn.style.backgroundColor = 'var(--text-tertiary)'
         if (secretIcon) {
           secretIcon.innerHTML =
