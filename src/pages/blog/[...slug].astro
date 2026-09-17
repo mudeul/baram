@@ -2,6 +2,7 @@
 import { type CollectionEntry, getCollection } from 'astro:content'
 import PostLayout from '../../layouts/PostLayout.astro'
 import { render } from 'astro:content'
+import Comments from '../../components/widgets/Comments.astro'
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog')
@@ -27,6 +28,10 @@ const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
   <div class="blog-content-wrapper">
     <Content />
   </div>
+  <!-- 👇 블로그 하단 댓글 컴포넌트 배치 -->
+  <section class="max-w-4xl mx-auto px-4 mt-8">
+    <Comments post_slug={post.id} />
+  </section>
 </PostLayout>
 
 <style>
