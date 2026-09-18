@@ -1,0 +1,38 @@
+---
+import { getEntry } from 'astro:content'
+import { render } from 'astro:content'
+
+const aboutEntry = await getEntry('about', 'about')
+const hasContent = aboutEntry?.body ? aboutEntry.body.replace(/<!--[\s\S]*?-->/g, '').trim().length > 0 : false
+const { Content } = hasContent && aboutEntry ? await render(aboutEntry) : { Content: null }
+---
+
+{
+  hasContent && Content && (
+    <div class="about-wrapper">
+      <div class="about prose">
+        <Content />
+      </div>
+    </div>
+  )
+}
+
+<style>
+  /* 바깥쪽에서 잡고 있는 제한을 풀고 화면 폭에 맞게 꽉 채움 */
+  .about-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: block;
+  }
+
+  .about {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-bottom: 1.25rem;
+  }
+
+  /* prose 내부의 글 배치 폭 제한도 해제 */
+  .about.prose {
+    max-width: 100% !important;
+  }
+</style>

@@ -1,0 +1,189 @@
+---
+import { getCollection } from 'astro:content'
+import { themeConfig } from '@/config'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+
+const posts = await getCollection('blog')
+
+// 최신순 정렬
+posts.sort((a, b) => {
+  const timeA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
+  const timeB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
+  return timeB - timeA
+})
+
+// 블로그 데이터 가공 (제목, 링크, 날짜)
+const formattedPosts = posts.map((post) => {
+  const postData = post.data as any
+  const postUrl = `/blog/${post.id}`
+
+  // 날짜 포맷 (YYYY.MM.DD)
+  let dateStr = ''
+  if (postData.pubDate) {
+    const d = new Date(postData.pubDate)
+    if (!isNaN(d.getTime())) {
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      dateStr = `${year}.${month}.${day}`
+    }
+  }
+
+  return {
+    title: postData.title || post.id,
+    url: postUrl,
+    dateStr
+  }
+})
+---
+
+<IndexLayout title={`Blog - ${themeConfig.site.title}`} description="그냥 해 보는 거였어~">
+  <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 0rem;">
+    <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+      <div style="margin-bottom: 1rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Blog
+        </h1>
+        <p
+          style="font-size: 0.75rem !important; line-height: 1.4; margin: 0 !important;"
+          class="text-gray-500 dark:text-gray-400"
+        >
+          그냥 해 보는 거였어~
+        </p>
+      </div>
+
+      <!-- 콤팩트 블로그 리스트 -->
+      <div class="blog-container">
+        {
+          formattedPosts.map(({ title, url, dateStr }, index) => (
+            <div class="blog-item-row" data-index={index}>
+              <a href={url} class="blog-link">
+                <span class="blog-title">{title}</span>
+                <span class="blog-line" />
+                <span class="blog-date">{dateStr}</span>
+              </a>
+            </div>
+          ))
+        }
+      </div>
+
+      <!-- 더보기 버튼 -->
+      <div id="load-more-container" style="display: flex; justify-content: center; margin-top: 1rem;">
+        <button
+          id="load-more-btn"
+          style="background: rgba(125, 125, 125, 0.08); border: 1px solid #eaeaea; color: #666666; padding: 0.4rem 1.2rem; border-radius: 9999px; font-size: 0.75rem; cursor: pointer; transition: all 0.2s ease;"
+        >
+          더보기
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <style>
+    .blog-container {
+      font-size: 90%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .blog-item-row {
+      width: 100%;
+    }
+
+    .blog-link {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: inherit;
+      padding: 0.15rem 0;
+      line-height: 1.2;
+    }
+
+    .blog-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 65%;
+    }
+
+    .blog-line {
+      flex: 1;
+      border-bottom: 1px dashed rgba(150, 150, 150, 0.3);
+      height: 0;
+      position: relative;
+      top: -3px;
+    }
+
+    .blog-date {
+      white-space: nowrap;
+      font-size: 0.85em;
+      color: #999;
+    }
+
+    .blog-link:hover .blog-title {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .blog-link:hover {
+      opacity: 0.8;
+    }
+
+    #load-more-btn:hover {
+      background: #eceafa;
+      color: #555555;
+      border-color: #eceafa;
+    }
+  </style>
+
+  <!-- 더보기 스크립트 -->
+  <script is:inline>
+    var pageSize = 20
+    var currentVisibleCount = pageSize
+
+    function updateBlogView() {
+      var rows = document.querySelectorAll('.blog-item-row')
+      var loadMoreContainer = document.getElementById('load-more-container')
+      var shownCount = 0
+
+      for (var k = 0; k < rows.length; k++) {
+        if (k < currentVisibleCount) {
+          rows[k].style.display = ''
+          shownCount++
+        } else {
+          rows[k].style.display = 'none'
+        }
+      }
+
+      if (loadMoreContainer) {
+        if (shownCount < rows.length) {
+          loadMoreContainer.style.display = 'flex'
+        } else {
+          loadMoreContainer.style.display = 'none'
+        }
+      }
+    }
+
+    function initBlog() {
+      var loadMoreBtn = document.getElementById('load-more-btn')
+
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function () {
+          currentVisibleCount += pageSize
+          updateBlogView()
+        })
+      }
+
+      updateBlogView()
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initBlog)
+    } else {
+      initBlog()
+    }
+    document.addEventListener('astro:page-load', initBlog)
+  </script>
+</IndexLayout>

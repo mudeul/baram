@@ -1,0 +1,182 @@
+---
+import { themeConfig } from '@/config'
+import ThemeToggle from '@/components/ui/ThemeToggle.astro'
+// widgets 폴더 안의 BgmPlayer 불러오기 (상대 경로)
+import BgmPlayer from '../widgets/BgmPlayer.astro'
+---
+
+<header>
+  <!-- 햄버거 메뉴 라인과 우측 끝을 맞추고, 더 위로 끌어올린 플레이어 래퍼 -->
+  <!-- 👉 transition:persist를 추가하여 페이지를 이동해도 BgmPlayer가 끊기지 않고 유지되도록 설정 -->
+  <div class="player-wrapper" transition:persist>
+    <BgmPlayer />
+  </div>
+
+  <nav>
+    <!-- 왼쪽: 사이트 타이틀 -->
+    <div class="nav-left">
+      <a href="/" class="site-title">{themeConfig.site.title}</a>
+    </div>
+
+    <!-- 오른쪽: 테마 토글 및 드롭다운 메뉴 -->
+    <div class="nav-right">
+      {themeConfig.general.themeToggle && <ThemeToggle />}
+
+      <div class="menu-container">
+        <button id="menu-btn" aria-label="Menu" class="menu-btn">
+          <!-- 햄버거 메뉴 아이콘 -->
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <!-- 펼쳐지는 메뉴 목록 -->
+        <div id="dropdown-menu" class="dropdown-menu">
+          <a href="/">home</a>
+          <a href="/blog">blog</a>
+          <a href="/bodong">bodong</a>
+          <a href="/conch">conch</a>
+          <a href="/dreams">dreams</a>
+          <a href="/avocado">avocado</a>
+          <a href="/scribble">scribble</a>
+          <a href="/wind-ally">wind-ally</a>
+          <a href="/bookmarks">bookmarks</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Astro 페이지 전환(View Transitions) 시에도 메뉴가 정상 작동하도록 설정
+  document.addEventListener('astro:page-load', () => {
+    const menuBtn = document.getElementById('menu-btn')
+    const dropdownMenu = document.getElementById('dropdown-menu')
+
+    if (menuBtn && dropdownMenu) {
+      menuBtn.onclick = (e) => {
+        e.stopPropagation()
+        dropdownMenu.classList.toggle('show')
+      }
+
+      window.onclick = () => {
+        dropdownMenu.classList.remove('show')
+      }
+    }
+  })
+</script>
+
+<style>
+  header {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 42rem; /* 본문과 동일한 최대 폭 설정 */
+    box-sizing: border-box;
+    position: relative; /* 내부 absolute 기준점 */
+  }
+
+  /* 👉 햄버거 메뉴 우측 라인과 일치시키고 위로 바짝 끌어올림 */
+  .player-wrapper {
+    position: absolute;
+    top: -45px; /* 값을 더 마이너스로 주어 위로 바짝 붙임 (필요시 -45px 등으로 조절 가능) */
+    right: 0; /* nav의 우측 패딩(1rem)과 동일하게 주어 햄버거 메뉴 끝선과 수직 정렬 */
+    z-index: 100;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 0 1rem 0;
+    box-sizing: border-box;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    top: 49px;
+  }
+
+  /* 사이트 타이틀 전용 스타일 */
+  .site-title {
+    font-weight: var(--font-weight-bold);
+    color: #82c2ea;
+    text-decoration: none;
+    font-size: 1rem;
+    display: inline-block;
+    position: relative;
+    top: -3px; /* 숫자를 더 키우거나 줄여서 원하는 만큼 위로 올릴 수 있습니다 (예: -10px, -12px 등) */
+  }
+
+  .site-title:hover {
+    opacity: 0.7;
+  }
+
+  /* 메뉴 버튼 스타일 */
+  .menu-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.25rem;
+  }
+  .menu-btn:hover {
+    background: var(--code-bg);
+  }
+
+  /* 드롭다운 메뉴 박스 스타일 */
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    flex-direction: column;
+    gap: 0.6rem;
+    z-index: 100;
+    min-width: 130px;
+  }
+
+  /* 토글 클래스가 붙었을 때 보이도록 설정 */
+  .dropdown-menu.show {
+    display: flex;
+  }
+
+  /* 나머지 일반 메뉴 링크들 */
+  .dropdown-menu a {
+    font-weight: normal;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    display: inline-block;
+  }
+
+  /* 👉 홈(Home) 링크만 아주 굵게 처리 */
+  .dropdown-menu a[href='/'] {
+    font-weight: 900;
+  }
+
+  .dropdown-menu a:hover {
+    opacity: 0.7;
+  }
+</style>

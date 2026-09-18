@@ -1,0 +1,303 @@
+<div class="simple-player">
+  <!-- 파스텔 톤 알록달록 움직이는 음파 바 -->
+  <div class="sound-wave" id="soundWave">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- 👉 곡 제목이 흘러가는 영역 (창문 역할 + 내부 텍스트) -->
+  <div class="track-title-container">
+    <span class="track-title" id="simpleTitle">곡 제목 로딩 중...</span>
+  </div>
+
+  <!-- 아이콘 컨트롤 버튼 영역 -->
+  <div class="simple-btns">
+    <button class="icon-btn" id="simplePlayBtn" title="재생/일시중지">
+      <svg class="play-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor"
+        ><path d="M8 5v14l11-7z"></path></svg
+      >
+      <svg class="pause-ico" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:none;"
+        ><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg
+      >
+    </button>
+    <button class="icon-btn" id="simpleNextBtn" title="다음 곡">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"
+        ><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path></svg
+      >
+    </button>
+  </div>
+
+  <!-- 숨겨진 오디오 태그 -->
+  <audio id="simpleAudio" preload="auto"></audio>
+</div>
+
+<style>
+  .simple-player {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    font-size: 12px;
+    color: var(--ink, #333);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 4px 0;
+    transform: translateX(-6px); /* 👉 왼쪽으로 1px 더 이동 (-2px -> -3px) */
+  }
+
+  /* 파스텔 톤 알록달록 음파 바 스타일 */
+  .sound-wave {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+    width: 16px;
+    flex-shrink: 0;
+  }
+
+  .sound-wave span {
+    display: block;
+    width: 3px;
+    height: 30%;
+    border-radius: 1.5px;
+    transition: height 0.2s;
+    background: #d1d5db; /* 정지 상태일 때는 연한 회색 */
+  }
+
+  /* 각 막대마다 고유한 소프트 파스텔 컬러 지정 */
+  .simple-player.playing .sound-wave span:nth-child(1) {
+    background: #ffb7b2; /* 연한 코랄 핑크 */
+    animation: waveAnim 0.6s ease-in-out infinite alternate;
+  }
+  .simple-player.playing .sound-wave span:nth-child(2) {
+    background: #ffdac1; /* 복숭아 피치 */
+    animation: waveAnim 0.4s ease-in-out infinite alternate;
+    animation-delay: 0.1s;
+  }
+  .simple-player.playing .sound-wave span:nth-child(3) {
+    background: #b5ead7; /* 파스텔 민트 */
+    animation: waveAnim 0.5s ease-in-out infinite alternate;
+    animation-delay: 0.2s;
+  }
+  .simple-player.playing .sound-wave span:nth-child(4) {
+    background: #c7ceea; /* 연보라/하늘색 */
+    animation: waveAnim 0.7s ease-in-out infinite alternate;
+    animation-delay: 0.15s;
+  }
+
+  @keyframes waveAnim {
+    0% {
+      height: 25%;
+    }
+    100% {
+      height: 100%;
+    }
+  }
+
+  /* 👉 제목 영역 컨테이너 (창문 역할: 이 영역보다 길어지면 숨김) */
+  .track-title-container {
+    max-width: 90px; /* 공간에 맞춰 이 숫자를 늘리거나 줄여보세요 (예: 120px~160px) */
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 10%,
+      black 90%,
+      transparent 100%
+    ); /* 양옆 끝을 은은하게 페이드아웃 */
+  }
+
+  /* 👉 곡 제목 스타일 및 바로 흐르는 애니메이션 */
+  .track-title {
+    display: inline-block;
+    color: var(--ink-soft, #c2b8c7);
+    font-weight: 500;
+    padding-left: 100%; /* 창문 오른쪽 바깥에서 대기 */
+    animation: marquee 25s linear infinite; /* 딜레이 없이 바로 25초 주기로 무한 반복 */
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+
+  .simple-btns {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-mute, #c2b8c7);
+    transition: color 0.15s;
+  }
+
+  .icon-btn:hover {
+    color: var(--accent, #efc1d8);
+  }
+</style>
+
+<script>
+  interface Track {
+    title: string
+    src: string
+  }
+
+  const simplePlaylist: Track[] = [
+    {
+      title: 'Devendra Banhart - The Ballad Of Keenan Milton',
+      src: 'https://pub-e69f8c60931d479bb39b3a7d6e6d6d24.r2.dev/Devendra%20Banhart_The%20Ballad%20Of%20Keenan%20Milton.mp3'
+    },
+    { title: 'Rhye - The Fall', src: 'https://pub-e69f8c60931d479bb39b3a7d6e6d6d24.r2.dev/Rhye_The%20Fall.mp3' },
+    {
+      title: 'Yoshiko Kishino - Bossa Libra',
+      src: 'https://pub-e69f8c60931d479bb39b3a7d6e6d6d24.r2.dev/Yoshiko%20Kishino_Bossa%20Libra.mp3'
+    }
+  ]
+
+  if (typeof window !== 'undefined') {
+    if ((window as any).__sIdx === undefined) (window as any).__sIdx = 0
+  }
+
+  function initSimplePlayer() {
+    const sAudio = document.getElementById('simpleAudio') as HTMLAudioElement
+    const sPlayBtn = document.getElementById('simplePlayBtn') as HTMLButtonElement
+    const sNextBtn = document.getElementById('simpleNextBtn') as HTMLButtonElement
+    const sTitle = document.getElementById('simpleTitle') as HTMLElement
+    const sPlayerBox = document.querySelector('.simple-player') as HTMLElement
+
+    if (!sAudio || !sPlayBtn || !sTitle || !sPlayerBox) return
+
+    const playIco = sPlayBtn.querySelector('.play-ico') as HTMLElement
+    const pauseIco = sPlayBtn.querySelector('.pause-ico') as HTMLElement
+
+    // 💡 동기화 충돌 방지를 위한 락 플래그
+    let isUserActionLock = false
+
+    function loadSimpleTrack(idx: number) {
+      if (simplePlaylist[idx]) {
+        sTitle.textContent = simplePlaylist[idx].title
+        if (sAudio.src !== simplePlaylist[idx].src) {
+          sAudio.src = simplePlaylist[idx].src
+        }
+      }
+    }
+
+    // UI 상태 업데이트 함수
+    function syncUIState() {
+      if (!playIco || !pauseIco || !sPlayerBox) return
+      // 사용자가 방금 클릭해서 로딩 중일 때는 자동 동기화가 아이콘을 건드리지 않도록 예외 처리
+      if (isUserActionLock) return
+
+      if (!sAudio.paused && sAudio.currentTime > 0) {
+        sPlayerBox.classList.add('playing')
+        playIco.style.display = 'none'
+        pauseIco.style.display = 'block'
+      } else {
+        sPlayerBox.classList.remove('playing')
+        playIco.style.display = 'block'
+        pauseIco.style.display = 'none'
+      }
+    }
+
+    const currentIdx = (window as any).__sIdx
+    loadSimpleTrack(currentIdx)
+    setTimeout(syncUIState, 50)
+
+    // 재생/일시정지 토글
+    const toggleSimplePlay = () => {
+      if (sAudio.paused) {
+        // 1. 클릭하자마자 무조건 '재생 중' 상태로 UI를 강제 고정
+        isUserActionLock = true
+        sPlayerBox.classList.add('playing')
+        playIco.style.display = 'none'
+        pauseIco.style.display = 'block'
+
+        sAudio
+          .play()
+          .then(() => {
+            // 2. 오디오 로딩과 재생이 완전히 성공한 뒤 잠시 후 락 해제
+            setTimeout(() => {
+              isUserActionLock = false
+              syncUIState()
+            }, 300)
+          })
+          .catch((e) => {
+            console.log('재생 제한:', e)
+            isUserActionLock = false
+            syncUIState()
+          })
+      } else {
+        isUserActionLock = false
+        sAudio.pause()
+        syncUIState()
+      }
+    }
+
+    const nextSimpleTrack = () => {
+      ;(window as any).__sIdx = ((window as any).__sIdx + 1) % simplePlaylist.length
+      loadSimpleTrack((window as any).__sIdx)
+      sAudio.currentTime = 0
+      isUserActionLock = true
+      sPlayerBox.classList.add('playing')
+      playIco.style.display = 'none'
+      pauseIco.style.display = 'block'
+
+      sAudio
+        .play()
+        .then(() => {
+          setTimeout(() => {
+            isUserActionLock = false
+            syncUIState()
+          }, 300)
+        })
+        .catch((e) => {
+          console.log('다음 곡 재생 실패:', e)
+          isUserActionLock = false
+          syncUIState()
+        })
+    }
+
+    // 이벤트 리스너 중복 방지 바인딩
+    if (sPlayBtn.dataset.bound !== 'true') {
+      sPlayBtn.addEventListener('click', toggleSimplePlay)
+      sPlayBtn.dataset.bound = 'true'
+    }
+
+    if (sNextBtn.dataset.bound !== 'true') {
+      sNextBtn.addEventListener('click', nextSimpleTrack)
+      sNextBtn.dataset.bound = 'true'
+    }
+
+    // 오디오 이벤트 연결
+    sAudio.onplay = syncUIState
+    sAudio.onpause = syncUIState
+    sAudio.onended = nextSimpleTrack
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSimplePlayer)
+  } else {
+    initSimplePlayer()
+  }
+
+  document.addEventListener('astro:page-load', initSimplePlayer)
+</script>

@@ -1,0 +1,69 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content'
+import PostLayout from '@/layouts/PostLayout.astro'
+import { render } from 'astro:content'
+import Comments from '../../components/widgets/Comments.astro'
+
+const { id } = Astro.params
+
+export async function getStaticPaths() {
+  const conchPosts = await getCollection('conch')
+  return conchPosts.map((item) => ({
+    params: { id: item.id },
+    props: item
+  }))
+}
+
+type Props = CollectionEntry<'conch'>
+
+const item = Astro.props
+const { Content, remarkPluginFrontmatter } = await render(item)
+
+const readingTime = remarkPluginFrontmatter?.readingTime
+const toc = remarkPluginFrontmatter?.toc || []
+const contentFeatures = remarkPluginFrontmatter?.contentFeatures || {}
+
+const fallbackDate = new Date(`${item.data.year || 2026}-01-01`)
+---
+
+<PostLayout
+  {...item.data}
+  title={item.data.title}
+  pubDate={item.data.pubDate || fallbackDate}
+  readingTime={readingTime}
+  toc={toc}
+  contentFeatures={contentFeatures}
+  backHref="/conch/"
+>
+  <div class="conch-detail-wrapper">
+    <div class="conch-markdown-body">
+      <Content />
+    </div>
+  </div>
+
+  <Comments post_slug={`conch-${id}`} />
+</PostLayout>
+
+<style>
+  .conch-detail-wrapper {
+    width: 100%;
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 0;
+  }
+
+  /* 다른 상세 페이지들과 똑같이 본문 내부 텍스트 및 요소 간격 정렬 */
+  .conch-markdown-body p:not([style*='font-size']),
+  .conch-markdown-body li:not([style*='font-size']) {
+    font-size: 1rem;
+    text-align: justify;
+    line-height: 1.75;
+    word-break: keep-all;
+    color: var(--text-primary);
+  }
+
+  /* 만약 첫 번째 콘텐츠가 이미지나 단락일 때 생기는 상단 여백을 다른 페이지들과 맞추기 */
+  .conch-markdown-body > :first-child {
+    margin-top: 0 !important;
+  }
+</style>

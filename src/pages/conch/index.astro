@@ -1,0 +1,182 @@
+---
+import { getCollection } from 'astro:content'
+import { themeConfig } from '@/config'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+
+const conchPosts = await getCollection('conch')
+
+// 1. 전체 포스트를 과거가 위로, 최신이 아래로 오도록 오름차순 정렬
+conchPosts.sort((a, b) => {
+  const yearA = a.data.year ?? 0
+  const yearB = b.data.year ?? 0
+  if (yearA !== yearB) {
+    return yearA - yearB // 연도 오름차순 (과거 -> 최신)
+  }
+  return a.id.localeCompare(b.id) // 같은 연도 내에서는 파일명(id) 순서대로 정렬
+})
+
+// 2. 연도별로 포스트 그룹화하기
+const groupedByYear = conchPosts.reduce(
+  (acc, post) => {
+    const year = post.data.year ?? 0
+    if (!acc[year]) {
+      acc[year] = []
+    }
+    acc[year].push(post)
+    return acc
+  },
+  {} as Record<number, typeof conchPosts>
+)
+
+// 3. 연도 목록 오름차순 정렬 (과거 연도가 위, 최신 연도가 맨 아래로!)
+const sortedYears = Object.keys(groupedByYear)
+  .map(Number)
+  .sort((a, b) => a - b)
+---
+
+<IndexLayout title={`Conch Archive - ${themeConfig.site.title}`} description="기록 아카이브">
+  <main style="width: 100%; max-width: 42rem; margin: 0 auto; padding: 2rem 0rem;">
+    <div style="display: flex; flex-direction: column; gap: 1rem; width: 100%;">
+      <!-- 블로그 목록 페이지와 정확히 일치하는 헤더 구조 -->
+      <div style="margin-bottom: 1rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Conch Archive
+        </h1>
+        <p
+          style="font-size: 0.75rem !important; line-height: 1.4; margin: 0 !important;"
+          class="text-gray-500 dark:text-gray-400"
+        >
+          여보세요~
+        </p>
+      </div>
+
+      {
+        sortedYears.map((year) => (
+          <div class="year-section">
+            <h2 class="year-heading">{year}년</h2>
+
+            <div class="conch-grid">
+              {groupedByYear[year].map((post) => (
+                <a href={`/conch/${post.id}`} class="conch-card" style={`background-image: url('${post.data.cover}');`}>
+                  <div class="conch-overlay" />
+                  <div class="conch-content">
+                    <span class="conch-year-sub">{year}</span>
+                    <span class="conch-title">{post.data.title}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </main>
+
+  <style>
+    /* 연도별 섹션 간격 */
+    .year-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .year-heading {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.875rem;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color, #eaeaea);
+      padding-bottom: 0.375rem;
+    }
+
+    /* 핵심: 3열 그리드 */
+    .conch-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+    }
+
+    /* 사각형 카드 디자인 */
+    .conch-card {
+      position: relative;
+      aspect-ratio: 4 / 3;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition:
+        transform 0.25s ease,
+        filter 0.25s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .conch-card::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      background-image: inherit;
+      background-size: cover;
+      background-position: center;
+      filter: blur(6px);
+      transform: scale(1.08);
+      z-index: 0;
+    }
+
+    .conch-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.35);
+      z-index: 1;
+      transition: background-color 0.25s ease;
+    }
+
+    .conch-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    .conch-year-sub {
+      font-size: 0.65rem;
+      font-weight: 500;
+      opacity: 0.85;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.125rem;
+    }
+
+    .conch-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .conch-card:hover {
+      transform: translateY(-3px);
+      filter: brightness(1.15);
+    }
+
+    .conch-card:hover .conch-overlay {
+      background-color: rgba(0, 0, 0, 0.15);
+    }
+
+    @media (max-width: 480px) {
+      .conch-grid {
+        gap: 0.5rem;
+      }
+      .conch-year-sub {
+        font-size: 0.55rem;
+      }
+      .conch-title {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</IndexLayout>

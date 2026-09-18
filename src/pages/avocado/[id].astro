@@ -1,0 +1,42 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content'
+import PostLayout from '@/layouts/PostLayout.astro'
+import { render } from 'astro:content'
+import Comments from '../../components/widgets/Comments.astro'
+const { id } = Astro.params
+
+export async function getStaticPaths() {
+  const avocado = await getCollection('avocado')
+  return avocado.map((item) => ({
+    params: { id: item.id },
+    props: item
+  }))
+}
+
+type Props = CollectionEntry<'avocado'>
+
+const item = Astro.props
+const { Content, remarkPluginFrontmatter } = await render(item)
+
+const readingTime = remarkPluginFrontmatter?.readingTime
+const toc = remarkPluginFrontmatter?.toc || []
+const contentFeatures = remarkPluginFrontmatter?.contentFeatures || {}
+---
+
+<PostLayout {...item.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures} backHref="/avocado/">
+  <div class="avocado-content-wrapper">
+    <Content />
+  </div>
+  <Comments post_slug={`avocado-${id}`} />
+</PostLayout>
+
+<style>
+  .avocado-content-wrapper p:not([style*='font-size']),
+  .avocado-content-wrapper li:not([style*='font-size']) {
+    font-size: 1rem;
+    text-align: justify;
+    line-height: 1.75;
+    word-break: keep-all;
+    color: var(--text-primary);
+  }
+</style>

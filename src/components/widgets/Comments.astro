@@ -1,0 +1,547 @@
+---
+export interface Props {
+  post_slug: string
+}
+
+const { post_slug } = Astro.props
+
+// conch 페이지인지 여부를 slug를 통해 판단 (conch-로 시작하는 경우)
+const isConch = post_slug.startsWith('conch-')
+---
+
+<style>
+  .comments-section {
+    font-family:
+      'Pretendard',
+      Pretendard,
+      -apple-system,
+      BlinkMacSystemFont,
+      system-ui,
+      Roboto,
+      'Helvetica Neue',
+      'Segoe UI',
+      'Apple SD Gothic Neo',
+      'Noto Sans KR',
+      'Malgun Gothic',
+      sans-serif;
+  }
+</style>
+
+<div
+  class="comments-section"
+  style="width: 100%; max-width: 48rem; margin: 2rem auto; padding: 1.5rem 0; background-color: transparent;"
+>
+  {/* 상단 액션 바: 댓글 토글 버튼 & 좋아요 버튼을 나란히 배치 */}
+  <div style="display: flex; align-items: center; gap: 1rem;">
+    {/* 댓글 토글 버튼 (말풍선 아이콘) */}
+    <button
+      id="comment-toggle-btn"
+      type="button"
+      style="display: inline-flex; align-items: center; gap: 0.1875rem; background: none; border: none; cursor: pointer; color: var(--text-primary); font-size: 0.875rem; padding: 0; font-family: inherit; -webkit-tap-highlight-color: transparent;"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        style="width: 1.125rem; height: 1.125rem;"
+        fill="currentColor"
+        viewBox="0 0 256 256"
+        stroke="currentColor"
+        stroke-width="14"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+      >
+        <path
+          d="M136,120a8,8,0,1,1-8-8A8,8,0,0,1,136,120Zm-52-8a8,8,0,1,0,8,8A8,8,0,0,0,84,112Zm88,0a8,8,0,1,0,8,8A8,8,0,0,0,172,112Zm56-56V184a12,12,0,0,1-12,12H153.25L138.42,222a12,12,0,0,1-20.84,0L102.75,196H40a12,12,0,0,1-12-12V56A12,12,0,0,1,40,44H216A12,12,0,0,1,228,56Zm-8,0a4,4,0,0,0-4-4H40a4,4,0,0,0-4,4V184a4,4,0,0,0,4,4h65.07a4,4,0,0,1,3.47,2l16,28a4,4,0,0,0,6.94,0l16-28a4,4,0,0,1,3.47-2H216a4,4,0,0,0,4-4Z"
+        ></path>
+      </svg>
+      <span
+        id="comment-count-text"
+        style="font-size: 0.875rem; font-weight: 700; color: var(--text-secondary); font-family: inherit;">0</span
+      >
+    </button>
+
+    {/* 좋아요 버튼 (하트 아이콘) */}
+    <button
+      id="like-btn"
+      type="button"
+      style="display: inline-flex; align-items: center; gap: 0.1875rem; background: none; border: none; cursor: pointer; color: var(--text-primary); font-size: 0.875rem; padding: 0; font-family: inherit; -webkit-tap-highlight-color: transparent;"
+      title="좋아요"
+    >
+      <svg
+        id="like-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        style="width: 1rem; height: 1rem;"
+        fill="none"
+        viewBox="0 0 256 256"
+        stroke="currentColor"
+        stroke-width="23"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M178,44c-21.44,0-39.92,10.19-50,27.07C117.92,54.19,99.44,44,78,44A58.07,58.07,0,0,0,20,102c0,28.59,18,58.47,53.4,88.79a333.81,333.81,0,0,0,52.7,36.73,4,4,0,0,0,3.8,0,333.81,333.81,0,0,0,52.7-36.73C218,160.47,236,130.59,236,102A58.07,58.07,0,0,0,178,44Z"
+        ></path>
+      </svg>
+      <span
+        id="like-count-text"
+        style="font-size: 0.875rem; font-weight: 700; color: var(--text-secondary); font-family: inherit;">0</span
+      >
+    </button>
+  </div>
+
+  {/* 평소엔 숨겨져 있다가 버튼을 누르면 열리는 컨테이너 */}
+  <div id="comment-container" style="display: none; margin-top: 1.5rem;">
+    <h3
+      style="font-size: 1rem; font-weight: 600; margin-bottom: 1.25rem; color: var(--text-title, var(--text-primary)); font-family: inherit;"
+    >
+      댓글
+    </h3>
+
+    {/* 댓글 리스트 영역 (항상 정상적으로 노출됨) */}
+    <div
+      id="comments-list"
+      style="margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 1rem;"
+    >
+      <p
+        style="font-size: 0.875rem; text-align: center; padding: 1rem 0; color: var(--text-secondary); font-family: inherit;"
+      >
+        댓글을 불러오는 중...
+      </p>
+    </div>
+
+    {/* 댓글 작성 폼 영역 */}
+    <div id="comment-form-wrapper">
+      <form id="comment-form" style="display: flex; flex-direction: column; gap: 1rem;">
+        {/* 닉네임 & 비밀번호 한 줄 배치 */}
+        <div style="display: flex; gap: 0.75rem;">
+          <input
+            id="nickname"
+            type="text"
+            placeholder="닉네임"
+            style="width: 50%; padding: 0.75rem 1rem; background-color: var(--code-bg); border: 1px solid var(--border); border-radius: 0.375rem; font-size: 0.875rem; color: var(--text-primary); outline: none; font-family: inherit;"
+            required
+          />
+          <input
+            id="password"
+            type="password"
+            placeholder="비밀번호"
+            style="width: 50%; padding: 0.75rem 1rem; background-color: var(--code-bg); border: 1px solid var(--border); border-radius: 0.375rem; font-size: 0.875rem; color: var(--text-primary); outline: none; font-family: inherit;"
+            required
+          />
+        </div>
+
+        {/* 허니팟 필드 */}
+        <div style="display: none; position: absolute; left: -9999px;" aria-hidden="true">
+          <label for="website-field">Website</label>
+          <input id="website-field" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        {/* 본문 입력 및 하단 버튼 영역 */}
+        <div
+          style="background-color: var(--code-bg); border: 1px solid var(--border); border-radius: 0.375rem; padding: 1rem;"
+        >
+          <textarea
+            id="content"
+            rows="3"
+            placeholder={isConch ? '이 공간은 관리자만 작성할 수 있습니다.' : '댓글을 남겨보세요...'}
+            style="width: 100%; background: transparent; border: none; font-size: 0.875rem; color: var(--text-primary); outline: none; resize: none; font-family: inherit;"
+            required></textarea>
+
+          {/* 하단 아이콘 및 등록 버튼 */}
+          <div
+            style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border);"
+          >
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              {/* 비밀글 토글 자물쇠 버튼 */}
+              <button
+                type="button"
+                id="secret-btn"
+                style="padding: 0.5rem; background-color: var(--text-tertiary); color: var(--bg); border: none; border-radius: 0.375rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; font-family: inherit;"
+                title="비밀글 설정 (클릭하여 토글)"
+              >
+                <svg
+                  id="secret-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style="width: 1rem; height: 1rem;"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"
+                  ></path>
+                </svg>
+              </button>
+              <span
+                id="secret-status-text"
+                style="font-size: 0.875rem; color: var(--text-secondary); font-family: inherit;">공개 댓글</span
+              >
+            </div>
+
+            <button
+              type="submit"
+              style="padding: 0.5rem 1.25rem; background-color: var(--text-title, var(--text-primary)); color: var(--bg); border: none; border-radius: 0.375rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; font-family: inherit;"
+            >
+              등록
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{/* Supabase 연동 및 로직 스크립트 */}
+<script type="module" define:vars={{ post_slug, isConch }}>
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+  const SUPABASE_URL = 'https://hdbqwihlntywvgratfrx.supabase.co'
+  const SUPABASE_ANON_KEY = 'sb_publishable_H686ApYaPygboh-6GXfoMQ_bHLA4qrq'
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+
+  // 관리자 인증 상태 체크 함수
+  async function checkIsAdmin() {
+    const {
+      data: { session }
+    } = await supabase.auth.getSession()
+    const isAuthedBySupabase = !!session
+
+    if (isAuthedBySupabase) {
+      localStorage.setItem('is_admin_mode', 'true')
+    }
+
+    return localStorage.getItem('is_admin_mode') === 'true' || isAuthedBySupabase
+  }
+
+  // 하트 또는 말풍선을 3번 연속 누르면 Supabase 인증 창 띄우기
+  let clickCount = 0
+  let clickTimer = null
+
+  function handleSecretAdminTrigger() {
+    clickCount++
+    if (clickTimer) clearTimeout(clickTimer)
+
+    clickTimer = setTimeout(async () => {
+      if (clickCount >= 3) {
+        const {
+          data: { session }
+        } = await supabase.auth.getSession()
+
+        if (session) {
+          await supabase.auth.signOut()
+          localStorage.removeItem('is_admin_mode')
+          alert('관리자 모드가 해제되었습니다.')
+          window.location.reload()
+        } else {
+          const email = prompt('관리자 이메일을 입력하세요:')
+          if (!email) return
+          const password = prompt('비밀번호를 입력하세요:')
+          if (!password) return
+
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: email.trim(),
+            password: password.trim()
+          })
+
+          if (error) {
+            alert('로그인 실패: 이메일 또는 비밀번호가 올바르지 않습니다.')
+          } else {
+            localStorage.setItem('is_admin_mode', 'true')
+            alert('관리자 모드가 활성화되었습니다!')
+            window.location.reload()
+          }
+        }
+      }
+      clickCount = 0
+    }, 400)
+  }
+
+  const toggleBtn = document.getElementById('comment-toggle-btn')
+  const likeBtn = document.getElementById('like-btn')
+
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', handleSecretAdminTrigger)
+    toggleBtn.addEventListener('touchend', handleSecretAdminTrigger, { passive: true })
+  }
+  if (likeBtn) {
+    likeBtn.addEventListener('click', handleSecretAdminTrigger)
+    likeBtn.addEventListener('touchend', handleSecretAdminTrigger, { passive: true })
+  }
+
+  // 1. 좋아요 기능 로직
+  try {
+    const likeIcon = document.getElementById('like-icon')
+    const likeCountText = document.getElementById('like-count-text')
+    const likedStorageKey = `liked_${post_slug}`
+    let hasLiked = localStorage.getItem(likedStorageKey) === 'true'
+
+    if (hasLiked && likeIcon) {
+      likeIcon.setAttribute('fill', 'currentColor')
+    }
+
+    async function fetchLikes() {
+      const { data, error } = await supabase
+        .from('astro_likes')
+        .select('likes_count')
+        .eq('post_slug', post_slug)
+        .single()
+      if (!error && data && likeCountText) {
+        likeCountText.textContent = data.likes_count
+      }
+    }
+
+    if (likeBtn) {
+      likeBtn.addEventListener('click', async (e) => {
+        const { data } = await supabase.from('astro_likes').select('likes_count').eq('post_slug', post_slug).single()
+        const currentCount = data ? data.likes_count : 0
+
+        if (hasLiked) {
+          const newCount = Math.max(0, currentCount - 1)
+          const { error } = await supabase
+            .from('astro_likes')
+            .upsert({ post_slug, likes_count: newCount, updated_at: new Date() })
+
+          if (!error) {
+            hasLiked = false
+            localStorage.removeItem(likedStorageKey)
+            if (likeCountText) likeCountText.textContent = newCount
+            if (likeIcon) likeIcon.setAttribute('fill', 'none')
+          }
+        } else {
+          const newCount = currentCount + 1
+          const { error } = await supabase
+            .from('astro_likes')
+            .upsert({ post_slug, likes_count: newCount, updated_at: new Date() })
+
+          if (!error) {
+            hasLiked = true
+            localStorage.setItem(likedStorageKey, 'true')
+            if (likeCountText) likeCountText.textContent = newCount
+            if (likeIcon) likeIcon.setAttribute('fill', 'currentColor')
+          }
+        }
+      })
+    }
+
+    fetchLikes()
+  } catch (err) {
+    console.error('좋아요 로직 에러:', err)
+  }
+
+  // 2. 댓글 토글 및 UI 로직
+  const commentContainer = document.getElementById('comment-container')
+  const commentCountText = document.getElementById('comment-count-text')
+  const form = document.getElementById('comment-form')
+  const commentsList = document.getElementById('comments-list')
+  const secretBtn = document.getElementById('secret-btn')
+  const secretIcon = document.getElementById('secret-icon')
+  const secretStatusText = document.getElementById('secret-status-text')
+  const websiteField = document.getElementById('website-field')
+
+  let isExpanded = false
+  let isSecret = false
+
+  if (toggleBtn && commentContainer) {
+    toggleBtn.addEventListener('click', (e) => {
+      isExpanded = !isExpanded
+      commentContainer.style.display = isExpanded ? 'block' : 'none'
+    })
+  }
+
+  if (secretBtn && secretIcon) {
+    secretBtn.addEventListener('click', () => {
+      isSecret = !isSecret
+      if (isSecret) {
+        secretBtn.style.backgroundColor = 'var(--text-primary)'
+        secretIcon.innerHTML =
+          '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />'
+        if (secretStatusText) {
+          secretStatusText.textContent = '비밀글'
+          secretStatusText.style.color = 'var(--text-primary)'
+        }
+      } else {
+        secretBtn.style.backgroundColor = 'var(--text-tertiary)'
+        secretIcon.innerHTML =
+          '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />'
+        if (secretStatusText) {
+          secretStatusText.textContent = '공개 댓글'
+          secretStatusText.style.color = 'var(--text-secondary)'
+        }
+      }
+    })
+  }
+
+  async function fetchComments() {
+    const { data, error } = await supabase
+      .from('astro-comments')
+      .select('*')
+      .eq('post_slug', post_slug)
+      .order('created_at', { ascending: true })
+
+    if (error) {
+      if (commentsList) {
+        commentsList.innerHTML =
+          '<p style="font-size: 0.875rem; color: #f87171; text-align: center; padding: 1rem 0; font-family: inherit;">댓글을 불러오지 못했습니다.</p>'
+      }
+      return
+    }
+
+    if (commentCountText) {
+      commentCountText.textContent = data.length
+    }
+
+    if (!commentsList) return
+
+    if (data.length === 0) {
+      commentsList.innerHTML =
+        '<p style="font-size: 0.875rem; text-align: center; padding: 1rem 0; color: var(--text-secondary); font-family: inherit;">아직 작성된 댓글이 없습니다. 첫 댓글을 남겨보세요!</p>'
+      return
+    }
+
+    commentsList.innerHTML = ''
+
+    data.forEach((comment) => {
+      const commentDiv = document.createElement('div')
+      commentDiv.style.cssText =
+        'display: flex; justify-content: space-between; align-items: flex-start; padding-top: 1rem; border-top: 1px solid var(--border);'
+
+      const leftDiv = document.createElement('div')
+
+      const headerDiv = document.createElement('div')
+      headerDiv.style.cssText = 'display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;'
+
+      const nicknameSpan = document.createElement('span')
+      nicknameSpan.style.cssText =
+        'font-weight: 600; font-size: 0.875rem; color: var(--text-primary); font-family: inherit;'
+      nicknameSpan.textContent = comment.nickname
+
+      const dateSpan = document.createElement('span')
+      dateSpan.style.cssText = 'font-size: 0.75rem; color: var(--text-secondary); font-family: inherit;'
+      dateSpan.textContent = new Date(comment.created_at).toLocaleDateString()
+
+      headerDiv.appendChild(nicknameSpan)
+      headerDiv.appendChild(dateSpan)
+
+      const contentP = document.createElement('p')
+      contentP.style.cssText =
+        'font-size: 0.875rem; white-space: pre-wrap; color: var(--text-primary); margin: 0; font-family: inherit;'
+
+      if (comment.is_secret) {
+        const secretSpan = document.createElement('span')
+        secretSpan.style.cssText =
+          'font-style: italic; color: var(--text-secondary); cursor: pointer; font-family: inherit; -webkit-tap-highlight-color: transparent;'
+        secretSpan.textContent = '🔒 비밀 댓글입니다. (클릭하여 보기)'
+
+        const handleReveal = (e) => {
+          e.preventDefault()
+          const inputPw = prompt('비밀글을 보려면 작성 시 입력한 비밀번호를 입력하세요:')
+          if (inputPw === comment.password) {
+            contentP.textContent = comment.content
+          } else if (inputPw !== null) {
+            alert('비밀번호가 일치하지 않습니다.')
+          }
+        }
+
+        secretSpan.addEventListener('click', handleReveal)
+        secretSpan.addEventListener('touchend', handleReveal, { passive: false })
+
+        contentP.appendChild(secretSpan)
+      } else {
+        contentP.textContent = comment.content
+      }
+
+      leftDiv.appendChild(headerDiv)
+      leftDiv.appendChild(contentP)
+
+      const deleteBtn = document.createElement('button')
+      deleteBtn.style.cssText =
+        'font-size: 0.75rem; color: var(--text-secondary); background: none; border: none; cursor: pointer; margin-left: 1rem; font-family: inherit;'
+      deleteBtn.textContent = '삭제'
+      deleteBtn.addEventListener('click', async () => {
+        const password = prompt('댓글 작성 시 입력한 비밀번호를 입력하세요:')
+        if (!password) return
+
+        const { error } = await supabase.from('astro-comments').delete().match({ id: comment.id, password })
+
+        if (error) {
+          alert('삭제에 실패했습니다. 비밀번호를 확인해주세요.')
+        } else {
+          fetchComments()
+        }
+      })
+
+      commentDiv.appendChild(leftDiv)
+      commentDiv.appendChild(deleteBtn)
+      commentsList.appendChild(commentDiv)
+    })
+  }
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+
+      // conch 페이지인 경우, 관리자가 아니면 등록 요청을 무시
+      if (isConch) {
+        const isAdmin = await checkIsAdmin()
+        if (!isAdmin) {
+          return // 일반 방문자가 등록을 누르면 아무 일도 일어나지 않음
+        }
+      }
+
+      if (websiteField && websiteField.value.trim() !== '') {
+        return
+      }
+
+      const COOLDOWN_TIME = 5000
+      const lastCommentTime = localStorage.getItem('last_comment_timestamp')
+      if (lastCommentTime) {
+        const elapsed = Date.now() - Number(lastCommentTime)
+        if (elapsed < COOLDOWN_TIME) {
+          const remainingSec = Math.ceil((COOLDOWN_TIME - elapsed) / 1000)
+          alert(`도배 방지를 위해 ${remainingSec}초 뒤에 다시 댓글을 작성할 수 있습니다.`)
+          return
+        }
+      }
+
+      const nickname = document.getElementById('nickname').value.trim()
+      const password = document.getElementById('password').value.trim()
+      const content = document.getElementById('content').value.trim()
+
+      if (!nickname || !password || !content) return
+
+      const { error } = await supabase.from('astro-comments').insert([
+        {
+          post_slug,
+          nickname,
+          password,
+          content,
+          is_secret: isSecret
+        }
+      ])
+
+      if (error) {
+        alert('댓글 등록에 실패했습니다.')
+      } else {
+        localStorage.setItem('last_comment_timestamp', Date.now().toString())
+
+        form.reset()
+        isSecret = false
+        if (websiteField) websiteField.value = ''
+        if (secretBtn) secretBtn.style.backgroundColor = 'var(--text-tertiary)'
+        if (secretIcon) {
+          secretIcon.innerHTML =
+            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />'
+        }
+        if (secretStatusText) {
+          secretStatusText.textContent = '공개 댓글'
+          secretStatusText.style.color = 'var(--text-secondary)'
+        }
+        fetchComments()
+      }
+    })
+  }
+
+  fetchComments()
+</script>

@@ -1,0 +1,45 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content'
+import PostLayout from '@/layouts/PostLayout.astro'
+import { render } from 'astro:content'
+import Comments from '../../components/widgets/Comments.astro'
+const { slug } = Astro.params
+
+export async function getStaticPaths() {
+  const dreams = await getCollection('dreams')
+  return dreams
+    .filter((dream) => !dream.id.startsWith('_'))
+    .map((dream) => ({
+      params: { slug: dream.id },
+      props: dream
+    }))
+}
+
+type Props = CollectionEntry<'dreams'>
+
+const dream = Astro.props
+const { Content, remarkPluginFrontmatter } = await render(dream)
+
+const readingTime = remarkPluginFrontmatter.readingTime
+const toc = remarkPluginFrontmatter.toc || []
+const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
+---
+
+<PostLayout {...dream.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures}>
+  <div class="dream-content-wrapper">
+    <Content />
+  </div>
+
+  <Comments post_slug={`dreams-${slug}`} />
+</PostLayout>
+
+<style>
+  .dream-content-wrapper p:not([style*='font-size']),
+  .dream-content-wrapper li:not([style*='font-size']) {
+    font-size: 1rem;
+    text-align: justify;
+    line-height: 1.75;
+    word-break: keep-all;
+    color: var(--text-primary);
+  }
+</style>

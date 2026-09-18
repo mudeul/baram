@@ -1,0 +1,114 @@
+---
+import IndexLayout from '../../layouts/IndexLayout.astro'
+import { themeConfig } from '../../config'
+import { getCollection } from 'astro:content'
+
+const avocados = await getCollection('avocado')
+
+// 날짜 최신순 정렬
+avocados.sort((a, b) => {
+  const dateA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
+  const dateB = b.data.pubDate ? new Date(b.data.pubDate).getTime() : 0
+  return dateB - dateA
+})
+---
+
+<IndexLayout title={`Avocado - ${themeConfig.site.title}`} description="아보카도">
+  <main class="avocado-container">
+    <div class="avocado-wrapper">
+      <div style="margin-bottom: 1rem;">
+        <h1 style="font-size: 1rem !important; font-weight: 700 !important; margin-bottom: 0.25rem !important;">
+          Avocado
+        </h1>
+        <p
+          style="font-size: 0.75rem !important; line-height: 1.4; margin: 0 !important;"
+          class="text-gray-500 dark:text-gray-400"
+        >
+          아보카도
+        </p>
+      </div>
+
+      <div class="avocado-grid">
+        {
+          avocados.map((item) => {
+            const coverImage = item.data.cover || item.data.image
+            return (
+              <a href={`/avocado/${item.id}/`} class="avocado-item">
+                {coverImage ? (
+                  <img src={coverImage} alt={item.data.title || 'Avocado image'} loading="lazy" class="avocado-img" />
+                ) : (
+                  <div class="avocado-placeholder">
+                    <span>{item.data.title || 'No Image'}</span>
+                  </div>
+                )}
+              </a>
+            )
+          })
+        }
+      </div>
+    </div>
+  </main>
+</IndexLayout>
+
+<style>
+  .avocado-container {
+    width: 100%;
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2rem 0rem;
+  }
+
+  .avocado-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .avocado-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    margin-top: 1rem;
+  }
+
+  .avocado-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-radius: 2px;
+    background-color: var(--color-surface, rgba(125, 125, 125, 0.1));
+    display: block;
+    transition: opacity 0.2s ease;
+  }
+
+  .avocado-item:hover {
+    opacity: 0.85;
+  }
+
+  .avocado-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .avocado-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: var(--color-text-muted, #666);
+    text-align: center;
+    padding: 4px;
+    word-break: keep-all;
+  }
+
+  @media (max-width: 640px) {
+    .avocado-grid {
+      gap: 2px;
+    }
+  }
+</style>
