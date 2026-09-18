@@ -1,12 +1,12 @@
 ---
 export interface Props {
-  post_slug: string
+  post_slug?: string // 옵셔널로 변경
 }
 
-const { post_slug } = Astro.props
+const { post_slug = '' } = Astro.props
 
-// conch 페이지인지 여부를 slug를 통해 판단 (conch-로 시작하는 경우)
-const isConch = post_slug.startsWith('conch-')
+// conch 페이지인지 여부를 slug를 통해 판단 (안전하게 체크)
+const isConch = typeof post_slug === 'string' && post_slug.startsWith('conch-')
 ---
 
 <style>

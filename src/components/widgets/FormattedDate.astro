@@ -8,18 +8,31 @@ const {
   format,
   context = 'default'
 } = Astro.props as FormattedDateProps & { context?: 'list' | 'post' | 'default' }
+
+/* 👉 date가 없을 경우를 대비한 안전 장치 */
+const validDate = date ? new Date(date) : null
+const isValidDate = validDate && !isNaN(validDate.getTime())
 ---
 
-<time
-  datetime={date.toISOString()}
-  class={!themeConfig.date.dateOnRight &&
-  (themeConfig.date.dateFormat === 'MONTH DAY YYYY' || themeConfig.date.dateFormat === 'DAY MONTH YYYY') &&
-  context === 'list'
-    ? 'date-left'
-    : ''}
->
-  <Fragment set:html={formatDate(date, format)} />
-</time>
+{
+  isValidDate ? (
+    <time
+      datetime={validDate.toISOString()}
+      class={
+        !themeConfig.date.dateOnRight &&
+        (themeConfig.date.dateFormat === 'MONTH DAY YYYY' || themeConfig.date.dateFormat === 'DAY MONTH YYYY') &&
+        context === 'list'
+          ? 'date-left'
+          : ''
+      }
+    >
+      <Fragment set:html={formatDate(validDate, format)} />
+    </time>
+  ) : (
+    /* 날짜 데이터가 아예 없을 때 출력할 빈 태그나 대체 텍스트 */
+    <span class="no-date" />
+  )
+}
 
 <style>
   .date-left {
