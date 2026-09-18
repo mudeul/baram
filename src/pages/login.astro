@@ -1,4 +1,6 @@
 ---
+let errorMessage = ''
+
 if (Astro.request.method === 'POST') {
   try {
     const data = await Astro.request.formData()
@@ -10,12 +12,16 @@ if (Astro.request.method === 'POST') {
         path: '/',
         httpOnly: true,
         secure: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
         maxAge: 86400
       })
-      return Astro.redirect('/bodong')
+      // 쿠키를 구운 뒤, 서버 리다이렉트 대신 HTML 안의 자바스크립트로 자연스럽게 보냄
+    } else {
+      errorMessage = '비밀번호가 틀렸습니다.'
     }
-  } catch (e) {}
+  } catch (e) {
+    errorMessage = '오류가 발생했습니다.'
+  }
 }
 ---
 
