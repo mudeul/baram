@@ -1,15 +1,35 @@
 ---
 import { themeConfig } from '@/config'
+import { createClient } from '@supabase/supabase-js'
+
 const today = new Date()
 
 // 1. 현재 경로가 메인 페이지('/')인지 확인합니다.
 const isHome = Astro.url.pathname === '/'
+
+// 2. 서버 측에서 미리 Supabase의 최신 카운트 값을 가져옵니다!
+// (클라이언트 키 그대로 써도 서버 측에서 안전하게 조회 가능합니다)
+const supabaseUrl = 'https://hdbqwihlntywvgratfrx.supabase.co'
+const supabaseKey = 'sb_publishable_H686ApYaPygboh-6GXfoMQ_bHLA4qrq'
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+let initialCount = 0
+
+try {
+  const { data } = await supabase.from('site_counters').select('count').eq('id', 'paw_total').single()
+
+  if (data) {
+    initialCount = data.count
+  }
+} catch (err) {
+  console.error('Failed to fetch initial count on server:', err)
+}
 ---
 
 <footer>
   <!-- 1. 위쪽 영역: 소셜 아이콘들과 발바닥 버튼 -->
   <div class="footer-social-group">
-    <!-- 중앙에 한 줄로 나열될 소셜 아이콘들 (유튜브 -> 블루ส카이 -> 하트 순서) -->
+    <!-- 중앙에 한 줄로 나열될 소셜 아이콘들 (유튜브 -> 블루스카이 -> 하트 순서) -->
     <div class="social-center-wrap">
       <div class="social-icons-row">
         <!-- 유튜브 링크 -->
@@ -78,8 +98,9 @@ const isHome = Astro.url.pathname === '/'
           <button id="pawBtn" class="paw-btn" title="다녀간 흔적 남기기">
             <span class="paw-text"> 👉 </span>
             <span class="paw-icon">🐾</span>
+            {/* 3. 서버에서 미리 가져온 initialCount 값을 바로 HTML에 꽂아줍니다! */}
             <span id="pawCount" class="paw-number">
-              0
+              {initialCount}
             </span>
           </button>
         </div>
@@ -102,7 +123,7 @@ const isHome = Astro.url.pathname === '/'
 </footer>
 
 <style>
-  /* 스타일은 기존과 동일하게 유지 */
+  /* 스타일은 기존과 동일 */
   footer {
     font-size: var(--font-size-s);
     font-weight: var(--font-weight-light);
@@ -246,8 +267,6 @@ const isHome = Astro.url.pathname === '/'
 <script>
   import { createClient } from '@supabase/supabase-js'
 
-  // Astro 환경 변수 방식에 맞춰서 URL과 Anon Key를 불러옵니다.
-  // (만약 기존에 쓰고 계신 Supabase client 파일이 있다면 그걸 import 해와서 쓰셔도 됩니다!)
   const supabaseUrl = 'https://hdbqwihlntywvgratfrx.supabase.co'
   const supabaseKey = 'sb_publishable_H686ApYaPygboh-6GXfoMQ_bHLA4qrq'
   const supabase = createClient(supabaseUrl, supabaseKey)
@@ -260,16 +279,8 @@ const isHome = Astro.url.pathname === '/'
 
     if (!pawBtn || !pawCountSpan) return
 
-    // 1. 페이지가 열리면 Supabase에서 최신 '전체 누적 숫자'를 먼저 가져옴 (사파리든 네이버든 동일하게 공유됨!)
-    try {
-      const { data, error } = await supabase.from('site_counters').select('count').eq('id', 'paw_total').single()
-
-      if (data) {
-        pawCountSpan.textContent = data.count.toString()
-      }
-    } catch (err) {
-      console.error('Failed to fetch paw count:', err)
-    }
+    // (참고: 이제 숫자는 서버에서 HTML에 미리 렌더링해서 보내주므로,
+    // 페이지 열리자마자 0에서 깜빡이며 바뀔 필요 없이 처음부터 숫자가 예쁘게 떠 있습니다!)
 
     const getTodayDate = () => {
       const date = new Date()
@@ -284,14 +295,13 @@ const isHome = Astro.url.pathname === '/'
       pawBtn.style.opacity = '0.7'
     }
 
-    // 2. 발자국 버튼 클릭 시
+    // 발자국 버튼 클릭 시
     pawBtn.onclick = async () => {
       const rect = pawBtn.getBoundingClientRect()
       const x = (rect.left + rect.width / 2) / window.innerWidth
       const y = (rect.top + rect.height / 2) / window.innerHeight
 
       if (!hasClickedToday) {
-        // 오늘 처음 눌렀다면 Supabase의 증가 함수(RPC) 실행!
         try {
           const { data: newCount, error } = await supabase.rpc('increment_paw')
 
@@ -315,7 +325,6 @@ const isHome = Astro.url.pathname === '/'
           })
         }
       } else {
-        // 이미 오늘 눌렀다면 애니메이션만 살짝
         if (typeof confetti === 'function') {
           confetti({
             particleCount: 25,
