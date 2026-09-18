@@ -26,7 +26,7 @@ const toc = remarkPluginFrontmatter.toc || []
 const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
 ---
 
-<PostLayout {...dream.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures}>
+<PostLayout {...dream.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures} backHref="/dreams/">
   <div class="dream-content-wrapper">
     <Content />
   </div>
