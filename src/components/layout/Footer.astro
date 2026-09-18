@@ -2,13 +2,16 @@
 import { themeConfig } from '@/config'
 import { createClient } from '@supabase/supabase-js'
 
+// 이 페이지(또는 컴포넌트가 들어가는 페이지)가 미리 빌드되지 않고,
+// 접속할 때마다 서버에서 최신 데이터를 가져오도록 설정합니다!
+export const prerender = false
+
 const today = new Date()
 
 // 1. 현재 경로가 메인 페이지('/')인지 확인합니다.
 const isHome = Astro.url.pathname === '/'
 
 // 2. 서버 측에서 미리 Supabase의 최신 카운트 값을 가져옵니다!
-// (클라이언트 키 그대로 써도 서버 측에서 안전하게 조회 가능합니다)
 const supabaseUrl = 'https://hdbqwihlntywvgratfrx.supabase.co'
 const supabaseKey = 'sb_publishable_H686ApYaPygboh-6GXfoMQ_bHLA4qrq'
 const supabase = createClient(supabaseUrl, supabaseKey)
