@@ -1,4 +1,8 @@
 ---
+import { getCollection } from 'astro:content'
+import { themeConfig } from '@/config'
+import IndexLayout from '@/layouts/IndexLayout.astro'
+
 // 1. 쿠키 검사 및 인증 상태 확인
 const authCookie = Astro.cookies.get('bodong_auth')
 let isAuthenticated = authCookie?.value === 'true'
@@ -28,13 +32,17 @@ if (!isAuthenticated && Astro.request.method === 'POST') {
   }
 }
 
-// 3. 인증 완료 시에만 게시글 데이터 로드
-let posts = []
-let formattedPosts = []
+// 3. 인증 완료 시에만 게시글 데이터 로드 및 가공 (타입 명시)
+interface FormattedPost {
+  title: string
+  url: string
+  dateStr: string
+}
+
+let formattedPosts: FormattedPost[] = []
 
 if (isAuthenticated) {
-  import { getCollection } from 'astro:content'
-  posts = await getCollection('bodong')
+  const posts = await getCollection('bodong')
 
   posts.sort((a, b) => {
     const timeA = a.data.pubDate ? new Date(a.data.pubDate).getTime() : 0
@@ -64,9 +72,6 @@ if (isAuthenticated) {
     }
   })
 }
-
-import { themeConfig } from '@/config'
-import IndexLayout from '@/layouts/IndexLayout.astro'
 ---
 
 <IndexLayout title={`Bodong - ${themeConfig.site.title}`} description={themeConfig.site.description}>
