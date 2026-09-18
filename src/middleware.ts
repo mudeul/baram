@@ -3,13 +3,12 @@ import { defineMiddleware } from 'astro:middleware'
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url)
 
-  // '/bodong' 경로가 아니면 미들웨어를 타지 않고 그대로 통과시킵니다.
   if (!url.pathname.startsWith('/bodong')) {
     return next()
   }
 
-  // Vercel 환경 변수에서 비밀번호를 가져옵니다.
-  const PASSWORD = context.locals.runtime?.env?.PASSWORD || process.env.PASSWORD
+  // 💡 process.env를 사용하도록 수정하여 타입 에러를 해결합니다.
+  const PASSWORD = process.env.PASSWORD
 
   const cookieHeader = context.request.headers.get('Cookie') || ''
   const cookies = Object.fromEntries(
@@ -19,12 +18,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     })
   )
 
-  // 이미 인증된 쿠키가 있다면 페이지를 보여줍니다.
   if (cookies.bodong_auth === 'true') {
     return next()
   }
 
-  // 사용자가 비밀번호를 입력해서 전송(POST)한 경우
   if (context.request.method === 'POST') {
     try {
       const formData = await context.request.formData()
@@ -35,7 +32,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
           status: 302,
           headers: {
             Location: url.pathname,
-            // 인증 성공 시 사이트 전체에서 유지되는 쿠키 발행 (24시간 유효)
             'Set-Cookie': 'bodong_auth=true; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400'
           }
         })
@@ -43,7 +39,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     } catch (e) {}
   }
 
-  // 인증되지 않았다면 비밀번호 입력 화면 출력
   const html = `
     <!DOCTYPE html>
     <html lang="ko">
