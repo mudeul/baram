@@ -1,4 +1,6 @@
 ---
+export const prerender = false // Vercel 서버리스 환경에서 매번 쿠키를 검사하도록 설정
+
 import { getCollection } from 'astro:content'
 import { themeConfig } from '@/config'
 import IndexLayout from '@/layouts/IndexLayout.astro'
@@ -32,7 +34,7 @@ if (!isAuthenticated && Astro.request.method === 'POST') {
   }
 }
 
-// 3. 인증 완료 시에만 게시글 데이터 로드 및 가공 (타입 명시)
+// 3. 인증 완료 시에만 게시글 데이터 로드 및 가공
 interface FormattedPost {
   title: string
   url: string
