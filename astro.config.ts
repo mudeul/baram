@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config'
+import vercel from '@astrojs/vercel'
 import mdx from '@astrojs/mdx'
 import sitemap from '@astrojs/sitemap'
 import remarkMath from 'remark-math'
@@ -17,6 +18,8 @@ import path from 'path'
 
 export default defineConfig({
   site: themeConfig.site.website,
+  output: 'server', // <-- 요기에 쏙 넣기!
+  adapter: vercel(), // <-- 요기도 쏙 넣기!
   image: {
     service: {
       entrypoint: 'astro/assets/services/sharp',
