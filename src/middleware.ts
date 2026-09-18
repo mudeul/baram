@@ -7,7 +7,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
     return next()
   }
 
-  // 💡 process.env를 사용하도록 수정하여 타입 에러를 해결합니다.
   const PASSWORD = process.env.PASSWORD
 
   const cookieHeader = context.request.headers.get('Cookie') || ''
@@ -18,27 +17,28 @@ export const onRequest = defineMiddleware(async (context, next) => {
     })
   )
 
+  // 이미 인증된 쿠키가 있다면 통과
   if (cookies.bodong_auth === 'true') {
     return next()
   }
 
+  // 사용자가 비밀번호를 입력해서 POST 요청을 보낸 경우
   if (context.request.method === 'POST') {
     try {
       const formData = await context.request.formData()
       const inputPassword = formData.get('password')
 
       if (inputPassword === PASSWORD) {
-        return new Response(null, {
-          status: 302,
-          headers: {
-            Location: url.pathname,
-            'Set-Cookie': 'bodong_auth=true; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400'
-          }
-        })
+        // 💡 리다이렉트(302)로 인한 루프를 없애고,
+        // 쿠키를 심은 채 곧바로 페이지를 통과시켜 렌더링합니다!
+        const response = await next()
+        response.headers.set('Set-Cookie', 'bodong_auth=true; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=86400')
+        return response
       }
     } catch (e) {}
   }
 
+  // 인증되지 않았다면 비밀번호 입력 폼 화면 출력
   const html = `
     <!DOCTYPE html>
     <html lang="ko">
