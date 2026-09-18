@@ -52,11 +52,11 @@ const shouldRenderLinkCard = themeConfig.post.linkCard && contentFeatures.hasLin
         <div class="title">
           <h1>{title}</h1>
           <div class="date">
-            <FormattedDate date={pubDate} context="post" />
+            {pubDate && <FormattedDate date={pubDate} context="post" />}
             {
               themeConfig.post.readingTime && readingTime && (
                 <span class="reading-time">
-                  <span class="separator">·</span>
+                  {pubDate && <span class="separator">·</span>}
                   {readingTime.text}
                 </span>
               )
