@@ -215,14 +215,18 @@ const isConch = typeof post_slug === 'string' && post_slug.startsWith('conch-')
     return localStorage.getItem('is_admin_mode') === 'true' || isAuthedBySupabase
   }
 
-  // 하트 또는 말풍선을 3번 연속 누르면 Supabase 인증 창 띄우기
+  // 하트 또는 말풍선을 연속으로 누르면 Supabase 인증 창 띄우기
   let clickCount = 0
   let clickTimer = null
 
-  function handleSecretAdminTrigger() {
+  function handleSecretAdminTrigger(e) {
+    // 모바일에서 터치 후 발생하는 기본 클릭 이벤트 중복 방지 (선택사항이지만 안정성을 높여줌)
+    e.preventDefault()
+
     clickCount++
     if (clickTimer) clearTimeout(clickTimer)
 
+    // 모바일 연타 속도를 고려해 타이머를 600ms로 약간 여유 있게 조정
     clickTimer = setTimeout(async () => {
       if (clickCount >= 3) {
         const {
@@ -255,19 +259,20 @@ const isConch = typeof post_slug === 'string' && post_slug.startsWith('conch-')
         }
       }
       clickCount = 0
-    }, 400)
+    }, 600)
   }
 
   const toggleBtn = document.getElementById('comment-toggle-btn')
   const likeBtn = document.getElementById('like-btn')
 
+  // 모바일과 PC 환경 모두에서 깔끔하게 동작하도록 pointerup 이벤트 사용 추천
   if (toggleBtn) {
-    toggleBtn.addEventListener('click', handleSecretAdminTrigger)
-    toggleBtn.addEventListener('touchend', handleSecretAdminTrigger, { passive: true })
+    toggleBtn.addEventListener('pointerup', handleSecretAdminTrigger)
   }
   if (likeBtn) {
-    likeBtn.addEventListener('click', handleSecretAdminTrigger)
-    likeBtn.addEventListener('touchend', handleSecretAdminTrigger, { passive: true })
+    // 좋아요 버튼은 '좋아요 기능' 클릭 이벤트와 충돌할 수 있으므로,
+    // 관리자 모드 트리거는 댓글 토글 버튼(말풍선 아이콘)에만 몰아주는 것이 훨씬 안전합니다!
+    // (만약 둘 다 쓰고 싶다면 아래 좋아요 로직과 pointerup 충돌을 조심해야 합니다)
   }
 
   // 1. 좋아요 기능 로직
