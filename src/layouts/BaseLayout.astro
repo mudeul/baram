@@ -1,0 +1,74 @@
+---
+import { themeConfig } from '@/config'
+import { ClientRouter } from 'astro:transitions'
+import ThemeManager from '@/components/ui/ThemeManager.astro'
+import TransitionWrapper from '@/components/layout/TransitionWrapper.astro'
+import Header from '@/components/layout/Header.astro' // 💡 이 줄을 꼭 추가해 주세요!
+import type { LayoutProps } from '@/types'
+
+type Props = LayoutProps
+
+const { type = 'page' } = Astro.props
+const language = themeConfig.site.language || 'en-US'
+const contentWidth = themeConfig.general.contentWidth
+const fadeAnimation = themeConfig.general.fadeAnimation
+const widthValue = Math.min(parseFloat(contentWidth), 50)
+const shouldUseCustomWidth = widthValue > 25
+const finalWidth = shouldUseCustomWidth ? `${widthValue}rem` : '25rem'
+---
+
+<html lang={language}>
+  <head>
+    <ThemeManager />
+    {fadeAnimation && <ClientRouter />}
+    <slot name="head" />
+
+    {/* 💡 파비콘 및 애플 터치 아이콘 수동 지정 (캐시 방지용 v=2 추가) */}
+    <link rel="icon" type="image/png" media="(prefers-color-scheme: light)" href="/favicons/favicon-light.png?v=3" />
+    <link rel="icon" type="image/png" media="(prefers-color-scheme: dark)" href="/favicons/favicon-dark.png?v=3" />
+    <link rel="apple-touch-icon" href="/og/og-logo.png?v=3" />
+  </head>
+  <body
+    data-centered={themeConfig.general.centeredLayout}
+    style={`
+      max-width: ${finalWidth};
+      ${shouldUseCustomWidth ? `--content-width: ${widthValue}rem;` : ''}
+    `}
+  >
+    <Header transition:persist="site-header" />
+    {
+      fadeAnimation ? (
+        <TransitionWrapper type={type} class="layout-wrapper">
+          <slot />
+        </TransitionWrapper>
+      ) : (
+        <div class="layout-wrapper">
+          <slot />
+        </div>
+      )
+    }
+
+    <script is:inline define:vars={{ fadeAnimation }}>
+      if (!fadeAnimation) {
+        const dispatchPageLoad = () => {
+          document.dispatchEvent(new Event('astro:page-load'))
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', dispatchPageLoad, { once: true })
+        } else {
+          queueMicrotask(dispatchPageLoad)
+        }
+      }
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  .layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+</style>

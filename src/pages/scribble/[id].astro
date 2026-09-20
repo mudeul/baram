@@ -1,0 +1,43 @@
+---
+export const prerender = true // 👈 이 줄을 추가해주세요!
+import { type CollectionEntry, getCollection } from 'astro:content'
+import PostLayout from '@/layouts/PostLayout.astro'
+import { render } from 'astro:content'
+import Comments from '../../components/widgets/Comments.astro'
+const { id } = Astro.params
+
+export async function getStaticPaths() {
+  const scribble = await getCollection('scribble')
+  return scribble.map((item) => ({
+    params: { id: item.id },
+    props: item
+  }))
+}
+
+type Props = CollectionEntry<'scribble'>
+
+const item = Astro.props
+const { Content, remarkPluginFrontmatter } = await render(item)
+
+const readingTime = remarkPluginFrontmatter?.readingTime
+const toc = remarkPluginFrontmatter?.toc || []
+const contentFeatures = remarkPluginFrontmatter?.contentFeatures || {}
+---
+
+<PostLayout {...item.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures} backHref="/scribble/">
+  <div class="scribble-content-wrapper">
+    <Content />
+  </div>
+  <Comments post_slug={`scribble-${id}`} />
+</PostLayout>
+
+<style>
+  .scribble-content-wrapper p:not([style*='font-size']),
+  .scribble-content-wrapper li:not([style*='font-size']) {
+    font-size: 1rem;
+    text-align: justify;
+    line-height: 1.75;
+    word-break: keep-all;
+    color: var(--text-primary);
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+export const prerender = true // 👈 이 줄을 추가해주세요!
+import { type CollectionEntry, getCollection } from 'astro:content'
+import PostLayout from '../../layouts/PostLayout.astro'
+import { render } from 'astro:content'
+import Comments from '../../components/widgets/Comments.astro'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog')
+  return posts
+    .filter((post) => !post.id.startsWith('_'))
+    .map((post) => ({
+      params: { slug: post.id },
+      props: post
+    }))
+}
+
+type Props = CollectionEntry<'blog'>
+
+const post = Astro.props
+const { Content, remarkPluginFrontmatter } = await render(post)
+
+const readingTime = remarkPluginFrontmatter.readingTime
+const toc = remarkPluginFrontmatter.toc || []
+const contentFeatures = remarkPluginFrontmatter.contentFeatures || {}
+---
+
+<PostLayout {...post.data} readingTime={readingTime} toc={toc} contentFeatures={contentFeatures} backHref="/blog/">
+  <div class="blog-content-wrapper">
+    <Content />
+  </div>
+  <!-- 👇 블로그 하단 댓글 컴포넌트 배치 -->
+  <section class="max-w-4xl mx-auto px-4 mt-8">
+    <Comments post_slug={post.id} />
+  </section>
+</PostLayout>
+
+<style>
+  /* 블로그 상세페이지 본문만 지정한 크기(1rem)로 설정 */
+  .blog-content-wrapper p:not([style*='font-size']),
+  .blog-content-wrapper li:not([style*='font-size']) {
+    font-size: 1rem; /* 원하시는 크기로 조절 가능 (예: 1rem, 1.05rem 등) */
+    text-align: justify;
+    line-height: 1.75;
+    word-break: keep-all;
+    color: var(--text-primary);
+  }
+</style>
